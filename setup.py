@@ -32,7 +32,7 @@ setup(
     url='https://github.com/rcsb/py-wwpdb_apps_wf_engine_utils',
     #
     license='Apache 2.0',
-    classifiers=(
+    classifiers=[
         'Development Status :: 3 - Alpha',
         # 'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
@@ -43,7 +43,7 @@ setup(
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
-    ),
+    ],
     entry_points={
         'console_scripts': []
     },
