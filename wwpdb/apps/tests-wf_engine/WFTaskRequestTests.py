@@ -28,9 +28,10 @@ import os
 import time
 import unittest
 import traceback
-from wwpdb.apps.wf_engine_utils.tasks.WFTaskRequest import WFTaskRequest
+#from wwpdb.apps.wf_engine.wf_engine_utils.tasks.WFTaskRequest import WFTaskRequest
 
 
+@unittest.skip("Until wf_engine code imported")
 class WFTaskRequestTests(unittest.TestCase):
 
     def __init__(self, methodName='runTest'):

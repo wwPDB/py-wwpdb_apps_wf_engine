@@ -26,7 +26,7 @@ import os
 import time
 import unittest
 import traceback
-from wwpdb.apps.wf_engine_utils.process.ProcessUtils import ProcessUtils
+from wwpdb.apps.wf_engine.wf_engine_utils.process.ProcessUtils import ProcessUtils
 
 
 class ProcessUtilsTests(unittest.TestCase):
