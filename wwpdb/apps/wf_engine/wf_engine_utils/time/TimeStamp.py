@@ -116,17 +116,17 @@ class TimeStamp(object):
 if __name__ == "__main__":
     #
     tS = TimeStamp()
-    print "getSecondsFromReference()", tS.getSecondsFromReference()
-    print "UTC (0) ", tS.getTimeStringUTC(0.0)
-    print "UTC (now) ", tS.getTimeStringUTC(tS.getSecondsFromReference())
-    print "Local now ", tS.getTimeStringLocal(tS.getSecondsFromReference())
+    print("getSecondsFromReference()", tS.getSecondsFromReference())
+    print("UTC (0) ", tS.getTimeStringUTC(0.0))
+    print("UTC (now) ", tS.getTimeStringUTC(tS.getSecondsFromReference()))
+    print("Local now ", tS.getTimeStringLocal(tS.getSecondsFromReference()))
     #
     tS = TimeStamp()
-    print "getSecondsFromReference()", tS.getSecondsFromReference()
-    print "getSecondsFromEpoc()", tS.getSecondsFromEpoc(tS.getSecondsFromReference())
+    print("getSecondsFromReference()", tS.getSecondsFromReference())
+    print("getSecondsFromEpoc()", tS.getSecondsFromEpoc(tS.getSecondsFromReference()))
     #
-    print "tS.getTimeStringLocal(0)", tS.getTimeStringLocal(0)
-    print "tS.getTimeStringLocal(3600*24)", tS.getTimeStringLocal(3600 * 24)
-    print ""
-    print "tS.getTimeStringUTC(0)", tS.getTimeStringUTC(0)
-    print "tS.getTimeStringUTC(3600*24)", tS.getTimeStringUTC(3600 * 24)
+    print("tS.getTimeStringLocal(0)", tS.getTimeStringLocal(0))
+    print("tS.getTimeStringLocal(3600*24)", tS.getTimeStringLocal(3600 * 24))
+    print("")
+    print("tS.getTimeStringUTC(0)", tS.getTimeStringUTC(0))
+    print("tS.getTimeStringUTC(3600*24)", tS.getTimeStringUTC(3600 * 24))
