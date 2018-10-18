@@ -1,0 +1,631 @@
+-- MySQL dump 10.11
+--
+-- Host: mysql-wwpdb-da.ebi.ac.uk    Database: status
+-- ------------------------------------------------------
+-- Server version	5.4.1-beta-community-log
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `author_corrections`
+--
+
+DROP TABLE IF EXISTS `author_corrections`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `author_corrections` (
+  `ordinal` int(11) NOT NULL AUTO_INCREMENT,
+  `dep_set_id` varchar(10) NOT NULL,
+  `content` varchar(40) NOT NULL,
+  `sending_date` date DEFAULT NULL,
+  `remark` varchar(50) DEFAULT NULL,
+  PRIMARY KEY (`ordinal`),
+  KEY `dep_set_id` (`dep_set_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `author_corrections`
+--
+
+LOCK TABLES `author_corrections` WRITE;
+/*!40000 ALTER TABLE `author_corrections` DISABLE KEYS */;
+/*!40000 ALTER TABLE `author_corrections` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `contact_author`
+--
+
+DROP TABLE IF EXISTS `contact_author`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `contact_author` (
+  `dep_set_id` varchar(10) NOT NULL,
+  `name_salutation` varchar(15) DEFAULT NULL,
+  `name_first` varchar(40) NOT NULL,
+  `name_last` varchar(65) NOT NULL,
+  `name_mi` varchar(50) DEFAULT NULL,
+  `role` varchar(50) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `address_1` varchar(520) NOT NULL,
+  `address_2` varchar(255) DEFAULT NULL,
+  `address_3` varchar(255) DEFAULT NULL,
+  `city` varchar(60) NOT NULL,
+  `state_province` varchar(70) DEFAULT NULL,
+  `postal_code` varchar(128) NOT NULL,
+  `country` varchar(50) NOT NULL,
+  `phone` varchar(60) DEFAULT NULL,
+  `fax` varchar(60) DEFAULT NULL,
+  `organization_type` varchar(40) NOT NULL,
+  PRIMARY KEY (`dep_set_id`,`name_first`,`name_last`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `contact_author`
+--
+
+LOCK TABLES `contact_author` WRITE;
+/*!40000 ALTER TABLE `contact_author` DISABLE KEYS */;
+/*!40000 ALTER TABLE `contact_author` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `da_group`
+--
+
+DROP TABLE IF EXISTS `da_group`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `da_group` (
+  `code` varchar(20) NOT NULL,
+  `group_name` varchar(20) NOT NULL,
+  `site` varchar(4) NOT NULL,
+  `main_page` varchar(30) DEFAULT NULL,
+  `da_group_id` int(10) NOT NULL,
+  PRIMARY KEY (`da_group_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `da_group`
+--
+
+LOCK TABLES `da_group` WRITE;
+/*!40000 ALTER TABLE `da_group` DISABLE KEYS */;
+INSERT INTO `da_group` VALUES ('ADMIN','Administrator','ALL','',1),('ANN','Annotator-test','ALL','Annotators.html',2),('ANN','PDBe - Annotators','PDBe','Annotators.html',3),('ANN','PDBJ - Annotators','PDBj','Annotators.html',4),('ANN','RCSB - Annotators','RCSB','Annotators.html',5);
+/*!40000 ALTER TABLE `da_group` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `da_users`
+--
+
+DROP TABLE IF EXISTS `da_users`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `da_users` (
+  `user_name` varchar(20) NOT NULL,
+  `password` varchar(10) NOT NULL,
+  `da_group_id` int(10) NOT NULL,
+  `email` varchar(30) NOT NULL,
+  `initials` varchar(5) DEFAULT NULL,
+  `first_name` varchar(50) DEFAULT NULL,
+  `last_name` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`user_name`),
+  KEY `da_group_id` (`da_group_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `da_users`
+--
+
+LOCK TABLES `da_users` WRITE;
+/*!40000 ALTER TABLE `da_users` DISABLE KEYS */;
+INSERT INTO `da_users` VALUES ('ann','ann',2,'ann@a2nn.com','AN','Ann','Ann'),('BD','BD',5,'','BD','Batsal Devokta',''),('CS','CS',5,'','CS','Chenghua',' Shao'),('EP','EP',5,'','EP','Ezra','Peisach'),('GG','GG',5,'','GG','Guanghua',' Gao'),('GJS','GJS',3,'','GJS','Jawahar','Swaminathan'),('GS','GS',3,'','GS','Gaurav','Sahni'),('GVG','GVG',3,'','GVG','Glen','van Ginkel'),('IP','IP',5,'','IP','Irina','Persikova'),('JY','JY',5,'','JY','Jasmine','Young'),('JZ','JZ',5,'','JZ','Jing','Zhou'),('KM','KM',4,'','KM','Kanna','Matsuura'),('LD','LD',5,'','LD','Luigi','Dicostanzo'),('LT','LT',5,'','LT','Lihua','Tan'),('MC','MC',3,'','MC','Matthew','Conroy'),('MRS','MRS',5,'','MRS','Monica','Sekharhan'),('MZ','MZ',5,'','MZ','Marina','Zhuravleva'),('pdbe_ann','pdbe_ann',3,'','PeA','PDBe','Annotator'),('pdbe_ann2','pdbe_ann2',3,'','PeA2','PDBe2','Annotator'),('pdbe_ann3','pdbe_ann3',3,'','PeA3','PDBe3','Annotator'),('pdbjJPN','pdbjJPN',4,'','JPN','unassigned','unassiged'),('pdbj_ann','pdbj_ann',4,'','PjA','PDBj','Annotator'),('pdbj_ann2','pdbj_ann2',4,'','PjA3','Pj3','Annotator'),('rcsb_ann','rcsb_ann',5,'','RA','RCSB','Annotator'),('rcsb_ann2','rcsb_ann2',5,'','RA2','RCSB2','Annotator'),('RI','RI',4,'','RI','Reiko','Igarashi'),('SG','SG',5,'','SG','Sutapa','Ghosh'),('SS','SS',3,'','SS','Sanchayita','Sen'),('YK','YK',4,'','YM','Yumiko','Kengaku');
+/*!40000 ALTER TABLE `da_users` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `database_PDB_obs_spr`
+--
+
+DROP TABLE IF EXISTS `database_PDB_obs_spr`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `database_PDB_obs_spr` (
+  `dep_set_id` varchar(10) NOT NULL,
+  `id` varchar(10) DEFAULT NULL,
+  `date` datetime DEFAULT NULL,
+  `pdb_id` varchar(10) DEFAULT NULL,
+  `replace_pdb_id` varchar(10) NOT NULL,
+  PRIMARY KEY (`dep_set_id`,`replace_pdb_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `database_PDB_obs_spr`
+--
+
+LOCK TABLES `database_PDB_obs_spr` WRITE;
+/*!40000 ALTER TABLE `database_PDB_obs_spr` DISABLE KEYS */;
+/*!40000 ALTER TABLE `database_PDB_obs_spr` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `database_ref`
+--
+
+DROP TABLE IF EXISTS `database_ref`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `database_ref` (
+  `dep_set_id` varchar(10) NOT NULL,
+  `database_name` varchar(20) NOT NULL,
+  `database_code` varchar(10) NOT NULL,
+  PRIMARY KEY (`dep_set_id`,`database_name`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `database_ref`
+--
+
+LOCK TABLES `database_ref` WRITE;
+/*!40000 ALTER TABLE `database_ref` DISABLE KEYS */;
+/*!40000 ALTER TABLE `database_ref` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `database_related`
+--
+
+DROP TABLE IF EXISTS `database_related`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `database_related` (
+  `dep_set_id` varchar(10) NOT NULL,
+  `db_name` varchar(10) NOT NULL,
+  `details` varchar(200) DEFAULT NULL,
+  `content_type` varchar(10) DEFAULT NULL,
+  `db_id` varchar(10) NOT NULL,
+  PRIMARY KEY (`dep_set_id`,`db_name`,`db_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `database_related`
+--
+
+LOCK TABLES `database_related` WRITE;
+/*!40000 ALTER TABLE `database_related` DISABLE KEYS */;
+/*!40000 ALTER TABLE `database_related` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Temporary table structure for view `dep_instance`
+--
+
+DROP TABLE IF EXISTS `dep_instance`;
+/*!50001 DROP VIEW IF EXISTS `dep_instance`*/;
+/*!50001 CREATE TABLE `dep_instance` (
+  `dep_set_id` varchar(10),
+  `pdb_id` varchar(4),
+  `dep_initial_deposition_date` date,
+  `annotator_initials` varchar(12),
+  `dep_deposit_site` varchar(8),
+  `dep_process_site` varchar(8),
+  `dep_status_code` varchar(5),
+  `dep_author_release_status_code` varchar(5),
+  `dep_title` varchar(400),
+  `dep_author_list` varchar(500),
+  `dep_exp_method` varchar(50),
+  `dep_status_code_exp` varchar(4),
+  `dep_SG_center` varchar(10),
+  `inst_ordinal` int(11),
+  `inst_id` varchar(10),
+  `inst_owner` varchar(50),
+  `inst_status` varchar(10),
+  `inst_status_timestamp` decimal(20,8),
+  `class_id` varchar(10),
+  `class_name` varchar(20),
+  `class_title` varchar(50),
+  `class_author` varchar(50),
+  `class_version` varchar(8),
+  `class_file` varchar(100)
+) ENGINE=MyISAM */;
+
+--
+-- Temporary table structure for view `dep_last_instance`
+--
+
+DROP TABLE IF EXISTS `dep_last_instance`;
+/*!50001 DROP VIEW IF EXISTS `dep_last_instance`*/;
+/*!50001 CREATE TABLE `dep_last_instance` (
+  `dep_set_id` varchar(10),
+  `pdb_id` varchar(4),
+  `dep_initial_deposition_date` date,
+  `annotator_initials` varchar(12),
+  `dep_deposit_site` varchar(8),
+  `dep_process_site` varchar(8),
+  `dep_status_code` varchar(5),
+  `dep_author_release_status_code` varchar(5),
+  `dep_title` varchar(400),
+  `dep_author_list` varchar(500),
+  `dep_exp_method` varchar(50),
+  `dep_status_code_exp` varchar(4),
+  `dep_SG_center` varchar(10),
+  `inst_ordinal` int(11),
+  `inst_id` varchar(10),
+  `inst_owner` varchar(50),
+  `inst_status` varchar(10),
+  `inst_status_timestamp` decimal(20,8),
+  `class_id` varchar(10),
+  `class_name` varchar(20),
+  `class_title` varchar(50),
+  `class_author` varchar(50),
+  `class_version` varchar(8),
+  `class_file` varchar(100)
+) ENGINE=MyISAM */;
+
+--
+-- Table structure for table `dep_with_problems`
+--
+
+DROP TABLE IF EXISTS `dep_with_problems`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `dep_with_problems` (
+  `ordinal` int(11) NOT NULL AUTO_INCREMENT,
+  `dep_set_id` varchar(10) NOT NULL,
+  `type` varchar(10) NOT NULL,
+  `detail` varchar(50) DEFAULT NULL,
+  PRIMARY KEY (`ordinal`),
+  KEY `dep_set_id` (`dep_set_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `dep_with_problems`
+--
+
+LOCK TABLES `dep_with_problems` WRITE;
+/*!40000 ALTER TABLE `dep_with_problems` DISABLE KEYS */;
+/*!40000 ALTER TABLE `dep_with_problems` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `deposition`
+--
+
+DROP TABLE IF EXISTS `deposition`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `deposition` (
+  `dep_set_id` varchar(10) NOT NULL,
+  `pdb_id` varchar(4) NOT NULL,
+  `initial_deposition_date` date DEFAULT NULL,
+  `annotator_initials` varchar(12) DEFAULT NULL,
+  `deposit_site` varchar(8) DEFAULT NULL,
+  `process_site` varchar(8) DEFAULT NULL,
+  `status_code` varchar(5) DEFAULT NULL,
+  `author_release_status_code` varchar(5) DEFAULT NULL,
+  `title` varchar(400) DEFAULT NULL,
+  `author_list` varchar(500) DEFAULT NULL,
+  `exp_method` varchar(50) DEFAULT NULL,
+  `status_code_exp` varchar(4) DEFAULT NULL,
+  `SG_center` varchar(10) DEFAULT NULL,
+  PRIMARY KEY (`dep_set_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `django_session`
+--
+
+DROP TABLE IF EXISTS `django_session`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `django_session` (
+  `session_key` varchar(40) NOT NULL,
+  `session_data` longtext NOT NULL,
+  `expire_date` datetime NOT NULL,
+  PRIMARY KEY (`session_key`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `django_session`
+--
+
+LOCK TABLES `django_session` WRITE;
+/*!40000 ALTER TABLE `django_session` DISABLE KEYS */;
+INSERT INTO `django_session` VALUES ('13830de0ba95c99eb4d8a9a139428bcb','gAJ9cQEoVQN2aWFxAlUDYXNjcQNVBHVzZXJxBChjd2ZfbWFuYWdlci53Zm0ubXltb2RlbHMuREFV\nc2VyCkRBVXNlcgpxBW9xBn1xByhVCmZpcnN0X25hbWVxCFUDQW5ucQlVCWxhc3RfbmFtZXEKVQNB\nbm5xC1UFZ3JvdXBxDChjd2ZfbWFuYWdlci53Zm0ubXltb2RlbHMuREFHcm91cApEQUdyb3VwCnEN\nb3EOfXEPKFUJZ3JvdXBuYW1lcRBVDkFubm90YXRvci10ZXN0cRFVBGNvZGVxElUDQU5OcRNVBHNp\ndGVxFChjd2ZfbWFuYWdlci53Zm0ubXltb2RlbHMuU2l0ZQpTaXRlCnEVb3EWfXEXKGgSVQNBTExx\nGFUMdmVyYm9zZV9uYW1lcRlVD0Fubm90YXRvcnMuaHRtbHEadWJVCW1haW5fcGFnZXEbaBp1YlUI\ncGFzc3dvcmRxHFUDYW5ucR1VCXVzZXJfbmFtZXEeVQNhbm5xH1UFZW1haWxxIFUMYW5uQGEybm4u\nY29tcSFVCGluaXRpYWxzcSJVAkFOcSN1YlUEcGFnZXEkKGN3Zl9tYW5hZ2VyLndmbS5teW1vZGVs\ncy5NYWluUGFnZQpNYWluUGFnZQpxJW9xJn1xJyhVBHRlc3RxKFUAVQdmaWx0ZXJzcSldcSpVBGRh\ndGFxK31xLFUHY29udGV4dHEtY2RqYW5nby50ZW1wbGF0ZS5jb250ZXh0CkNvbnRleHQKcS4pgXEv\nfXEwKFUKYXV0b2VzY2FwZXExiFUFZGljdHNxMl1xMyh9cTRVDFRBQl9GSUxURVJFRHE1iXN9cTZV\nB1JFRlJFU0hxN0sBc31xOFUIREVQX1BST0JxOV1xOnN9cTtVCkRFUF9SRUxSRVNxPF1xPXN9cT5V\nCUFVVEhfQ09SUnE/XXFAc31xQVUQRklMVEVSRURfRU5UUklFU3FCXXFDc31xRFUIREVQX1BST0Nx\nRV1xRihjd2ZfbWFuYWdlci53Zm0ubXltb2RlbHMuRGVwb3NpdGlvbgpEZXBvc2l0aW9uCnFHb3FI\nfXFJKFUKYXV0aG9yTGlzdHFKVURUYWxsYW50LCBDLiwgR2FyY2lhLUNhc3RlbGxhbm9zLCBSLiwg\nQmF1bWFubiwgVS4sIEdvbWlzLVJ1dGgsIEYuIFguLHFLVQV0aXRsZXFMVSJTdHJ1Y3R1cmUgb2Yg\ndWxpbHlzaW4gbXV0YW50IE0yOTBMcU1VAmFpcU5VAkFOcU9VC3Byb2Nlc3NTaXRlcVBVBFJDU0Jx\nUVUQaW5pdGlhbF9kZXBfZGF0ZXFSY2RhdGV0aW1lCmRhdGUKcVNVBAfaAhKFUnFUVQdleHBNZXRo\ncVVVEVgtUkFZIERJRkZSQUNUSU9OcVZVDGxhc3RJbnN0YW5jZXFXKGN3Zl9tYW5hZ2VyLndmbS5t\neW1vZGVscy5XRkluc3RhbmNlCldGSW5zdGFuY2UKcVhvcVl9cVooVQdvcmRpbmFscVuKAp8AVQZz\ndGF0dXNxXFUHd2FpdGluZ3FdVQl3ZkNsYXNzSURxXlUGU2VxTW9kcV9VCXRpbWVzdGFtcHFgY2Rl\nY2ltYWwKRGVjaW1hbApxYVUSMzM2NzY2MzI5LjIzMzA3MTk4hVJxYlUHd2ZDbGFzc3FjKGN3Zl9t\nYW5hZ2VyLndmbS5teW1vZGVscy5XRkNsYXNzCldGQ2xhc3MKcWRvcWV9cWYoVQRuYW1lcWdVElNl\ncXVlbmNlTW9kdWxlLnhtbHFoVQZhdXRob3JxaVUKTC4gUmluYWxkaXFqVQpjbGFzc19maWxlcWtV\nElNlcXVlbmNlTW9kdWxlLnhtbHFsVQpzaG9ydF9kZXNjcW1VAFUHdmVyc2lvbnFuVQUwMC4wMXFv\nVQRkYXRlcXBVAGhMVRZEZW1vbnN0cmF0aW9uIFdvcmtmbG93cXFVAmlkcXJoX1UEZGVzY3FzVQB1\nYlUFb3duZXJxdE5VBWRlcElEcXVVCERfMDU3NzUwcXZoclUFV18wMDZxd3ViVRFhdXRob3JfcmVs\nZWFzZV9zdHF4VQNSRUxxeVUHZGVwU2l0ZXF6VQRSQ1NCcXtVBXBkYklEcXxVBDNMVU1xfWh1aHZV\nDXN0YXR1c0NvZGVFeHBxflUEUFJPQ3F/VQhzZ0NlbnRlcnGAVQE/VQpzdGF0dXNDb2RlcYFVBFBS\nT0NxgnViYXN9cYNVB0ZJTFRFUlNxhF1xhSgoY3dmX21hbmFnZXIud2ZtLm15bW9kZWxzLkZpbHRl\nclNlbGVjdApGaWx0ZXJTZWxlY3QKcYZvcYd9cYgoVQxkZWZhdWx0VmFsdWVxiVUAVQR0eXBlcYpV\nBlNFTEVDVHGLVQdvcHRpb25zcYxdcY0oY3dmX21hbmFnZXIud2ZtLm15bW9kZWxzLkZpbHRlck9w\ndGlvbgpGaWx0ZXJPcHRpb24KcY5vcY99cZAoVQhzZWxlY3RlZHGRiWhnVQJBTnGSVQV2YWx1ZXGT\naJJ1YmFVB3RhZ05hbWVxlGhOVQVsYWJlbHGVVRJBbm5vdGF0b3IgSW5pdGlhbHNxlnViKGiGb3GX\nfXGYKGiJVQBoimiLaIxdcZkoKGiOb3GafXGbKGiRiWhnVQRBVVRIcZxok1UZQVVUSCBbV2FpdGlu\nZyBmb3IgQXV0aG9yXXGddWIoaI5vcZ59cZ8oaJGJaGdVBEhPTERxoGiTVRhIT0xEIFtIb2xkIGZv\nciBvbmUgeWVhcl1xoXViKGiOb3GifXGjKGiRiWhnVQRIUFVCcaRok1UhSFBVQiBbUmVsZWFzZWQg\ndXBvbiBwdWJibGljYXRpb25dcaV1Yihojm9xpn1xpyhokYloZ1UDT0JTcahok1UOT0JTIFtPYnNv\nbGV0ZV1xqXViKGiOb3GqfXGrKGiRiWhnVQRQUk9Dcaxok1UXUFJPQyBbVW5kZXIgcHJvY2Vzc2lu\nZ11xrXViKGiOb3GufXGvKGiRiWhnVQNSRUxxsGiTVQ5SRUwgW1JlbGVhc2VkXXGxdWIoaI5vcbJ9\ncbMoaJGJaGdVBFJFUExxtGiTVR5SRVBMIFtSZXBsYWNlbWVudCBDb29yZGluYXRlc11xtXViKGiO\nb3G2fXG3KGiRiWhnVQRXQUlUcbhok1UaV0FJVCBbQXdhaXRpbmcgUHJvY2Vzc2luZ11xuXViKGiO\nb3G6fXG7KGiRiWhnVQRXRFJOcbxok1UQV0RSTiBbV2l0aGRyYXduXXG9dWJlaJRoXGiVVQZTdGF0\ndXNxvnViKGN3Zl9tYW5hZ2VyLndmbS5teW1vZGVscy5GaWx0ZXJUZXh0CkZpbHRlclRleHQKcb9v\nccB9ccEoVQVyZWdleHHCVQBoiVUAaJFVAGiVVQZQREIgSURxw2iUVQVwZGJpZHHEaIpVBFRFWFRx\nxVUEc2l6ZXHGSwp1Yihov29xx31xyChowlUAaIlVAGiRVQBolVUGRGVwIElEcclolFUFZGVwaWRx\nymiKaMVoxksKdWIoaIZvcct9ccwoaIlVAGiKaItojF1xzSgoaI5vcc59cc8oaJGJaGdVBEJJR1Nx\n0GiTVSRCYWN0ZXJpYWwgdGFyZ2V0cyBhdCBJR1MtQ05SUyBbQklHU11x0XViKGiOb3HSfXHTKGiR\niWhnVQRCU0dDcdRok1UqQmVya2VsZXkgU3RydWN0dXJhbCBHZW5vbWljcyBDZW50ZXIgW0JTR0Nd\ncdV1Yihojm9x1n1x1yhokYloZ1UEQlNHSXHYaJNVQiBNb250cmVhbC1LaW5nc3RvbiBCYWN0ZXJp\nYWwgU3RydWN0dXJhbCBHZW5vbWljcyBJbml0aWF0aXZlIFtCU0dJXXHZdWIoaI5vcdp9cdsoaJGJ\naGdVBENFU0dx3GiTVTEgQ2VudGVyIGZvciBFdWthcnlvdGljIFN0cnVjdHVyYWwgR2Vub21pY3Mg\nW0NFU0ddcd11Yihojm9x3n1x3yhokYloZ1UEQ0hUU3HgaJNVNUNlbnRlciBmb3IgSGlnaC1UaHJv\ndWdocHV0IFN0cnVjdHVyYWwgQmlvbG9neSBbQ0hUU0JdceF1Yihojm9x4n1x4yhokYloZ1UEQ1NH\nSXHkaJNVPUNlbnRlciBmb3IgU3RydWN0dXJhbCBHZW5vbWljcyBvZiBJbmZlY3Rpb3VzIERpc2Vh\nc2VzIFtDU0dJRF1x5XViKGiOb3HmfXHnKGiRiWhnVQRDU01Qcehok1UxQ2VudGVyIGZvciBTdHJ1\nY3R1cmVzIG9mIE1lbWJyYW5lIFByb3RlaW5zIFtDU01QXXHpdWIoaI5vcep9cesoaJGJaGdVBElT\nRklx7GiTVT5JbnRlZ3JhdGVkIENlbnRlciBmb3IgU3RydWN0dXJlIGFuZCBGdW5jdGlvbiBJbm5v\ndmF0aW9uIFtJU0ZJXXHtdWIoaI5vce59ce8oaJGJaGdVBElTUENx8GiTVSpJc3JhZWwgU3RydWN0\ndXJhbCBQcm90ZW9taWNzIENlbnRlciBbSVNQQ11x8XViKGiOb3HyfXHzKGiRiWhnVQRKQ1NHcfRo\nk1UrSm9pbnQgQ2VudGVyIGZvciBTdHJ1Y3R1cmFsIEdlbm9taWNzIFtKQ1NHXXH1dWIoaI5vcfZ9\ncfcoaJGJaGdVBE1DU0dx+GiTVS1NaWR3ZXN0IENlbnRlciBmb3IgU3RydWN0dXJhbCBHZW5vbWlj\ncyBbTUNTR11x+XViKGiOb3H6fXH7KGiRiWhnVQRNU0dQcfxok1U0TWFyc2VpbGxlcyBTdHJ1Y3R1\ncmFsIEdlbm9taWNzIFByb2dyYW0gQCBBRk1CIFtNU0dQXXH9dWIoaI5vcf59cf8oaJGJaGdVBE5F\nU0dyAAEAAGiTVS9Ob3J0aGVhc3QgU3RydWN0dXJhbCBHZW5vbWljcyBDb25zb3J0aXVtIFtORVNH\nXXIBAQAAdWIoaI5vcgIBAAB9cgMBAAAoaJGJaGdVBE5ZQ09yBAEAAGiTVTtOZXcgWW9yayBDb25z\nb3J0aXVtIG9uIE1lbWJyYW5lIFByb3RlaW4gU3RydWN0dXJlIFtOWUNPTVBTXXIFAQAAdWIoaI5v\ncgYBAAB9cgcBAAAoaJGJaGdVBE5ZU0dyCAEAAGiTVT5OZXcgWW9yayBTR1ggUmVzZWFyY2ggQ2Vu\ndGVyIGZvciBTdHJ1Y3R1cmFsIEdlbm9taWNzIFtOWVNHWFJDXXIJAQAAdWIoaI5vcgoBAAB9cgsB\nAAAoaJGJaGdVBE9DU1ByDAEAAGiTVS9PbnRhcmlvIENlbnRyZSBmb3IgU3RydWN0dXJhbCBQcm90\nZW9taWNzIFtPQ1NQXXINAQAAdWIoaI5vcg4BAAB9cg8BAAAoaJGJaGdVBE9QUEZyEAEAAGiTVSog\nT3hmb3JkIFByb3RlaW4gUHJvZHVjdGlvbiBGYWNpbGl0eSBbT1BQRl1yEQEAAHViKGiOb3ISAQAA\nfXITAQAAKGiRiWhnVQRSSUtFchQBAABok1U3UklLRU4gU3RydWN0dXJhbCBHZW5vbWljcy9Qcm90\nZW9taWNzIEluaXRpYXRpdmUgW1JJS0VOXXIVAQAAdWIoaI5vchYBAAB9chcBAAAoaJGJaGdVA1My\nRnIYAQAAaJNVIlN0cnVjdHVyZSAyIEZ1bmN0aW9uIFByb2plY3QgW1MyRl1yGQEAAHViKGiOb3Ia\nAQAAfXIbAQAAKGiRiWhnVQRTRUNTchwBAABok1U3U291dGhlYXN0IENvbGxhYm9yYXRvcnkgZm9y\nIFN0cnVjdHVyYWwgR2Vub21pY3MgW1NFQ1NHXXIdAQAAdWIoaI5vch4BAAB9ch8BAAAoaJGJaGdV\nA1NHQ3IgAQAAaJNVJFN0cnVjdHVyYWwgR2Vub21pY3MgQ29uc29ydGl1bSBbU0dDXXIhAQAAdWIo\naI5vciIBAAB9ciMBAAAoaJGJaGdVBFNHUFByJAEAAGiTVTxTdHJ1Y3R1cmFsIEdlbm9taWNzIG9m\nIFBhdGhvZ2VuaWMgUHJvdG96b2EgQ29uc29ydGl1bSBbU0dQUF1yJQEAAHViKGiOb3ImAQAAfXIn\nAQAAKGiRiWhnVQNTR1hyKAEAAGiTVRlTR1ggUGhhcm1hY2V1dGljYWxzIFtTR1hdcikBAAB1Yiho\njm9yKgEAAH1yKwEAAChokYloZ1UEU1BJTnIsAQAAaJNVJ1N0cnVjdHVyYWwgUHJvdGVvbWljcyBp\nbiBFdXJvcGUgW1NQSU5FXXItAQAAdWIoaI5vci4BAAB9ci8BAAAoaJGJaGdVBFNTR0NyMAEAAGiT\nVUJTZWF0dGxlIFN0cnVjdHVyYWwgR2Vub21pY3MgQ2VudGVyIGZvciBJbmZlY3Rpb3VzIERpc2Vh\nc2UgW1NTR0NJRF1yMQEAAHViKGiOb3IyAQAAfXIzAQAAKGiRiWhnVQRUQlNHcjQBAABok1UpVEIg\nU3RydWN0dXJhbCBHZW5vbWljcyBDb25zb3J0aXVtIFtUQlNHQ11yNQEAAHViKGiOb3I2AQAAfXI3\nAQAAKGiRiWhnVQRYTVRCcjgBAABok1U/TXljb2JhY3Rlcml1bSBUdWJlcmN1bG9zaXMgU3RydWN0\ndXJhbCBQcm90ZW9taWNzIFByb2plY3QgW1hNVEJdcjkBAAB1Yihojm9yOgEAAH1yOwEAAChokYlo\nZ1UDWVNHcjwBAABok1UpUGFyaXMtU3VkIFllYXN0IFN0cnVjdHVyYWwgR2Vub21pY3MgW1lTR11y\nPQEAAHViZWiUVQlzZ0NlbnRlcnNyPgEAAGiVVQpTRyBDZW50ZXJzcj8BAAB1YmVzfXJAAQAAVQR1\nc2VyckEBAABoBnN9ckIBAABldWJVCHRlbXBsYXRlckMBAABoGnVidS5jMzZiZTAwYTRmMDJjNWZm\nOGE5Y2U3YmZjYjEyODMwMg==\n','2010-09-17 09:30:49'),('42eb6b12ee027c445d37646a03236380','gAJ9cQEoVQN2aWFxAlUDYXNjcQNVBHVzZXJxBChjd3dwZGIuYXBwcy53Zl9tYW5hZ2VyLndmbS5t\neW1vZGVscy5EQVVzZXIKREFVc2VyCnEFb3EGfXEHKFUKZmlyc3RfbmFtZXEIVQNBbm5xCVUJbGFz\ndF9uYW1lcQpVA0FubnELVQVncm91cHEMKGN3d3BkYi5hcHBzLndmX21hbmFnZXIud2ZtLm15bW9k\nZWxzLkRBR3JvdXAKREFHcm91cApxDW9xDn1xDyhVCWdyb3VwbmFtZXEQVQ5Bbm5vdGF0b3ItdGVz\ndHERVQRjb2RlcRJVA0FOTnETVQRzaXRlcRQoY3d3cGRiLmFwcHMud2ZfbWFuYWdlci53Zm0ubXlt\nb2RlbHMuU2l0ZQpTaXRlCnEVb3EWfXEXKGgSVQNBTExxGFUMdmVyYm9zZV9uYW1lcRlVD0Fubm90\nYXRvcnMuaHRtbHEadWJVCW1haW5fcGFnZXEbaBp1YlUIcGFzc3dvcmRxHFUDYW5ucR1VCXVzZXJf\nbmFtZXEeVQNhbm5xH1UFZW1haWxxIFUMYW5uQGEybm4uY29tcSFVCGluaXRpYWxzcSJVAkFOcSN1\nYlUEcGFnZXEkKGN3d3BkYi5hcHBzLndmX21hbmFnZXIud2ZtLm15bW9kZWxzLk1haW5QYWdlCk1h\naW5QYWdlCnElb3EmfXEnKFUEdGVzdHEoVQBVB2ZpbHRlcnNxKV1xKlUEZGF0YXErfXEsVQdjb250\nZXh0cS1jZGphbmdvLnRlbXBsYXRlLmNvbnRleHQKQ29udGV4dApxLimBcS99cTAoVQphdXRvZXNj\nYXBlcTGIVQVkaWN0c3EyXXEzKH1xNFUMVEFCX0ZJTFRFUkVEcTWJc31xNlUHUkVGUkVTSHE3SwFz\nfXE4VQhERVBfUFJPQnE5XXE6c31xO1UKREVQX1JFTFJFU3E8XXE9c31xPlUJQVVUSF9DT1JScT9d\ncUBzfXFBVRBGSUxURVJFRF9FTlRSSUVTcUJdcUNzfXFEVQhERVBfUFJPQ3FFXXFGKChjd3dwZGIu\nYXBwcy53Zl9tYW5hZ2VyLndmbS5teW1vZGVscy5EZXBvc2l0aW9uCkRlcG9zaXRpb24KcUdvcUh9\ncUkoVQphdXRob3JMaXN0cUpVI0Jvemt1cnQsIEcuLCBXaWxkLCBLLiwgU2lubmluZywgSS4scUtV\nBXRpdGxlcUxVI0NyeXN0YWwgc3RydWN0dXJlIG9mIEMuIHRoZXJtLiBHZXQ0cU1VAmFpcU5VAkFO\ncU9VC3Byb2Nlc3NTaXRlcVBVBFJDU0JxUVUQaW5pdGlhbF9kZXBfZGF0ZXFSY2RhdGV0aW1lCmRh\ndGUKcVNVBAfaAgiFUnFUVQdleHBNZXRocVVVEVgtUkFZIERJRkZSQUNUSU9OcVZVDGxhc3RJbnN0\nYW5jZXFXKGN3d3BkYi5hcHBzLndmX21hbmFnZXIud2ZtLm15bW9kZWxzLldGSW5zdGFuY2UKV0ZJ\nbnN0YW5jZQpxWG9xWX1xWihVB29yZGluYWxxW4oBRVUGc3RhdHVzcVxVB3dhaXRpbmdxXVUJd2ZD\nbGFzc0lEcV5VBlNlcU1vZHFfVQl0aW1lc3RhbXBxYGNkYXRldGltZQpkYXRldGltZQpxYVUKB9oI\nGgoWJwAAAIVScWJVB3dmQ2xhc3NxYyhjd3dwZGIuYXBwcy53Zl9tYW5hZ2VyLndmbS5teW1vZGVs\ncy5XRkNsYXNzCldGQ2xhc3MKcWRvcWV9cWYoVQRuYW1lcWdVElNlcXVlbmNlTW9kdWxlLnhtbHFo\nVQZhdXRob3JxaVUKTC4gUmluYWxkaXFqVQpjbGFzc19maWxlcWtVElNlcXVlbmNlTW9kdWxlLnht\nbHFsVQpzaG9ydF9kZXNjcW1VAFUHdmVyc2lvbnFuVQUwMC4wMXFvVQRkYXRlcXBVAGhMVRZEZW1v\nbnN0cmF0aW9uIFdvcmtmbG93cXFVAmlkcXJoX1UEZGVzY3FzVQB1YlUFb3duZXJxdE5VBWRlcElE\ncXVVCERfMDU3NTg0cXZoclUFV18wMDFxd3ViVRFhdXRob3JfcmVsZWFzZV9zdHF4VQRIUFVCcXlV\nB2RlcFNpdGVxelUEUkNTQnF7VQVwZGJJRHF8VQQzTFBacX1odWh2VQ1zdGF0dXNDb2RlRXhwcX5V\nBEhQVUJxf1UIc2dDZW50ZXJxgFUBP1UKc3RhdHVzQ29kZXGBVQRQUk9DcYJ1YihoR29xg31xhCho\nSlVEVGFsbGFudCwgQy4sIEdhcmNpYS1DYXN0ZWxsYW5vcywgUi4sIEJhdW1hbm4sIFUuLCBHb21p\ncy1SdXRoLCBGLiBYLixxhWhMVSJTdHJ1Y3R1cmUgb2YgdWxpbHlzaW4gbXV0YW50IE0yOTBMcYZo\nTlUCQU5xh2hQVQRSQ1NCcYhoUmhTVQQH2gIShVJxiWhVVRFYLVJBWSBESUZGUkFDVElPTnGKaFco\naFhvcYt9cYwoaFuKAUhoXFUIZmluaXNoZWRxjWheVQZTZXFNb2RxjmhgaGFVCgfaCBoKFjEAAACF\nUnGPaGMoaGRvcZB9cZEoaGdVElNlcXVlbmNlTW9kdWxlLnhtbHGSaGlVCkwuIFJpbmFsZGlxk2hr\nVRJTZXF1ZW5jZU1vZHVsZS54bWxxlGhtVQBoblUFMDAuMDFxlWhwVQBoTFUWRGVtb25zdHJhdGlv\nbiBXb3JrZmxvd3GWaHJojmhzVQB1Ymh0Tmh1VQhEXzA1Nzc1MHGXaHJVBVdfMDAxcZh1Ymh4VQNS\nRUxxmWh6VQRSQ1NCcZpofFUEM0xVTXGbaHVol2h+VQRQUk9DcZxogFUBP2iBVQRQUk9DcZ11YmVz\nfXGeVQdGSUxURVJTcZ9dcaAoKGN3d3BkYi5hcHBzLndmX21hbmFnZXIud2ZtLm15bW9kZWxzLkZp\nbHRlclNlbGVjdApGaWx0ZXJTZWxlY3QKcaFvcaJ9caMoVQxkZWZhdWx0VmFsdWVxpFUAVQR0eXBl\ncaVVBlNFTEVDVHGmVQdvcHRpb25zcaddcagoY3d3cGRiLmFwcHMud2ZfbWFuYWdlci53Zm0ubXlt\nb2RlbHMuRmlsdGVyT3B0aW9uCkZpbHRlck9wdGlvbgpxqW9xqn1xqyhVCHNlbGVjdGVkcayJaGdV\nAkFOca1VBXZhbHVlca5orXViYVUHdGFnTmFtZXGvaE5VBWxhYmVscbBVEkFubm90YXRvciBJbml0\naWFsc3GxdWIoaKFvcbJ9cbMoaKRVAGilaKZop11xtCgoaKlvcbV9cbYoaKyJaGdVBEFVVEhxt2iu\nVRlBVVRIIFtXYWl0aW5nIGZvciBBdXRob3Jdcbh1YihoqW9xuX1xuihorIloZ1UESE9MRHG7aK5V\nGEhPTEQgW0hvbGQgZm9yIG9uZSB5ZWFyXXG8dWIoaKlvcb19cb4oaKyJaGdVBEhQVUJxv2iuVSFI\nUFVCIFtSZWxlYXNlZCB1cG9uIHB1YmJsaWNhdGlvbl1xwHViKGipb3HBfXHCKGisiWhnVQNPQlNx\nw2iuVQ5PQlMgW09ic29sZXRlXXHEdWIoaKlvccV9ccYoaKyJaGdVBFBST0Nxx2iuVRdQUk9DIFtV\nbmRlciBwcm9jZXNzaW5nXXHIdWIoaKlvccl9ccooaKyJaGdVA1JFTHHLaK5VDlJFTCBbUmVsZWFz\nZWRdccx1YihoqW9xzX1xzihorIloZ1UEUkVQTHHPaK5VHlJFUEwgW1JlcGxhY2VtZW50IENvb3Jk\naW5hdGVzXXHQdWIoaKlvcdF9cdIoaKyJaGdVBFdBSVRx02iuVRpXQUlUIFtBd2FpdGluZyBQcm9j\nZXNzaW5nXXHUdWIoaKlvcdV9cdYoaKyJaGdVBFdEUk5x12iuVRBXRFJOIFtXaXRoZHJhd25dcdh1\nYmVor2hcaLBVBlN0YXR1c3HZdWIoY3d3cGRiLmFwcHMud2ZfbWFuYWdlci53Zm0ubXltb2RlbHMu\nRmlsdGVyVGV4dApGaWx0ZXJUZXh0CnHab3HbfXHcKFUFcmVnZXhx3VUAaKRVAGisVQBosFUGUERC\nIElEcd5or1UFcGRiaWRx32ilVQRURVhUceBVBHNpemVx4UsKdWIoaNpvceJ9ceMoaN1VAGikVQBo\nrFUAaLBVBkRlcCBJRHHkaK9VBWRlcGlkceVopWjgaOFLCnViKGihb3HmfXHnKGikVQBopWimaKdd\ncegoKGipb3HpfXHqKGisiWhnVQRCSUdTcetorlUkQmFjdGVyaWFsIHRhcmdldHMgYXQgSUdTLUNO\nUlMgW0JJR1Ndcex1YihoqW9x7X1x7ihorIloZ1UEQlNHQ3HvaK5VKkJlcmtlbGV5IFN0cnVjdHVy\nYWwgR2Vub21pY3MgQ2VudGVyIFtCU0dDXXHwdWIoaKlvcfF9cfIoaKyJaGdVBEJTR0lx82iuVUIg\nTW9udHJlYWwtS2luZ3N0b24gQmFjdGVyaWFsIFN0cnVjdHVyYWwgR2Vub21pY3MgSW5pdGlhdGl2\nZSBbQlNHSV1x9HViKGipb3H1fXH2KGisiWhnVQRDRVNHcfdorlUxIENlbnRlciBmb3IgRXVrYXJ5\nb3RpYyBTdHJ1Y3R1cmFsIEdlbm9taWNzIFtDRVNHXXH4dWIoaKlvcfl9cfooaKyJaGdVBENIVFNx\n+2iuVTVDZW50ZXIgZm9yIEhpZ2gtVGhyb3VnaHB1dCBTdHJ1Y3R1cmFsIEJpb2xvZ3kgW0NIVFNC\nXXH8dWIoaKlvcf19cf4oaKyJaGdVBENTR0lx/2iuVT1DZW50ZXIgZm9yIFN0cnVjdHVyYWwgR2Vu\nb21pY3Mgb2YgSW5mZWN0aW91cyBEaXNlYXNlcyBbQ1NHSURdcgABAAB1YihoqW9yAQEAAH1yAgEA\nAChorIloZ1UEQ1NNUHIDAQAAaK5VMUNlbnRlciBmb3IgU3RydWN0dXJlcyBvZiBNZW1icmFuZSBQ\ncm90ZWlucyBbQ1NNUF1yBAEAAHViKGipb3IFAQAAfXIGAQAAKGisiWhnVQRJU0ZJcgcBAABorlU+\nSW50ZWdyYXRlZCBDZW50ZXIgZm9yIFN0cnVjdHVyZSBhbmQgRnVuY3Rpb24gSW5ub3ZhdGlvbiBb\nSVNGSV1yCAEAAHViKGipb3IJAQAAfXIKAQAAKGisiWhnVQRJU1BDcgsBAABorlUqSXNyYWVsIFN0\ncnVjdHVyYWwgUHJvdGVvbWljcyBDZW50ZXIgW0lTUENdcgwBAAB1YihoqW9yDQEAAH1yDgEAACho\nrIloZ1UESkNTR3IPAQAAaK5VK0pvaW50IENlbnRlciBmb3IgU3RydWN0dXJhbCBHZW5vbWljcyBb\nSkNTR11yEAEAAHViKGipb3IRAQAAfXISAQAAKGisiWhnVQRNQ1NHchMBAABorlUtTWlkd2VzdCBD\nZW50ZXIgZm9yIFN0cnVjdHVyYWwgR2Vub21pY3MgW01DU0ddchQBAAB1YihoqW9yFQEAAH1yFgEA\nAChorIloZ1UETVNHUHIXAQAAaK5VNE1hcnNlaWxsZXMgU3RydWN0dXJhbCBHZW5vbWljcyBQcm9n\ncmFtIEAgQUZNQiBbTVNHUF1yGAEAAHViKGipb3IZAQAAfXIaAQAAKGisiWhnVQRORVNHchsBAABo\nrlUvTm9ydGhlYXN0IFN0cnVjdHVyYWwgR2Vub21pY3MgQ29uc29ydGl1bSBbTkVTR11yHAEAAHVi\nKGipb3IdAQAAfXIeAQAAKGisiWhnVQROWUNPch8BAABorlU7TmV3IFlvcmsgQ29uc29ydGl1bSBv\nbiBNZW1icmFuZSBQcm90ZWluIFN0cnVjdHVyZSBbTllDT01QU11yIAEAAHViKGipb3IhAQAAfXIi\nAQAAKGisiWhnVQROWVNHciMBAABorlU+TmV3IFlvcmsgU0dYIFJlc2VhcmNoIENlbnRlciBmb3Ig\nU3RydWN0dXJhbCBHZW5vbWljcyBbTllTR1hSQ11yJAEAAHViKGipb3IlAQAAfXImAQAAKGisiWhn\nVQRPQ1NQcicBAABorlUvT250YXJpbyBDZW50cmUgZm9yIFN0cnVjdHVyYWwgUHJvdGVvbWljcyBb\nT0NTUF1yKAEAAHViKGipb3IpAQAAfXIqAQAAKGisiWhnVQRPUFBGcisBAABorlUqIE94Zm9yZCBQ\ncm90ZWluIFByb2R1Y3Rpb24gRmFjaWxpdHkgW09QUEZdciwBAAB1YihoqW9yLQEAAH1yLgEAACho\nrIloZ1UEUklLRXIvAQAAaK5VN1JJS0VOIFN0cnVjdHVyYWwgR2Vub21pY3MvUHJvdGVvbWljcyBJ\nbml0aWF0aXZlIFtSSUtFTl1yMAEAAHViKGipb3IxAQAAfXIyAQAAKGisiWhnVQNTMkZyMwEAAGiu\nVSJTdHJ1Y3R1cmUgMiBGdW5jdGlvbiBQcm9qZWN0IFtTMkZdcjQBAAB1YihoqW9yNQEAAH1yNgEA\nAChorIloZ1UEU0VDU3I3AQAAaK5VN1NvdXRoZWFzdCBDb2xsYWJvcmF0b3J5IGZvciBTdHJ1Y3R1\ncmFsIEdlbm9taWNzIFtTRUNTR11yOAEAAHViKGipb3I5AQAAfXI6AQAAKGisiWhnVQNTR0NyOwEA\nAGiuVSRTdHJ1Y3R1cmFsIEdlbm9taWNzIENvbnNvcnRpdW0gW1NHQ11yPAEAAHViKGipb3I9AQAA\nfXI+AQAAKGisiWhnVQRTR1BQcj8BAABorlU8U3RydWN0dXJhbCBHZW5vbWljcyBvZiBQYXRob2dl\nbmljIFByb3Rvem9hIENvbnNvcnRpdW0gW1NHUFBdckABAAB1YihoqW9yQQEAAH1yQgEAAChorIlo\nZ1UDU0dYckMBAABorlUZU0dYIFBoYXJtYWNldXRpY2FscyBbU0dYXXJEAQAAdWIoaKlvckUBAAB9\nckYBAAAoaKyJaGdVBFNQSU5yRwEAAGiuVSdTdHJ1Y3R1cmFsIFByb3Rlb21pY3MgaW4gRXVyb3Bl\nIFtTUElORV1ySAEAAHViKGipb3JJAQAAfXJKAQAAKGisiWhnVQRTU0dDcksBAABorlVCU2VhdHRs\nZSBTdHJ1Y3R1cmFsIEdlbm9taWNzIENlbnRlciBmb3IgSW5mZWN0aW91cyBEaXNlYXNlIFtTU0dD\nSURdckwBAAB1YihoqW9yTQEAAH1yTgEAAChorIloZ1UEVEJTR3JPAQAAaK5VKVRCIFN0cnVjdHVy\nYWwgR2Vub21pY3MgQ29uc29ydGl1bSBbVEJTR0NdclABAAB1YihoqW9yUQEAAH1yUgEAAChorIlo\nZ1UEWE1UQnJTAQAAaK5VP015Y29iYWN0ZXJpdW0gVHViZXJjdWxvc2lzIFN0cnVjdHVyYWwgUHJv\ndGVvbWljcyBQcm9qZWN0IFtYTVRCXXJUAQAAdWIoaKlvclUBAAB9clYBAAAoaKyJaGdVA1lTR3JX\nAQAAaK5VKVBhcmlzLVN1ZCBZZWFzdCBTdHJ1Y3R1cmFsIEdlbm9taWNzIFtZU0ddclgBAAB1YmVo\nr1UJc2dDZW50ZXJzclkBAABosFUKU0cgQ2VudGVyc3JaAQAAdWJlc31yWwEAAGgEaAZzfXJcAQAA\nZXViVQh0ZW1wbGF0ZXJdAQAAaBp1YnUuZDA1NGJkNmUzZWFmMGJlOGFhMjk3ZWE0NWUzZTE3OWE=\n','2010-09-09 19:19:10'),('64c1d65468b8e5a6e24274e8f5e4ca0b','gAJ9cQEoVQN2aWFxAlUDYXNjcQNVBHVzZXJxBChjd2ZfbWFuYWdlci53Zm0ubXltb2RlbHMuREFV\nc2VyCkRBVXNlcgpxBW9xBn1xByhVCmZpcnN0X25hbWVxCFUDQW5ucQlVCWxhc3RfbmFtZXEKVQNB\nbm5xC1UFZ3JvdXBxDChjd2ZfbWFuYWdlci53Zm0ubXltb2RlbHMuREFHcm91cApEQUdyb3VwCnEN\nb3EOfXEPKFUJZ3JvdXBuYW1lcRBVDkFubm90YXRvci10ZXN0cRFVBGNvZGVxElUDQU5OcRNVBHNp\ndGVxFChjd2ZfbWFuYWdlci53Zm0ubXltb2RlbHMuU2l0ZQpTaXRlCnEVb3EWfXEXKGgSVQNBTExx\nGFUMdmVyYm9zZV9uYW1lcRlVD0Fubm90YXRvcnMuaHRtbHEadWJVCW1haW5fcGFnZXEbaBp1YlUI\ncGFzc3dvcmRxHFUDYW5ucR1VCXVzZXJfbmFtZXEeVQNhbm5xH1UFZW1haWxxIFUMYW5uQGEybm4u\nY29tcSFVCGluaXRpYWxzcSJVAkFOcSN1YlUEcGFnZXEkKGN3Zl9tYW5hZ2VyLndmbS5teW1vZGVs\ncy5NYWluUGFnZQpNYWluUGFnZQpxJW9xJn1xJyhVBHRlc3RxKFUAVQdmaWx0ZXJzcSldcSpVBGRh\ndGFxK31xLFUHY29udGV4dHEtY2RqYW5nby50ZW1wbGF0ZS5jb250ZXh0CkNvbnRleHQKcS4pgXEv\nfXEwKFUKYXV0b2VzY2FwZXExiFUFZGljdHNxMl1xMyh9cTRVDFRBQl9GSUxURVJFRHE1iXN9cTZV\nB1JFRlJFU0hxN0sBc31xOFUIREVQX1BST0JxOV1xOnN9cTtVCkRFUF9SRUxSRVNxPF1xPXN9cT5V\nCUFVVEhfQ09SUnE/XXFAc31xQVUQRklMVEVSRURfRU5UUklFU3FCXXFDc31xRFUIREVQX1BST0Nx\nRV1xRigoY3dmX21hbmFnZXIud2ZtLm15bW9kZWxzLkRlcG9zaXRpb24KRGVwb3NpdGlvbgpxR29x\nSH1xSShVCmF1dGhvckxpc3RxSlUjQm96a3VydCwgRy4sIFdpbGQsIEsuLCBTaW5uaW5nLCBJLixx\nS1UFdGl0bGVxTFUjQ3J5c3RhbCBzdHJ1Y3R1cmUgb2YgQy4gdGhlcm0uIEdldDRxTVUCYWlxTlUC\nQU5xT1ULcHJvY2Vzc1NpdGVxUFUEUkNTQnFRVRBpbml0aWFsX2RlcF9kYXRlcVJjZGF0ZXRpbWUK\nZGF0ZQpxU1UEB9oCCIVScVRVB2V4cE1ldGhxVVURWC1SQVkgRElGRlJBQ1RJT05xVlUMbGFzdElu\nc3RhbmNlcVcoY3dmX21hbmFnZXIud2ZtLm15bW9kZWxzLldGSW5zdGFuY2UKV0ZJbnN0YW5jZQpx\nWG9xWX1xWihVB29yZGluYWxxW4oBVVUGc3RhdHVzcVxVCGZpbmlzaGVkcV1VCXdmQ2xhc3NJRHFe\nVQZTZXFNb2RxX1UJdGltZXN0YW1wcWBjZGF0ZXRpbWUKZGF0ZXRpbWUKcWFVCgfaCQEKACsAAACF\nUnFiVQd3ZkNsYXNzcWMoY3dmX21hbmFnZXIud2ZtLm15bW9kZWxzLldGQ2xhc3MKV0ZDbGFzcwpx\nZG9xZX1xZihVBG5hbWVxZ1USU2VxdWVuY2VNb2R1bGUueG1scWhVBmF1dGhvcnFpVQpMLiBSaW5h\nbGRpcWpVCmNsYXNzX2ZpbGVxa1USU2VxdWVuY2VNb2R1bGUueG1scWxVCnNob3J0X2Rlc2NxbVUA\nVQd2ZXJzaW9ucW5VBTAwLjAxcW9VBGRhdGVxcFUAaExVFkRlbW9uc3RyYXRpb24gV29ya2Zsb3dx\ncVUCaWRxcmhfVQRkZXNjcXNVAHViVQVvd25lcnF0TlUFZGVwSURxdVUIRF8wNTc1ODRxdmhyVQVX\nXzAwM3F3dWJVEWF1dGhvcl9yZWxlYXNlX3N0cXhVBEhQVUJxeVUHZGVwU2l0ZXF6VQRSQ1NCcXtV\nBXBkYklEcXxVBDNMUFpxfWh1aHZVDXN0YXR1c0NvZGVFeHBxflUESFBVQnF/VQhzZ0NlbnRlcnGA\nVQE/VQpzdGF0dXNDb2RlcYFVBFBST0NxgnViKGhHb3GDfXGEKGhKVURUYWxsYW50LCBDLiwgR2Fy\nY2lhLUNhc3RlbGxhbm9zLCBSLiwgQmF1bWFubiwgVS4sIEdvbWlzLVJ1dGgsIEYuIFguLHGFaExV\nIlN0cnVjdHVyZSBvZiB1bGlseXNpbiBtdXRhbnQgTTI5MExxhmhOVQJBTnGHaFBVBFJDU0JxiGhS\naFNVBAfaAhKFUnGJaFVVEVgtUkFZIERJRkZSQUNUSU9OcYpoVyhoWG9xi31xjChoW4oBW2hcVQd3\nYWl0aW5ncY1oXlUGU2VxTW9kcY5oYGhhVQoH2gkBChExAAAAhVJxj2hjKGhkb3GQfXGRKGhnVRJT\nZXF1ZW5jZU1vZHVsZS54bWxxkmhpVQpMLiBSaW5hbGRpcZNoa1USU2VxdWVuY2VNb2R1bGUueG1s\ncZRobVUAaG5VBTAwLjAxcZVocFUAaExVFkRlbW9uc3RyYXRpb24gV29ya2Zsb3dxlmhyaI5oc1UA\ndWJodE5odVUIRF8wNTc3NTBxl2hyVQVXXzAwNHGYdWJoeFUDUkVMcZloelUEUkNTQnGaaHxVBDNM\nVU1xm2h1aJdoflUEUFJPQ3GcaIBVAT9ogVUEUFJPQ3GddWJlc31xnlUHRklMVEVSU3GfXXGgKChj\nd2ZfbWFuYWdlci53Zm0ubXltb2RlbHMuRmlsdGVyU2VsZWN0CkZpbHRlclNlbGVjdApxoW9xon1x\noyhVDGRlZmF1bHRWYWx1ZXGkVQBVBHR5cGVxpVUGU0VMRUNUcaZVB29wdGlvbnNxp11xqChjd2Zf\nbWFuYWdlci53Zm0ubXltb2RlbHMuRmlsdGVyT3B0aW9uCkZpbHRlck9wdGlvbgpxqW9xqn1xqyhV\nCHNlbGVjdGVkcayJaGdVAkFOca1VBXZhbHVlca5orXViYVUHdGFnTmFtZXGvaE5VBWxhYmVscbBV\nEkFubm90YXRvciBJbml0aWFsc3GxdWIoaKFvcbJ9cbMoaKRVAGilaKZop11xtCgoaKlvcbV9cbYo\naKyJaGdVBEFVVEhxt2iuVRlBVVRIIFtXYWl0aW5nIGZvciBBdXRob3Jdcbh1YihoqW9xuX1xuiho\nrIloZ1UESE9MRHG7aK5VGEhPTEQgW0hvbGQgZm9yIG9uZSB5ZWFyXXG8dWIoaKlvcb19cb4oaKyJ\naGdVBEhQVUJxv2iuVSFIUFVCIFtSZWxlYXNlZCB1cG9uIHB1YmJsaWNhdGlvbl1xwHViKGipb3HB\nfXHCKGisiWhnVQNPQlNxw2iuVQ5PQlMgW09ic29sZXRlXXHEdWIoaKlvccV9ccYoaKyJaGdVBFBS\nT0Nxx2iuVRdQUk9DIFtVbmRlciBwcm9jZXNzaW5nXXHIdWIoaKlvccl9ccooaKyJaGdVA1JFTHHL\naK5VDlJFTCBbUmVsZWFzZWRdccx1YihoqW9xzX1xzihorIloZ1UEUkVQTHHPaK5VHlJFUEwgW1Jl\ncGxhY2VtZW50IENvb3JkaW5hdGVzXXHQdWIoaKlvcdF9cdIoaKyJaGdVBFdBSVRx02iuVRpXQUlU\nIFtBd2FpdGluZyBQcm9jZXNzaW5nXXHUdWIoaKlvcdV9cdYoaKyJaGdVBFdEUk5x12iuVRBXRFJO\nIFtXaXRoZHJhd25dcdh1YmVor2hcaLBVBlN0YXR1c3HZdWIoY3dmX21hbmFnZXIud2ZtLm15bW9k\nZWxzLkZpbHRlclRleHQKRmlsdGVyVGV4dApx2m9x231x3ChVBXJlZ2V4cd1VAGikVQBorFUAaLBV\nBlBEQiBJRHHeaK9VBXBkYmlkcd9opVUEVEVYVHHgVQRzaXplceFLCnViKGjab3HifXHjKGjdVQBo\npFUAaKxVAGiwVQZEZXAgSURx5GivVQVkZXBpZHHlaKVo4GjhSwp1YihooW9x5n1x5yhopFUAaKVo\npminXXHoKChoqW9x6X1x6ihorIloZ1UEQklHU3HraK5VJEJhY3RlcmlhbCB0YXJnZXRzIGF0IElH\nUy1DTlJTIFtCSUdTXXHsdWIoaKlvce19ce4oaKyJaGdVBEJTR0Nx72iuVSpCZXJrZWxleSBTdHJ1\nY3R1cmFsIEdlbm9taWNzIENlbnRlciBbQlNHQ11x8HViKGipb3HxfXHyKGisiWhnVQRCU0dJcfNo\nrlVCIE1vbnRyZWFsLUtpbmdzdG9uIEJhY3RlcmlhbCBTdHJ1Y3R1cmFsIEdlbm9taWNzIEluaXRp\nYXRpdmUgW0JTR0ldcfR1YihoqW9x9X1x9ihorIloZ1UEQ0VTR3H3aK5VMSBDZW50ZXIgZm9yIEV1\na2FyeW90aWMgU3RydWN0dXJhbCBHZW5vbWljcyBbQ0VTR11x+HViKGipb3H5fXH6KGisiWhnVQRD\nSFRTcftorlU1Q2VudGVyIGZvciBIaWdoLVRocm91Z2hwdXQgU3RydWN0dXJhbCBCaW9sb2d5IFtD\nSFRTQl1x/HViKGipb3H9fXH+KGisiWhnVQRDU0dJcf9orlU9Q2VudGVyIGZvciBTdHJ1Y3R1cmFs\nIEdlbm9taWNzIG9mIEluZmVjdGlvdXMgRGlzZWFzZXMgW0NTR0lEXXIAAQAAdWIoaKlvcgEBAAB9\ncgIBAAAoaKyJaGdVBENTTVByAwEAAGiuVTFDZW50ZXIgZm9yIFN0cnVjdHVyZXMgb2YgTWVtYnJh\nbmUgUHJvdGVpbnMgW0NTTVBdcgQBAAB1YihoqW9yBQEAAH1yBgEAAChorIloZ1UESVNGSXIHAQAA\naK5VPkludGVncmF0ZWQgQ2VudGVyIGZvciBTdHJ1Y3R1cmUgYW5kIEZ1bmN0aW9uIElubm92YXRp\nb24gW0lTRkldcggBAAB1YihoqW9yCQEAAH1yCgEAAChorIloZ1UESVNQQ3ILAQAAaK5VKklzcmFl\nbCBTdHJ1Y3R1cmFsIFByb3Rlb21pY3MgQ2VudGVyIFtJU1BDXXIMAQAAdWIoaKlvcg0BAAB9cg4B\nAAAoaKyJaGdVBEpDU0dyDwEAAGiuVStKb2ludCBDZW50ZXIgZm9yIFN0cnVjdHVyYWwgR2Vub21p\nY3MgW0pDU0ddchABAAB1YihoqW9yEQEAAH1yEgEAAChorIloZ1UETUNTR3ITAQAAaK5VLU1pZHdl\nc3QgQ2VudGVyIGZvciBTdHJ1Y3R1cmFsIEdlbm9taWNzIFtNQ1NHXXIUAQAAdWIoaKlvchUBAAB9\nchYBAAAoaKyJaGdVBE1TR1ByFwEAAGiuVTRNYXJzZWlsbGVzIFN0cnVjdHVyYWwgR2Vub21pY3Mg\nUHJvZ3JhbSBAIEFGTUIgW01TR1BdchgBAAB1YihoqW9yGQEAAH1yGgEAAChorIloZ1UETkVTR3Ib\nAQAAaK5VL05vcnRoZWFzdCBTdHJ1Y3R1cmFsIEdlbm9taWNzIENvbnNvcnRpdW0gW05FU0ddchwB\nAAB1YihoqW9yHQEAAH1yHgEAAChorIloZ1UETllDT3IfAQAAaK5VO05ldyBZb3JrIENvbnNvcnRp\ndW0gb24gTWVtYnJhbmUgUHJvdGVpbiBTdHJ1Y3R1cmUgW05ZQ09NUFNdciABAAB1YihoqW9yIQEA\nAH1yIgEAAChorIloZ1UETllTR3IjAQAAaK5VPk5ldyBZb3JrIFNHWCBSZXNlYXJjaCBDZW50ZXIg\nZm9yIFN0cnVjdHVyYWwgR2Vub21pY3MgW05ZU0dYUkNdciQBAAB1YihoqW9yJQEAAH1yJgEAACho\nrIloZ1UET0NTUHInAQAAaK5VL09udGFyaW8gQ2VudHJlIGZvciBTdHJ1Y3R1cmFsIFByb3Rlb21p\nY3MgW09DU1BdcigBAAB1YihoqW9yKQEAAH1yKgEAAChorIloZ1UET1BQRnIrAQAAaK5VKiBPeGZv\ncmQgUHJvdGVpbiBQcm9kdWN0aW9uIEZhY2lsaXR5IFtPUFBGXXIsAQAAdWIoaKlvci0BAAB9ci4B\nAAAoaKyJaGdVBFJJS0VyLwEAAGiuVTdSSUtFTiBTdHJ1Y3R1cmFsIEdlbm9taWNzL1Byb3Rlb21p\nY3MgSW5pdGlhdGl2ZSBbUklLRU5dcjABAAB1YihoqW9yMQEAAH1yMgEAAChorIloZ1UDUzJGcjMB\nAABorlUiU3RydWN0dXJlIDIgRnVuY3Rpb24gUHJvamVjdCBbUzJGXXI0AQAAdWIoaKlvcjUBAAB9\ncjYBAAAoaKyJaGdVBFNFQ1NyNwEAAGiuVTdTb3V0aGVhc3QgQ29sbGFib3JhdG9yeSBmb3IgU3Ry\ndWN0dXJhbCBHZW5vbWljcyBbU0VDU0ddcjgBAAB1YihoqW9yOQEAAH1yOgEAAChorIloZ1UDU0dD\ncjsBAABorlUkU3RydWN0dXJhbCBHZW5vbWljcyBDb25zb3J0aXVtIFtTR0NdcjwBAAB1YihoqW9y\nPQEAAH1yPgEAAChorIloZ1UEU0dQUHI/AQAAaK5VPFN0cnVjdHVyYWwgR2Vub21pY3Mgb2YgUGF0\naG9nZW5pYyBQcm90b3pvYSBDb25zb3J0aXVtIFtTR1BQXXJAAQAAdWIoaKlvckEBAAB9ckIBAAAo\naKyJaGdVA1NHWHJDAQAAaK5VGVNHWCBQaGFybWFjZXV0aWNhbHMgW1NHWF1yRAEAAHViKGipb3JF\nAQAAfXJGAQAAKGisiWhnVQRTUElOckcBAABorlUnU3RydWN0dXJhbCBQcm90ZW9taWNzIGluIEV1\ncm9wZSBbU1BJTkVdckgBAAB1YihoqW9ySQEAAH1ySgEAAChorIloZ1UEU1NHQ3JLAQAAaK5VQlNl\nYXR0bGUgU3RydWN0dXJhbCBHZW5vbWljcyBDZW50ZXIgZm9yIEluZmVjdGlvdXMgRGlzZWFzZSBb\nU1NHQ0lEXXJMAQAAdWIoaKlvck0BAAB9ck4BAAAoaKyJaGdVBFRCU0dyTwEAAGiuVSlUQiBTdHJ1\nY3R1cmFsIEdlbm9taWNzIENvbnNvcnRpdW0gW1RCU0dDXXJQAQAAdWIoaKlvclEBAAB9clIBAAAo\naKyJaGdVBFhNVEJyUwEAAGiuVT9NeWNvYmFjdGVyaXVtIFR1YmVyY3Vsb3NpcyBTdHJ1Y3R1cmFs\nIFByb3Rlb21pY3MgUHJvamVjdCBbWE1UQl1yVAEAAHViKGipb3JVAQAAfXJWAQAAKGisiWhnVQNZ\nU0dyVwEAAGiuVSlQYXJpcy1TdWQgWWVhc3QgU3RydWN0dXJhbCBHZW5vbWljcyBbWVNHXXJYAQAA\ndWJlaK9VCXNnQ2VudGVyc3JZAQAAaLBVClNHIENlbnRlcnNyWgEAAHViZXN9clsBAABoBGgGc31y\nXAEAAGV1YlUIdGVtcGxhdGVyXQEAAGgadWJ1LjU2NjEyNzJjMzdlMjQzNTFiNDNkNjQ1NTBiNWJi\nNGE3\n','2010-09-15 11:47:06'),('9fc5794c64977bdf1fd2896a0cec9f3f','gAJ9cQEoVQN2aWFxAlUDYXNjcQNVBHVzZXJxBChjd2ZfbWFuYWdlci53Zm0ubXltb2RlbHMuREFV\nc2VyCkRBVXNlcgpxBW9xBn1xByhVCmZpcnN0X25hbWVxCFUDQW5ucQlVCWxhc3RfbmFtZXEKVQNB\nbm5xC1UFZ3JvdXBxDChjd2ZfbWFuYWdlci53Zm0ubXltb2RlbHMuREFHcm91cApEQUdyb3VwCnEN\nb3EOfXEPKFUJZ3JvdXBuYW1lcRBVDkFubm90YXRvci10ZXN0cRFVBGNvZGVxElUDQU5OcRNVBHNp\ndGVxFChjd2ZfbWFuYWdlci53Zm0ubXltb2RlbHMuU2l0ZQpTaXRlCnEVb3EWfXEXKGgSVQNBTExx\nGFUMdmVyYm9zZV9uYW1lcRlVD0Fubm90YXRvcnMuaHRtbHEadWJVCW1haW5fcGFnZXEbaBp1YlUI\ncGFzc3dvcmRxHFUDYW5ucR1VCXVzZXJfbmFtZXEeVQNhbm5xH1UFZW1haWxxIFUMYW5uQGEybm4u\nY29tcSFVCGluaXRpYWxzcSJVAkFOcSN1YlUEcGFnZXEkKGN3Zl9tYW5hZ2VyLndmbS5teW1vZGVs\ncy5NYWluUGFnZQpNYWluUGFnZQpxJW9xJn1xJyhVBHRlc3RxKFUAVQdmaWx0ZXJzcSldcSpVBGRh\ndGFxK31xLFUHY29udGV4dHEtY2RqYW5nby50ZW1wbGF0ZS5jb250ZXh0CkNvbnRleHQKcS4pgXEv\nfXEwKFUKYXV0b2VzY2FwZXExiFUFZGljdHNxMl1xMyh9cTRVDFRBQl9GSUxURVJFRHE1iXN9cTZV\nB1JFRlJFU0hxN0sBc31xOFUIREVQX1BST0JxOV1xOnN9cTtVCkRFUF9SRUxSRVNxPF1xPXN9cT5V\nCUFVVEhfQ09SUnE/XXFAc31xQVUQRklMVEVSRURfRU5UUklFU3FCXXFDc31xRFUIREVQX1BST0Nx\nRV1xRihjd2ZfbWFuYWdlci53Zm0ubXltb2RlbHMuRGVwb3NpdGlvbgpEZXBvc2l0aW9uCnFHb3FI\nfXFJKFUKYXV0aG9yTGlzdHFKVURUYWxsYW50LCBDLiwgR2FyY2lhLUNhc3RlbGxhbm9zLCBSLiwg\nQmF1bWFubiwgVS4sIEdvbWlzLVJ1dGgsIEYuIFguLHFLVQV0aXRsZXFMVSJTdHJ1Y3R1cmUgb2Yg\ndWxpbHlzaW4gbXV0YW50IE0yOTBMcU1VAmFpcU5VAkFOcU9VC3Byb2Nlc3NTaXRlcVBVBFJDU0Jx\nUVUQaW5pdGlhbF9kZXBfZGF0ZXFSY2RhdGV0aW1lCmRhdGUKcVNVBAfaAhKFUnFUVQdleHBNZXRo\ncVVVEVgtUkFZIERJRkZSQUNUSU9OcVZVDGxhc3RJbnN0YW5jZXFXKGN3Zl9tYW5hZ2VyLndmbS5t\neW1vZGVscy5XRkluc3RhbmNlCldGSW5zdGFuY2UKcVhvcVl9cVooVQdvcmRpbmFscVuKAoYAVQZz\ndGF0dXNxXFUEaW5pdHFdVQl3ZkNsYXNzSURxXlUFcG9wREJxX1UJdGltZXN0YW1wcWBjZGVjaW1h\nbApEZWNpbWFsCnFhVQ8xMjgzNDIzMTk3LjkxOTOFUnFiVQd3ZkNsYXNzcWMoY3dmX21hbmFnZXIu\nd2ZtLm15bW9kZWxzLldGQ2xhc3MKV0ZDbGFzcwpxZG9xZX1xZihVBG5hbWVxZ1UOUG9wdWxhdGVE\nQi54bWxxaFUGYXV0aG9ycWlVCkwuIFJpbmFsZGlxalUKY2xhc3NfZmlsZXFrTlUKc2hvcnRfZGVz\nY3FsVQBVB3ZlcnNpb25xbVUFMDAuMDFxblUEZGF0ZXFvVQBoTFUUUG9wdWxhdGUgREIgd29ya2Zs\nb3dxcFUCaWRxcWhfVQRkZXNjcXJVAHViVQVvd25lcnFzTlUFZGVwSURxdFUIRF8wNTc3NTBxdWhx\nVQVXXzAwMXF2dWJVEWF1dGhvcl9yZWxlYXNlX3N0cXdVA1JFTHF4VQdkZXBTaXRlcXlVBFJDU0Jx\nelUFcGRiSURxe1UEM0xVTXF8aHRodVUNc3RhdHVzQ29kZUV4cHF9VQRQUk9DcX5VCHNnQ2VudGVy\ncX9VAT9VCnN0YXR1c0NvZGVxgFUEUFJPQ3GBdWJhc31xglUHRklMVEVSU3GDXXGEKChjd2ZfbWFu\nYWdlci53Zm0ubXltb2RlbHMuRmlsdGVyU2VsZWN0CkZpbHRlclNlbGVjdApxhW9xhn1xhyhVDGRl\nZmF1bHRWYWx1ZXGIVQBVBHR5cGVxiVUGU0VMRUNUcYpVB29wdGlvbnNxi11xjChjd2ZfbWFuYWdl\nci53Zm0ubXltb2RlbHMuRmlsdGVyT3B0aW9uCkZpbHRlck9wdGlvbgpxjW9xjn1xjyhVCHNlbGVj\ndGVkcZCJaGdVAkFOcZFVBXZhbHVlcZJokXViYVUHdGFnTmFtZXGTaE5VBWxhYmVscZRVEkFubm90\nYXRvciBJbml0aWFsc3GVdWIoaIVvcZZ9cZcoaIhVAGiJaIpoi11xmCgoaI1vcZl9cZooaJCJaGdV\nBEFVVEhxm2iSVRlBVVRIIFtXYWl0aW5nIGZvciBBdXRob3JdcZx1YihojW9xnX1xnihokIloZ1UE\nSE9MRHGfaJJVGEhPTEQgW0hvbGQgZm9yIG9uZSB5ZWFyXXGgdWIoaI1vcaF9caIoaJCJaGdVBEhQ\nVUJxo2iSVSFIUFVCIFtSZWxlYXNlZCB1cG9uIHB1YmJsaWNhdGlvbl1xpHViKGiNb3GlfXGmKGiQ\niWhnVQNPQlNxp2iSVQ5PQlMgW09ic29sZXRlXXGodWIoaI1vcal9caooaJCJaGdVBFBST0Nxq2iS\nVRdQUk9DIFtVbmRlciBwcm9jZXNzaW5nXXGsdWIoaI1vca19ca4oaJCJaGdVA1JFTHGvaJJVDlJF\nTCBbUmVsZWFzZWRdcbB1YihojW9xsX1xsihokIloZ1UEUkVQTHGzaJJVHlJFUEwgW1JlcGxhY2Vt\nZW50IENvb3JkaW5hdGVzXXG0dWIoaI1vcbV9cbYoaJCJaGdVBFdBSVRxt2iSVRpXQUlUIFtBd2Fp\ndGluZyBQcm9jZXNzaW5nXXG4dWIoaI1vcbl9cbooaJCJaGdVBFdEUk5xu2iSVRBXRFJOIFtXaXRo\nZHJhd25dcbx1YmVok2hcaJRVBlN0YXR1c3G9dWIoY3dmX21hbmFnZXIud2ZtLm15bW9kZWxzLkZp\nbHRlclRleHQKRmlsdGVyVGV4dApxvm9xv31xwChVBXJlZ2V4ccFVAGiIVQBokFUAaJRVBlBEQiBJ\nRHHCaJNVBXBkYmlkccNoiVUEVEVYVHHEVQRzaXplccVLCnViKGi+b3HGfXHHKGjBVQBoiFUAaJBV\nAGiUVQZEZXAgSURxyGiTVQVkZXBpZHHJaIloxGjFSwp1YihohW9xyn1xyyhoiFUAaIloimiLXXHM\nKChojW9xzX1xzihokIloZ1UEQklHU3HPaJJVJEJhY3RlcmlhbCB0YXJnZXRzIGF0IElHUy1DTlJT\nIFtCSUdTXXHQdWIoaI1vcdF9cdIoaJCJaGdVBEJTR0Nx02iSVSpCZXJrZWxleSBTdHJ1Y3R1cmFs\nIEdlbm9taWNzIENlbnRlciBbQlNHQ11x1HViKGiNb3HVfXHWKGiQiWhnVQRCU0dJcddoklVCIE1v\nbnRyZWFsLUtpbmdzdG9uIEJhY3RlcmlhbCBTdHJ1Y3R1cmFsIEdlbm9taWNzIEluaXRpYXRpdmUg\nW0JTR0ldcdh1YihojW9x2X1x2ihokIloZ1UEQ0VTR3HbaJJVMSBDZW50ZXIgZm9yIEV1a2FyeW90\naWMgU3RydWN0dXJhbCBHZW5vbWljcyBbQ0VTR11x3HViKGiNb3HdfXHeKGiQiWhnVQRDSFRTcd9o\nklU1Q2VudGVyIGZvciBIaWdoLVRocm91Z2hwdXQgU3RydWN0dXJhbCBCaW9sb2d5IFtDSFRTQl1x\n4HViKGiNb3HhfXHiKGiQiWhnVQRDU0dJceNoklU9Q2VudGVyIGZvciBTdHJ1Y3R1cmFsIEdlbm9t\naWNzIG9mIEluZmVjdGlvdXMgRGlzZWFzZXMgW0NTR0lEXXHkdWIoaI1vceV9ceYoaJCJaGdVBENT\nTVBx52iSVTFDZW50ZXIgZm9yIFN0cnVjdHVyZXMgb2YgTWVtYnJhbmUgUHJvdGVpbnMgW0NTTVBd\nceh1YihojW9x6X1x6ihokIloZ1UESVNGSXHraJJVPkludGVncmF0ZWQgQ2VudGVyIGZvciBTdHJ1\nY3R1cmUgYW5kIEZ1bmN0aW9uIElubm92YXRpb24gW0lTRkldcex1YihojW9x7X1x7ihokIloZ1UE\nSVNQQ3HvaJJVKklzcmFlbCBTdHJ1Y3R1cmFsIFByb3Rlb21pY3MgQ2VudGVyIFtJU1BDXXHwdWIo\naI1vcfF9cfIoaJCJaGdVBEpDU0dx82iSVStKb2ludCBDZW50ZXIgZm9yIFN0cnVjdHVyYWwgR2Vu\nb21pY3MgW0pDU0ddcfR1YihojW9x9X1x9ihokIloZ1UETUNTR3H3aJJVLU1pZHdlc3QgQ2VudGVy\nIGZvciBTdHJ1Y3R1cmFsIEdlbm9taWNzIFtNQ1NHXXH4dWIoaI1vcfl9cfooaJCJaGdVBE1TR1Bx\n+2iSVTRNYXJzZWlsbGVzIFN0cnVjdHVyYWwgR2Vub21pY3MgUHJvZ3JhbSBAIEFGTUIgW01TR1Bd\ncfx1YihojW9x/X1x/ihokIloZ1UETkVTR3H/aJJVL05vcnRoZWFzdCBTdHJ1Y3R1cmFsIEdlbm9t\naWNzIENvbnNvcnRpdW0gW05FU0ddcgABAAB1YihojW9yAQEAAH1yAgEAAChokIloZ1UETllDT3ID\nAQAAaJJVO05ldyBZb3JrIENvbnNvcnRpdW0gb24gTWVtYnJhbmUgUHJvdGVpbiBTdHJ1Y3R1cmUg\nW05ZQ09NUFNdcgQBAAB1YihojW9yBQEAAH1yBgEAAChokIloZ1UETllTR3IHAQAAaJJVPk5ldyBZ\nb3JrIFNHWCBSZXNlYXJjaCBDZW50ZXIgZm9yIFN0cnVjdHVyYWwgR2Vub21pY3MgW05ZU0dYUkNd\ncggBAAB1YihojW9yCQEAAH1yCgEAAChokIloZ1UET0NTUHILAQAAaJJVL09udGFyaW8gQ2VudHJl\nIGZvciBTdHJ1Y3R1cmFsIFByb3Rlb21pY3MgW09DU1BdcgwBAAB1YihojW9yDQEAAH1yDgEAACho\nkIloZ1UET1BQRnIPAQAAaJJVKiBPeGZvcmQgUHJvdGVpbiBQcm9kdWN0aW9uIEZhY2lsaXR5IFtP\nUFBGXXIQAQAAdWIoaI1vchEBAAB9chIBAAAoaJCJaGdVBFJJS0VyEwEAAGiSVTdSSUtFTiBTdHJ1\nY3R1cmFsIEdlbm9taWNzL1Byb3Rlb21pY3MgSW5pdGlhdGl2ZSBbUklLRU5dchQBAAB1YihojW9y\nFQEAAH1yFgEAAChokIloZ1UDUzJGchcBAABoklUiU3RydWN0dXJlIDIgRnVuY3Rpb24gUHJvamVj\ndCBbUzJGXXIYAQAAdWIoaI1vchkBAAB9choBAAAoaJCJaGdVBFNFQ1NyGwEAAGiSVTdTb3V0aGVh\nc3QgQ29sbGFib3JhdG9yeSBmb3IgU3RydWN0dXJhbCBHZW5vbWljcyBbU0VDU0ddchwBAAB1Yiho\njW9yHQEAAH1yHgEAAChokIloZ1UDU0dDch8BAABoklUkU3RydWN0dXJhbCBHZW5vbWljcyBDb25z\nb3J0aXVtIFtTR0NdciABAAB1YihojW9yIQEAAH1yIgEAAChokIloZ1UEU0dQUHIjAQAAaJJVPFN0\ncnVjdHVyYWwgR2Vub21pY3Mgb2YgUGF0aG9nZW5pYyBQcm90b3pvYSBDb25zb3J0aXVtIFtTR1BQ\nXXIkAQAAdWIoaI1vciUBAAB9ciYBAAAoaJCJaGdVA1NHWHInAQAAaJJVGVNHWCBQaGFybWFjZXV0\naWNhbHMgW1NHWF1yKAEAAHViKGiNb3IpAQAAfXIqAQAAKGiQiWhnVQRTUElOcisBAABoklUnU3Ry\ndWN0dXJhbCBQcm90ZW9taWNzIGluIEV1cm9wZSBbU1BJTkVdciwBAAB1YihojW9yLQEAAH1yLgEA\nAChokIloZ1UEU1NHQ3IvAQAAaJJVQlNlYXR0bGUgU3RydWN0dXJhbCBHZW5vbWljcyBDZW50ZXIg\nZm9yIEluZmVjdGlvdXMgRGlzZWFzZSBbU1NHQ0lEXXIwAQAAdWIoaI1vcjEBAAB9cjIBAAAoaJCJ\naGdVBFRCU0dyMwEAAGiSVSlUQiBTdHJ1Y3R1cmFsIEdlbm9taWNzIENvbnNvcnRpdW0gW1RCU0dD\nXXI0AQAAdWIoaI1vcjUBAAB9cjYBAAAoaJCJaGdVBFhNVEJyNwEAAGiSVT9NeWNvYmFjdGVyaXVt\nIFR1YmVyY3Vsb3NpcyBTdHJ1Y3R1cmFsIFByb3Rlb21pY3MgUHJvamVjdCBbWE1UQl1yOAEAAHVi\nKGiNb3I5AQAAfXI6AQAAKGiQiWhnVQNZU0dyOwEAAGiSVSlQYXJpcy1TdWQgWWVhc3QgU3RydWN0\ndXJhbCBHZW5vbWljcyBbWVNHXXI8AQAAdWJlaJNVCXNnQ2VudGVyc3I9AQAAaJRVClNHIENlbnRl\ncnNyPgEAAHViZXN9cj8BAABVBHVzZXJyQAEAAGgGc31yQQEAAGV1YlUIdGVtcGxhdGVyQgEAAGga\ndWJ1LmIyZjExODI3NTE3ZjljODlkYWJkM2ZkZDk3M2JmMDc3\n','2010-09-16 12:10:46'),('de4969938bc5aa60380f68b9527f5569','gAJ9cQEoVQN2aWFxAlUDYXNjcQNVBHVzZXJxBChjd2ZfbWFuYWdlci53Zm0ubXltb2RlbHMuREFV\nc2VyCkRBVXNlcgpxBW9xBn1xByhVCmZpcnN0X25hbWVxCFUDQW5ucQlVCWxhc3RfbmFtZXEKVQNB\nbm5xC1UFZ3JvdXBxDChjd2ZfbWFuYWdlci53Zm0ubXltb2RlbHMuREFHcm91cApEQUdyb3VwCnEN\nb3EOfXEPKFUJZ3JvdXBuYW1lcRBVDkFubm90YXRvci10ZXN0cRFVBGNvZGVxElUDQU5OcRNVBHNp\ndGVxFChjd2ZfbWFuYWdlci53Zm0ubXltb2RlbHMuU2l0ZQpTaXRlCnEVb3EWfXEXKGgSVQNBTExx\nGFUMdmVyYm9zZV9uYW1lcRlVD0Fubm90YXRvcnMuaHRtbHEadWJVCW1haW5fcGFnZXEbaBp1YlUI\ncGFzc3dvcmRxHFUDYW5ucR1VCXVzZXJfbmFtZXEeVQNhbm5xH1UFZW1haWxxIFUMYW5uQGEybm4u\nY29tcSFVCGluaXRpYWxzcSJVAkFOcSN1YlUEcGFnZXEkKGN3Zl9tYW5hZ2VyLndmbS5teW1vZGVs\ncy5NYWluUGFnZQpNYWluUGFnZQpxJW9xJn1xJyhVBHRlc3RxKFUAVQdmaWx0ZXJzcSldcSpVBGRh\ndGFxK31xLFUHY29udGV4dHEtY2RqYW5nby50ZW1wbGF0ZS5jb250ZXh0CkNvbnRleHQKcS4pgXEv\nfXEwKFUKYXV0b2VzY2FwZXExiFULY3VycmVudF9hcHBxMk5VBWRpY3RzcTNdcTQofXE1VQxUQUJf\nRklMVEVSRURxNolzfXE3VQdSRUZSRVNIcThLAXN9cTlVCERFUF9QUk9CcTpdcTtzfXE8VQpERVBf\nUkVMUkVTcT1dcT5zfXE/VQlBVVRIX0NPUlJxQF1xQXN9cUJVEEZJTFRFUkVEX0VOVFJJRVNxQ11x\nRHN9cUVVCERFUF9QUk9DcUZdcUcoY3dmX21hbmFnZXIud2ZtLm15bW9kZWxzLkRlcG9zaXRpb24K\nRGVwb3NpdGlvbgpxSG9xSX1xSihVCmF1dGhvckxpc3RxS1VEVGFsbGFudCwgQy4sIEdhcmNpYS1D\nYXN0ZWxsYW5vcywgUi4sIEJhdW1hbm4sIFUuLCBHb21pcy1SdXRoLCBGLiBYLixxTFUFdGl0bGVx\nTVUiU3RydWN0dXJlIG9mIHVsaWx5c2luIG11dGFudCBNMjkwTHFOVQJhaXFPVQJBTnFQVQtwcm9j\nZXNzU2l0ZXFRVQRSQ1NCcVJVEGluaXRpYWxfZGVwX2RhdGVxU2NkYXRldGltZQpkYXRlCnFUVQQH\n2gIShVJxVVUHZXhwTWV0aHFWVRFYLVJBWSBESUZGUkFDVElPTnFXVQxsYXN0SW5zdGFuY2VxWChj\nd2ZfbWFuYWdlci53Zm0ubXltb2RlbHMuV0ZJbnN0YW5jZQpXRkluc3RhbmNlCnFZb3FafXFbKFUH\nb3JkaW5hbHFcigKGAFUGc3RhdHVzcV1VBGluaXRxXlUJd2ZDbGFzc0lEcV9VBXBvcERCcWBVCXRp\nbWVzdGFtcHFhY2RlY2ltYWwKRGVjaW1hbApxYlUPMTI4MzQyMzE5Ny45MTkzhVJxY1UHd2ZDbGFz\nc3FkKGN3Zl9tYW5hZ2VyLndmbS5teW1vZGVscy5XRkNsYXNzCldGQ2xhc3MKcWVvcWZ9cWcoVQRu\nYW1lcWhVDlBvcHVsYXRlREIueG1scWlVBmF1dGhvcnFqVQpMLiBSaW5hbGRpcWtVCmNsYXNzX2Zp\nbGVxbE5VCnNob3J0X2Rlc2NxbVUAVQd2ZXJzaW9ucW5VBTAwLjAxcW9VBGRhdGVxcFUAaE1VFFBv\ncHVsYXRlIERCIHdvcmtmbG93cXFVAmlkcXJoYFUEZGVzY3FzVQB1YlUFb3duZXJxdE5VBWRlcElE\ncXVVCERfMDU3NzUwcXZoclUFV18wMDFxd3ViVRFhdXRob3JfcmVsZWFzZV9zdHF4VQNSRUxxeVUH\nZGVwU2l0ZXF6VQRSQ1NCcXtVBXBkYklEcXxVBDNMVU1xfWh1aHZVDXN0YXR1c0NvZGVFeHBxflUE\nUFJPQ3F/VQhzZ0NlbnRlcnGAVQE/VQpzdGF0dXNDb2RlcYFVBFBST0NxgnViYXN9cYNVB0ZJTFRF\nUlNxhF1xhSgoY3dmX21hbmFnZXIud2ZtLm15bW9kZWxzLkZpbHRlclNlbGVjdApGaWx0ZXJTZWxl\nY3QKcYZvcYd9cYgoVQxkZWZhdWx0VmFsdWVxiVUAVQR0eXBlcYpVBlNFTEVDVHGLVQdvcHRpb25z\ncYxdcY0oY3dmX21hbmFnZXIud2ZtLm15bW9kZWxzLkZpbHRlck9wdGlvbgpGaWx0ZXJPcHRpb24K\ncY5vcY99cZAoVQhzZWxlY3RlZHGRiWhoVQJBTnGSVQV2YWx1ZXGTaJJ1YmFVB3RhZ05hbWVxlGhP\nVQVsYWJlbHGVVRJBbm5vdGF0b3IgSW5pdGlhbHNxlnViKGiGb3GXfXGYKGiJVQBoimiLaIxdcZko\nKGiOb3GafXGbKGiRiWhoVQRBVVRIcZxok1UZQVVUSCBbV2FpdGluZyBmb3IgQXV0aG9yXXGddWIo\naI5vcZ59cZ8oaJGJaGhVBEhPTERxoGiTVRhIT0xEIFtIb2xkIGZvciBvbmUgeWVhcl1xoXViKGiO\nb3GifXGjKGiRiWhoVQRIUFVCcaRok1UhSFBVQiBbUmVsZWFzZWQgdXBvbiBwdWJibGljYXRpb25d\ncaV1Yihojm9xpn1xpyhokYloaFUDT0JTcahok1UOT0JTIFtPYnNvbGV0ZV1xqXViKGiOb3GqfXGr\nKGiRiWhoVQRQUk9Dcaxok1UXUFJPQyBbVW5kZXIgcHJvY2Vzc2luZ11xrXViKGiOb3GufXGvKGiR\niWhoVQNSRUxxsGiTVQ5SRUwgW1JlbGVhc2VkXXGxdWIoaI5vcbJ9cbMoaJGJaGhVBFJFUExxtGiT\nVR5SRVBMIFtSZXBsYWNlbWVudCBDb29yZGluYXRlc11xtXViKGiOb3G2fXG3KGiRiWhoVQRXQUlU\ncbhok1UaV0FJVCBbQXdhaXRpbmcgUHJvY2Vzc2luZ11xuXViKGiOb3G6fXG7KGiRiWhoVQRXRFJO\ncbxok1UQV0RSTiBbV2l0aGRyYXduXXG9dWJlaJRoXWiVVQZTdGF0dXNxvnViKGN3Zl9tYW5hZ2Vy\nLndmbS5teW1vZGVscy5GaWx0ZXJUZXh0CkZpbHRlclRleHQKcb9vccB9ccEoVQVyZWdleHHCVQBo\niVUAaJFVAGiVVQZQREIgSURxw2iUVQVwZGJpZHHEaIpVBFRFWFRxxVUEc2l6ZXHGSwp1Yihov29x\nx31xyChowlUAaIlVAGiRVQBolVUGRGVwIElEcclolFUFZGVwaWRxymiKaMVoxksKdWIoaIZvcct9\nccwoaIlVAGiKaItojF1xzSgoaI5vcc59cc8oaJGJaGhVBEJJR1Nx0GiTVSRCYWN0ZXJpYWwgdGFy\nZ2V0cyBhdCBJR1MtQ05SUyBbQklHU11x0XViKGiOb3HSfXHTKGiRiWhoVQRCU0dDcdRok1UqQmVy\na2VsZXkgU3RydWN0dXJhbCBHZW5vbWljcyBDZW50ZXIgW0JTR0NdcdV1Yihojm9x1n1x1yhokYlo\naFUEQlNHSXHYaJNVQiBNb250cmVhbC1LaW5nc3RvbiBCYWN0ZXJpYWwgU3RydWN0dXJhbCBHZW5v\nbWljcyBJbml0aWF0aXZlIFtCU0dJXXHZdWIoaI5vcdp9cdsoaJGJaGhVBENFU0dx3GiTVTEgQ2Vu\ndGVyIGZvciBFdWthcnlvdGljIFN0cnVjdHVyYWwgR2Vub21pY3MgW0NFU0ddcd11Yihojm9x3n1x\n3yhokYloaFUEQ0hUU3HgaJNVNUNlbnRlciBmb3IgSGlnaC1UaHJvdWdocHV0IFN0cnVjdHVyYWwg\nQmlvbG9neSBbQ0hUU0JdceF1Yihojm9x4n1x4yhokYloaFUEQ1NHSXHkaJNVPUNlbnRlciBmb3Ig\nU3RydWN0dXJhbCBHZW5vbWljcyBvZiBJbmZlY3Rpb3VzIERpc2Vhc2VzIFtDU0dJRF1x5XViKGiO\nb3HmfXHnKGiRiWhoVQRDU01Qcehok1UxQ2VudGVyIGZvciBTdHJ1Y3R1cmVzIG9mIE1lbWJyYW5l\nIFByb3RlaW5zIFtDU01QXXHpdWIoaI5vcep9cesoaJGJaGhVBElTRklx7GiTVT5JbnRlZ3JhdGVk\nIENlbnRlciBmb3IgU3RydWN0dXJlIGFuZCBGdW5jdGlvbiBJbm5vdmF0aW9uIFtJU0ZJXXHtdWIo\naI5vce59ce8oaJGJaGhVBElTUENx8GiTVSpJc3JhZWwgU3RydWN0dXJhbCBQcm90ZW9taWNzIENl\nbnRlciBbSVNQQ11x8XViKGiOb3HyfXHzKGiRiWhoVQRKQ1NHcfRok1UrSm9pbnQgQ2VudGVyIGZv\nciBTdHJ1Y3R1cmFsIEdlbm9taWNzIFtKQ1NHXXH1dWIoaI5vcfZ9cfcoaJGJaGhVBE1DU0dx+GiT\nVS1NaWR3ZXN0IENlbnRlciBmb3IgU3RydWN0dXJhbCBHZW5vbWljcyBbTUNTR11x+XViKGiOb3H6\nfXH7KGiRiWhoVQRNU0dQcfxok1U0TWFyc2VpbGxlcyBTdHJ1Y3R1cmFsIEdlbm9taWNzIFByb2dy\nYW0gQCBBRk1CIFtNU0dQXXH9dWIoaI5vcf59cf8oaJGJaGhVBE5FU0dyAAEAAGiTVS9Ob3J0aGVh\nc3QgU3RydWN0dXJhbCBHZW5vbWljcyBDb25zb3J0aXVtIFtORVNHXXIBAQAAdWIoaI5vcgIBAAB9\ncgMBAAAoaJGJaGhVBE5ZQ09yBAEAAGiTVTtOZXcgWW9yayBDb25zb3J0aXVtIG9uIE1lbWJyYW5l\nIFByb3RlaW4gU3RydWN0dXJlIFtOWUNPTVBTXXIFAQAAdWIoaI5vcgYBAAB9cgcBAAAoaJGJaGhV\nBE5ZU0dyCAEAAGiTVT5OZXcgWW9yayBTR1ggUmVzZWFyY2ggQ2VudGVyIGZvciBTdHJ1Y3R1cmFs\nIEdlbm9taWNzIFtOWVNHWFJDXXIJAQAAdWIoaI5vcgoBAAB9cgsBAAAoaJGJaGhVBE9DU1ByDAEA\nAGiTVS9PbnRhcmlvIENlbnRyZSBmb3IgU3RydWN0dXJhbCBQcm90ZW9taWNzIFtPQ1NQXXINAQAA\ndWIoaI5vcg4BAAB9cg8BAAAoaJGJaGhVBE9QUEZyEAEAAGiTVSogT3hmb3JkIFByb3RlaW4gUHJv\nZHVjdGlvbiBGYWNpbGl0eSBbT1BQRl1yEQEAAHViKGiOb3ISAQAAfXITAQAAKGiRiWhoVQRSSUtF\nchQBAABok1U3UklLRU4gU3RydWN0dXJhbCBHZW5vbWljcy9Qcm90ZW9taWNzIEluaXRpYXRpdmUg\nW1JJS0VOXXIVAQAAdWIoaI5vchYBAAB9chcBAAAoaJGJaGhVA1MyRnIYAQAAaJNVIlN0cnVjdHVy\nZSAyIEZ1bmN0aW9uIFByb2plY3QgW1MyRl1yGQEAAHViKGiOb3IaAQAAfXIbAQAAKGiRiWhoVQRT\nRUNTchwBAABok1U3U291dGhlYXN0IENvbGxhYm9yYXRvcnkgZm9yIFN0cnVjdHVyYWwgR2Vub21p\nY3MgW1NFQ1NHXXIdAQAAdWIoaI5vch4BAAB9ch8BAAAoaJGJaGhVA1NHQ3IgAQAAaJNVJFN0cnVj\ndHVyYWwgR2Vub21pY3MgQ29uc29ydGl1bSBbU0dDXXIhAQAAdWIoaI5vciIBAAB9ciMBAAAoaJGJ\naGhVBFNHUFByJAEAAGiTVTxTdHJ1Y3R1cmFsIEdlbm9taWNzIG9mIFBhdGhvZ2VuaWMgUHJvdG96\nb2EgQ29uc29ydGl1bSBbU0dQUF1yJQEAAHViKGiOb3ImAQAAfXInAQAAKGiRiWhoVQNTR1hyKAEA\nAGiTVRlTR1ggUGhhcm1hY2V1dGljYWxzIFtTR1hdcikBAAB1Yihojm9yKgEAAH1yKwEAAChokYlo\naFUEU1BJTnIsAQAAaJNVJ1N0cnVjdHVyYWwgUHJvdGVvbWljcyBpbiBFdXJvcGUgW1NQSU5FXXIt\nAQAAdWIoaI5vci4BAAB9ci8BAAAoaJGJaGhVBFNTR0NyMAEAAGiTVUJTZWF0dGxlIFN0cnVjdHVy\nYWwgR2Vub21pY3MgQ2VudGVyIGZvciBJbmZlY3Rpb3VzIERpc2Vhc2UgW1NTR0NJRF1yMQEAAHVi\nKGiOb3IyAQAAfXIzAQAAKGiRiWhoVQRUQlNHcjQBAABok1UpVEIgU3RydWN0dXJhbCBHZW5vbWlj\ncyBDb25zb3J0aXVtIFtUQlNHQ11yNQEAAHViKGiOb3I2AQAAfXI3AQAAKGiRiWhoVQRYTVRCcjgB\nAABok1U/TXljb2JhY3Rlcml1bSBUdWJlcmN1bG9zaXMgU3RydWN0dXJhbCBQcm90ZW9taWNzIFBy\nb2plY3QgW1hNVEJdcjkBAAB1Yihojm9yOgEAAH1yOwEAAChokYloaFUDWVNHcjwBAABok1UpUGFy\naXMtU3VkIFllYXN0IFN0cnVjdHVyYWwgR2Vub21pY3MgW1lTR11yPQEAAHViZWiUVQlzZ0NlbnRl\ncnNyPgEAAGiVVQpTRyBDZW50ZXJzcj8BAAB1YmVzfXJAAQAAVQR1c2VyckEBAABoBnN9ckIBAABl\ndWJVCHRlbXBsYXRlckMBAABoGnVidS5lMjdjNTdlODI2NTBjMWU3NTQ3N2VmNGY2YTAxYWQxZQ==\n','2010-09-16 11:41:11');
+/*!40000 ALTER TABLE `django_session` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `manager_site`
+--
+
+DROP TABLE IF EXISTS `manager_site`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `manager_site` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `code` varchar(4) NOT NULL,
+  `display_name` varchar(100) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `manager_site`
+--
+
+LOCK TABLES `manager_site` WRITE;
+/*!40000 ALTER TABLE `manager_site` DISABLE KEYS */;
+/*!40000 ALTER TABLE `manager_site` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `process_information`
+--
+
+DROP TABLE IF EXISTS `process_information`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `process_information` (
+  `dep_set_id` varchar(10) NOT NULL,
+  `serial_number` int(11) NOT NULL,
+  `process_begin` datetime DEFAULT NULL,
+  `process_end` datetime DEFAULT NULL,
+  `remark` varchar(50) DEFAULT NULL,
+  PRIMARY KEY (`dep_set_id`,`serial_number`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `process_information`
+--
+
+LOCK TABLES `process_information` WRITE;
+/*!40000 ALTER TABLE `process_information` DISABLE KEYS */;
+/*!40000 ALTER TABLE `process_information` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `release_request`
+--
+
+DROP TABLE IF EXISTS `release_request`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `release_request` (
+  `dep_set_id` varchar(10) NOT NULL,
+  `citation` varchar(100) DEFAULT NULL,
+  `release_date` date DEFAULT NULL,
+  `PubMed_id` int(11) DEFAULT NULL,
+  KEY `dep_set_id` (`dep_set_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `release_request`
+--
+
+LOCK TABLES `release_request` WRITE;
+/*!40000 ALTER TABLE `release_request` DISABLE KEYS */;
+/*!40000 ALTER TABLE `release_request` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `sgcenters`
+--
+
+DROP TABLE IF EXISTS `sgcenters`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `sgcenters` (
+  `code` varchar(4) NOT NULL,
+  `verbose_name` varchar(250) NOT NULL,
+  PRIMARY KEY (`code`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `sgcenters`
+--
+
+LOCK TABLES `sgcenters` WRITE;
+/*!40000 ALTER TABLE `sgcenters` DISABLE KEYS */;
+INSERT INTO `sgcenters` VALUES ('BIGS','Bacterial targets at IGS-CNRS [BIGS]'),('BSGC','Berkeley Structural Genomics Center [BSGC]'),('BSGI',' Montreal-Kingston Bacterial Structural Genomics Initiative [BSGI]'),('CESG',' Center for Eukaryotic Structural Genomics [CESG]'),('CHTS','Center for High-Throughput Structural Biology [CHTSB]'),('CSGI','Center for Structural Genomics of Infectious Diseases [CSGID]'),('CSMP','Center for Structures of Membrane Proteins [CSMP]'),('ISFI','Integrated Center for Structure and Function Innovation [ISFI]'),('ISPC','Israel Structural Proteomics Center [ISPC]'),('JCSG','Joint Center for Structural Genomics [JCSG]'),('MCSG','Midwest Center for Structural Genomics [MCSG]'),('MSGP','Marseilles Structural Genomics Program @ AFMB [MSGP]'),('NESG','Northeast Structural Genomics Consortium [NESG]'),('NYCO','New York Consortium on Membrane Protein Structure [NYCOMPS]'),('NYSG','New York SGX Research Center for Structural Genomics [NYSGXRC]'),('OCSP','Ontario Centre for Structural Proteomics [OCSP]'),('OPPF',' Oxford Protein Production Facility [OPPF]'),('RIKE','RIKEN Structural Genomics/Proteomics Initiative [RIKEN]'),('S2F','Structure 2 Function Project [S2F]'),('SECS','Southeast Collaboratory for Structural Genomics [SECSG]'),('SGC','Structural Genomics Consortium [SGC]'),('SGPP','Structural Genomics of Pathogenic Protozoa Consortium [SGPP]'),('SGX','SGX Pharmaceuticals [SGX]'),('SPIN','Structural Proteomics in Europe [SPINE]'),('SSGC','Seattle Structural Genomics Center for Infectious Disease [SSGCID]'),('TBSG','TB Structural Genomics Consortium [TBSGC]'),('XMTB','Mycobacterium Tuberculosis Structural Proteomics Project [XMTB]'),('YSG','Paris-Sud Yeast Structural Genomics [YSG]');
+/*!40000 ALTER TABLE `sgcenters` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `site`
+--
+
+DROP TABLE IF EXISTS `site`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `site` (
+  `code` varchar(4) NOT NULL DEFAULT '',
+  `verbose_name` varchar(150) DEFAULT NULL,
+  PRIMARY KEY (`code`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `site`
+--
+
+LOCK TABLES `site` WRITE;
+/*!40000 ALTER TABLE `site` DISABLE KEYS */;
+INSERT INTO `site` VALUES ('ALL','All site for administration'),('BMRB','BMRM | Biological Magnetic Resonance Bank'),('PDBe','PDBe | Protein Data Bank Europe'),('PDBj','PDBj | Protein Data Bank Japan'),('RCSB','RCSB | Research Collaboratory for Structural Bioinformatics');
+/*!40000 ALTER TABLE `site` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `status`
+--
+
+DROP TABLE IF EXISTS `status`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `status` (
+  `code` varchar(4) NOT NULL,
+  `verbose_name` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`code`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `status`
+--
+
+LOCK TABLES `status` WRITE;
+/*!40000 ALTER TABLE `status` DISABLE KEYS */;
+INSERT INTO `status` VALUES ('AUTH','AUTH [Waiting for Author]'),('HOLD','HOLD [Hold for one year]'),('HPUB','HPUB [Released upon pubblication]'),('OBS','OBS [Obsolete]'),('PROC','PROC [Under processing]'),('REL','REL [Released]'),('REPL','REPL [Replacement Coordinates]'),('WAIT','WAIT [Awaiting Processing]'),('WDRN','WDRN [Withdrawn]');
+/*!40000 ALTER TABLE `status` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `wf_class_dict`
+--
+
+DROP TABLE IF EXISTS `wf_class_dict`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `wf_class_dict` (
+  `wf_class_id` varchar(10) NOT NULL,
+  `wf_class_name` varchar(20) NOT NULL,
+  `title` varchar(50) DEFAULT NULL,
+  `author` varchar(50) DEFAULT NULL,
+  `version` varchar(8) DEFAULT NULL,
+  `class_file` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`wf_class_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `wf_class_dict`
+--
+
+LOCK TABLES `wf_class_dict` WRITE;
+/*!40000 ALTER TABLE `wf_class_dict` DISABLE KEYS */;
+INSERT INTO `wf_class_dict` VALUES ('Annotate','Annotation.bf.xml','Annotation flow monitor (of DB) workflow','L. Rinaldi','00.01','Annotation.bf.xml'),('LigMod','LigandModule.xml','Annotation flow monitor (of DB) workflow','L. Rinaldi','00.01','LigandModule.xml'),('popDB','PopulateDB.xml','Populate DB workflow','L. Rinaldi','00.01','PopulateDB.xml'),('SeqMod','SequenceModule.xml','Demonstration Workflow','L. Rinaldi','00.01','SequenceModule.xml');
+/*!40000 ALTER TABLE `wf_class_dict` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `wf_instance`
+--
+
+DROP TABLE IF EXISTS `wf_instance`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `wf_instance` (
+  `ordinal` int(11) NOT NULL AUTO_INCREMENT,
+  `wf_inst_id` varchar(10) NOT NULL,
+  `wf_class_id` varchar(10) NOT NULL,
+  `dep_set_id` varchar(10) NOT NULL,
+  `owner` varchar(50) DEFAULT NULL,
+  `inst_status` varchar(10) DEFAULT NULL,
+  `status_timestamp` decimal(20,8) DEFAULT NULL,
+  PRIMARY KEY (`ordinal`),
+  KEY `wf_inst_id` (`wf_inst_id`),
+  KEY `wf_class_id` (`wf_class_id`),
+  KEY `dep_set_id` (`dep_set_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=160 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `wf_reference`
+--
+
+DROP TABLE IF EXISTS `wf_reference`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `wf_reference` (
+  `dep_set_id` varchar(10) NOT NULL,
+  `wf_inst_id` varchar(10) DEFAULT NULL,
+  `wf_task_id` varchar(10) DEFAULT NULL,
+  `wf_class_id` varchar(10) DEFAULT NULL,
+  `hash_id` varchar(20) NOT NULL,
+  `value` varchar(20) DEFAULT NULL,
+  KEY `dep_set_id` (`dep_set_id`),
+  KEY `hash_id` (`hash_id`),
+  KEY `wf_inst_id` (`wf_inst_id`),
+  KEY `wf_task_id` (`wf_task_id`),
+  KEY `wf_class_id` (`wf_class_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `wf_task`
+--
+
+DROP TABLE IF EXISTS `wf_task`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `wf_task` (
+  `ordinal` int(11) NOT NULL AUTO_INCREMENT,
+  `wf_task_id` varchar(10) NOT NULL,
+  `wf_inst_id` varchar(10) NOT NULL,
+  `wf_class_id` varchar(10) NOT NULL,
+  `dep_set_id` varchar(10) NOT NULL,
+  `task_name` varchar(10) DEFAULT NULL,
+  `task_status` varchar(10) NOT NULL,
+  `status_timestamp` decimal(20,8) DEFAULT NULL,
+  `task_type` varchar(25) DEFAULT NULL,
+  PRIMARY KEY (`ordinal`),
+  KEY `wf_task_id` (`wf_task_id`),
+  KEY `wf_inst_id` (`wf_inst_id`),
+  KEY `wf_class_id` (`wf_class_id`),
+  KEY `dep_set_id` (`dep_set_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=914 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Final view structure for view `dep_instance`
+--
+
+/*!50001 DROP TABLE `dep_instance`*/;
+/*!50001 DROP VIEW IF EXISTS `dep_instance`*/;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`wf`@`%` SQL SECURITY DEFINER */
+/*!50001 VIEW `dep_instance` AS select `d`.`dep_set_id` AS `dep_set_id`,`d`.`pdb_id` AS `pdb_id`,`d`.`initial_deposition_date` AS `dep_initial_deposition_date`,`d`.`annotator_initials` AS `annotator_initials`,`d`.`deposit_site` AS `dep_deposit_site`,`d`.`process_site` AS `dep_process_site`,`d`.`status_code` AS `dep_status_code`,`d`.`author_release_status_code` AS `dep_author_release_status_code`,`d`.`title` AS `dep_title`,`d`.`author_list` AS `dep_author_list`,`d`.`exp_method` AS `dep_exp_method`,`d`.`status_code_exp` AS `dep_status_code_exp`,`d`.`SG_center` AS `dep_SG_center`,`wfi`.`ordinal` AS `inst_ordinal`,`wfi`.`wf_inst_id` AS `inst_id`,`wfi`.`owner` AS `inst_owner`,`wfi`.`inst_status` AS `inst_status`,`wfi`.`status_timestamp` AS `inst_status_timestamp`,`wfi`.`wf_class_id` AS `class_id`,`wfcd`.`wf_class_name` AS `class_name`,`wfcd`.`title` AS `class_title`,`wfcd`.`author` AS `class_author`,`wfcd`.`version` AS `class_version`,`wfcd`.`class_file` AS `class_file` from ((`deposition` `d` join `wf_instance` `wfi`) join `wf_class_dict` `wfcd`) where ((`d`.`dep_set_id` = `wfi`.`dep_set_id`) and (`wfi`.`wf_class_id` = `wfcd`.`wf_class_id`)) */;
+
+--
+-- Final view structure for view `dep_last_instance`
+--
+
+/*!50001 DROP TABLE `dep_last_instance`*/;
+/*!50001 DROP VIEW IF EXISTS `dep_last_instance`*/;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`wf`@`%` SQL SECURITY DEFINER */
+/*!50001 VIEW `dep_last_instance` AS select distinct `d1`.`dep_set_id` AS `dep_set_id`,`d1`.`pdb_id` AS `pdb_id`,`d1`.`dep_initial_deposition_date` AS `dep_initial_deposition_date`,`d1`.`annotator_initials` AS `annotator_initials`,`d1`.`dep_deposit_site` AS `dep_deposit_site`,`d1`.`dep_process_site` AS `dep_process_site`,`d1`.`dep_status_code` AS `dep_status_code`,`d1`.`dep_author_release_status_code` AS `dep_author_release_status_code`,`d1`.`dep_title` AS `dep_title`,`d1`.`dep_author_list` AS `dep_author_list`,`d1`.`dep_exp_method` AS `dep_exp_method`,`d1`.`dep_status_code_exp` AS `dep_status_code_exp`,`d1`.`dep_SG_center` AS `dep_SG_center`,`d1`.`inst_ordinal` AS `inst_ordinal`,`d1`.`inst_id` AS `inst_id`,`d1`.`inst_owner` AS `inst_owner`,`d1`.`inst_status` AS `inst_status`,`d1`.`inst_status_timestamp` AS `inst_status_timestamp`,`d1`.`class_id` AS `class_id`,`d1`.`class_name` AS `class_name`,`d1`.`class_title` AS `class_title`,`d1`.`class_author` AS `class_author`,`d1`.`class_version` AS `class_version`,`d1`.`class_file` AS `class_file` from (`dep_instance` `d1` join `dep_instance` `d2`) where ((`d1`.`dep_set_id` = `d2`.`dep_set_id`) and (`d1`.`inst_status_timestamp` = (select max(`d2`.`inst_status_timestamp`) AS `max(d2.inst_status_timestamp)` from `dep_instance` `d2` where (`d2`.`dep_set_id` = `d1`.`dep_set_id`)))) */;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2010-09-03  9:57:54

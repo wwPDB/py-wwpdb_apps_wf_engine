@@ -16,8 +16,8 @@ import unittest
 
 from wwpdb.apps.wf_engine.wf_engine_utils.process.ProcessUtils import ProcessUtils
 from wwpdb.apps.wf_engine.wf_engine_utils.run.MyLogger import MyLogger
-#from wwpdb.apps.wf_engine.wf_engine_utils.run.WFEngineRunner import WFEngineRunner
-#from wwpdb.apps.wf_engine.wf_engine_utils.tasks.WFTaskRequest import WFTaskRequest
+from wwpdb.apps.wf_engine.wf_engine_utils.run.WFEngineRunner import WFEngineRunner
+from wwpdb.apps.wf_engine.wf_engine_utils.tasks.WFTaskRequest import WFTaskRequest
 from wwpdb.apps.wf_engine.wf_engine_utils.time.TimeStamp import TimeStamp
 
 
@@ -28,8 +28,8 @@ class ImportTests(unittest.TestCase):
     def testInstantiate(self):
 #        vc = ProcessUtils()
         vc = MyLogger()
-#        vc = WFEngineRunner()
-#        vc = WFTaskRequest()
+        vc = WFEngineRunner()
+        #vc = WFTaskRequest()
         vc = TimeStamp()
 
 if __name__ == '__main__':

@@ -1,0 +1,1 @@
+update communication set sender='DEP', receiver = 'WFE', wf_class_id=Null, wf_inst_id = Null, wf_class_file='Annotation.bf.xml', command='restartGoWF', status='pending', actual_timestamp=Null, parent_dep_set_id = 'D_1100201165',  parent_wf_class_id='Annotate', parent_wf_inst_id='None', data_version='latest' where dep_set_id = 'D_1100201165'

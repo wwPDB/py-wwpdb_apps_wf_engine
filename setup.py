@@ -48,9 +48,10 @@ setup(
         'console_scripts': []
     },
     #
-    install_requires=['psutil', 'wwpdb.utils.db', 'wwpdb.utils.config',
-                      'python-dateutil'],
-    packages=find_packages(exclude=['wwpdb.apps.tests-wf_engine']),
+    install_requires=['psutil', 'python-dateutil',
+                      'wwpdb.utils.db', 'wwpdb.utils.config',
+                      'wwpdb.utils.wf', 'wwpdb.utils.detach'],
+    packages=find_packages(exclude=['wwpdb.apps.tests-wf_engine', 'wwpdb.apps.wf_engine.examples']),
     package_data={
         # If any package contains *.md or *.rst ...  files, include them:
         '': ['*.md', '*.rst', "*.txt", "*.cfg"]
