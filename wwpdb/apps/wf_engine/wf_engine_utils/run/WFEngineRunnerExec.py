@@ -23,11 +23,11 @@ import time
 import logging
 
 from optparse import OptionParser
-from wwpdb.apps.wf_engine_utils.run.WFEngineRunner import WFEngineRunner
+from wwpdb.apps.wf_engine.wf_engine_utils.run.WFEngineRunner import WFEngineRunner
 
 import platform
 
-from wwpdb.api.facade.ConfigInfo import ConfigInfo, getSiteId
+from wwpdb.utils.config.ConfigInfo import ConfigInfo, getSiteId
 
 
 def main():
