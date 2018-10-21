@@ -22,7 +22,7 @@ import time
 from wwpdb.apps.wf_engine.reader.TaskComparitor import TaskComparitor
 from wwpdb.apps.wf_engine.reader.TaskParameter import TaskParameter
 
-from wwpdb.apps.wf_engine.process.ActionRegistry import ActionRegistry
+from wwpdb.utils.wf.process.ActionRegistry import ActionRegistry
 
 
 class taskModule():

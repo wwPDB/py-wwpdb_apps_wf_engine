@@ -20,7 +20,7 @@ import pickle
 import datetime
 import random
 
-from wwpdb.apps.wf_engine.process.ProcessRunner import ProcessRunner
+from wwpdb.utils.wf.process.ProcessRunner import ProcessRunner
 from wwpdb.utils.wf.WfDataObject import WfDataObject
 from wwpdb.utils.wf.dbapi.WfDbApi import WfDbApi
 from wwpdb.utils.wf.dbapi.dbAPI import dbAPI

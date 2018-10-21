@@ -33,7 +33,7 @@ import traceback
 
 from wwpdb.apps.wf_engine.engine.ServerMonitor import ServerMonitor
 
-from wwpdb.apps.wf_engine.process.ProcessRunner import ProcessRunner
+from wwpdb.utils.wf.process.ProcessRunner import ProcessRunner
 from wwpdb.apps.wf_engine.engine.EngineUtils import EngineUtils
 from wwpdb.apps.wf_engine.wf_engine_utils.run.MyLogger import MyLogger
 from wwpdb.apps.wf_engine.wf_engine_utils.time.TimeStamp import TimeStamp
