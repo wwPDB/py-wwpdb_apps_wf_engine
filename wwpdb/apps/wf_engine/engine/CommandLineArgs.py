@@ -105,7 +105,7 @@ class CommandLineArgs(object):
 
         if anyB < 0 and self.wfDepth > 0:
             # systax error in wf request
-            print "Request for workflow of depth " + str(self.wfDepth) + " that is invalid in " + self.workflow + " : zero level error"
+            print("Request for workflow of depth " + str(self.wfDepth) + " that is invalid in " + self.workflow + " : zero level error")
             sys.exit(0)
 
         if anyB < 0:
@@ -115,7 +115,7 @@ class CommandLineArgs(object):
             for i in range(0, self.wfDepth + 1):
                 b1 = self.workflow.find('(', start)
                 if b1 < 0:
-                    print "Request for workflow of depth " + str(self.wfDepth) + " that is invalid in " + self.workflow + " : " + str(i) + " level error"
+                    print("Request for workflow of depth " + str(self.wfDepth) + " that is invalid in " + self.workflow + " : " + str(i) + " level error")
                     exit(0)
                 if i == self.wfDepth:
                     return self.workflow[start:b1]
@@ -128,18 +128,18 @@ class CommandLineArgs(object):
 
     def usage(self):
 
-        print "Usage of the engine"
-        print "python mainEngine.py -s <session name> [-i <Task>] [-d 1]"
-        print "-s  : Session name or deposition ID : required to run engine on domain data"
-        print "-w  : workflow File name : no default"
-        print "-p  : path for XML workflows : default = ./"
-        print "-i  : instance ID"
-        print "-g  : interface console (default - interface is external)"
-        print "-t  : start workflow at this task"
-        print "-d  : debug level 0/1/2/3 (default = 0)"
-        print "-l  : log output file"
-        print "-a  : accession code only for  -x"
-        print "-x  : Insert dummy dep_id and class_id into DB"
-        print "-r  : automatically recover instance from last working task"
-        print "-k  : set domain data processState - only valid with -x"
-        print "-z  : set the WFdepth (default = 0)"
+        print("Usage of the engine")
+        print("python mainEngine.py -s <session name> [-i <Task>] [-d 1]")
+        print("-s  : Session name or deposition ID : required to run engine on domain data")
+        print("-w  : workflow File name : no default")
+        print("-p  : path for XML workflows : default = ./")
+        print("-i  : instance ID")
+        print("-g  : interface console (default - interface is external)")
+        print("-t  : start workflow at this task")
+        print("-d  : debug level 0/1/2/3 (default = 0)")
+        print("-l  : log output file")
+        print("-a  : accession code only for  -x")
+        print("-x  : Insert dummy dep_id and class_id into DB")
+        print("-r  : automatically recover instance from last working task")
+        print("-k  : set domain data processState - only valid with -x")
+        print("-z  : set the WFdepth (default = 0)")
