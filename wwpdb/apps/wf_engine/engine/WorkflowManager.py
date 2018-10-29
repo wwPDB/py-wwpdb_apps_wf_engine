@@ -32,7 +32,6 @@ class WorkflowManager(threading.Thread):
         self.__siteId = getSiteId(defaultSiteId="WWPDB_DEPLOY_TEST")
         self.__cI = ConfigInfo(self.__siteId)
         self.__wfXmlPath = self.__cI.get('SITE_WF_XML_PATH')
-        self.__wfPath = self.__cI.get('SITE_WF_PYTHON_PATH')
 
     def setCommand(self, command):
         self.command = command
@@ -57,7 +56,7 @@ class WorkflowManager(threading.Thread):
 
         if self.instID is None:
             args = ["python",
-                    os.path.join(self.__wfPath, "engine", "mainEngine.py"),
+                    "-m", "wwpdb.apps.wf_engine.engine.mainEngine",
                     "-0",
                     "-s",
                     self.depID,
@@ -75,7 +74,7 @@ class WorkflowManager(threading.Thread):
         else:
             args = [
                 "python",
-                os.path.join(self.__wfPath, "engine", "mainEngine.py"),
+                "-m", "wwpdb.apps.wf_engine.engine.mainEngine",
                 "-0",
                 "-s",
                 self.depID,
@@ -117,7 +116,7 @@ class WorkflowManager(threading.Thread):
 
         if self.instID is None:
             args = ["python",
-                    os.path.join(self.__wfPath, "engine", "mainEngine.py"),
+                    "-m", "wwpdb.apps.wf_engine.engine.mainEngine",
                     "-0",
                     "-s",
                     self.depID,
@@ -134,7 +133,7 @@ class WorkflowManager(threading.Thread):
 
         else:
             args = ["python",
-                    os.path.join(self.__wfPath, "engine", "mainEngine.py"),
+                    "-m", "wwpdb.apps.wf_engine.engine.mainEngine",
                     "-0",
                     "-s",
                     self.depID,
