@@ -52,7 +52,7 @@ setup(
     #
     install_requires=['psutil', 'python-dateutil', 'mmcif.utils',
                       'wwpdb.utils.db', 'wwpdb.utils.config',
-                      'wwpdb.utils.wf >= 0.5', 'wwpdb.utils.detach', 'mmcif.io'],
+                      'wwpdb.utils.wf >= 0.5', 'wwpdb.utils.detach', 'wwpdb.io'],
     packages=find_packages(exclude=['wwpdb.apps.tests-wf_engine', 'wwpdb.apps.wf_engine.examples']),
     package_data={
         # If any package contains *.md or *.rst ...  files, include them:
