@@ -37,10 +37,10 @@ import time
 from tabulate import tabulate
 from optparse import OptionParser
 
-from wwpdb.utils.rcsb.PathInfo import PathInfo
-from wwpdb.api.facade.ConfigInfo import ConfigInfo, getSiteId
-from wwpdb.apps.wf_engine_utils.tasks.WFTaskRequest import WFTaskRequest
-from pdbx_v2.pdbx.PdbxIo import PdbxEntryInfoIo
+from wwpdb.io.locator.PathInfo import PathInfo
+from wwpdb.utils.config.ConfigInfo import ConfigInfo, getSiteId
+from wwpdb.apps.wf_engine.wf_engine_utils.tasks.WFTaskRequest import WFTaskRequest
+from mmcif_utils.pdbx.PdbxIo import PdbxEntryInfoIo
 
 
 class WFTaskRequestWorker(object):
