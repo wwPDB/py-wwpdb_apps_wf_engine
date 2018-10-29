@@ -50,7 +50,7 @@ setup(
         'console_scripts': []
     },
     #
-    install_requires=['psutil', 'python-dateutil', 'mmcif.utils'
+    install_requires=['psutil', 'python-dateutil', 'mmcif.utils',
                       'wwpdb.utils.db', 'wwpdb.utils.config',
                       'wwpdb.utils.wf >= 0.5', 'wwpdb.utils.detach', 'mmcif.io'],
     packages=find_packages(exclude=['wwpdb.apps.tests-wf_engine', 'wwpdb.apps.wf_engine.examples']),
