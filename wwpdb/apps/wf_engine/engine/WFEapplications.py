@@ -25,6 +25,7 @@ import logging
 from wwpdb.utils.wf.process.ProcessRunner import ProcessRunner
 from wwpdb.utils.wf.WfDataObject import WfDataObject
 from wwpdb.utils.wf.dbapi.WfDbApi import WfDbApi
+from wwpdb.utils.wf.dbapi.dbAPI import dbAPI
 from wwpdb.utils.config.ConfigInfo import ConfigInfo, getSiteId
 from wwpdb.utils.wf.dbapi.WFEtime import *
 from email.mime.text import MIMEText
@@ -299,6 +300,63 @@ def updateInitialStateDB(DBstatusAPI, depID, debug=0, prt=sys.stderr):
             else:
                 prt.write("+updateInitialStateDB - %s status=%r for updating Annotate class in wf_instance \n" % (depID, ok))
 
+
+def DepUIsendDepositorEmail(depID, data):
+
+    data = data.replace("$DEPID", depID)
+    data = data.replace("$LINEFEED", '\n')
+
+    words = data.split('|')
+    email = DepUIgetDepositorEmail(depID)
+
+    WFEsendEmail(email, words[0], words[1], words[2])
+
+
+def DepUIgetDepositorEmail(depID):
+    '''
+      go get the depositor email
+    '''
+
+    # This code is here to break a dependence on DepUI code from WFE
+    siteId = getSiteId(defaultSiteId="WWPDB_DEPLOY_TEST")
+    cI = ConfigInfo(siteId)
+    WWPDB_APP_VERSION_STRING = 'v-200'
+
+    FILE_UPLOAD_TEMP_DIR = os.path.join(
+        cI.get("SITE_DEPOSIT_STORAGE_PATH"),
+        "deposit",
+        "temp_files")
+    STORAGE_PICKLED_DEPOSITIONS = os.path.join(
+        FILE_UPLOAD_TEMP_DIR,
+        "deposition" + "-" + WWPDB_APP_VERSION_STRING)
+
+    ret = cI.get('SITE_WF_PYTHON_PATH')
+
+    if STORAGE_PICKLED_DEPOSITIONS is None:
+        print " The storage location of the pickle file is not known"
+        return None
+
+    fPath = os.path.join(STORAGE_PICKLED_DEPOSITIONS, str(depID))
+    fName = os.path.join(fPath, "formdata.pkl")
+
+    if os.path.isfile(fName):
+        try:
+            f = open(fName, 'rb')
+            dat = pickle.load(f)
+            f.close()
+            if 'email' in dat:
+                return dat['email']
+            else:
+                return None
+        except Exception as e:
+            print "Tried to get the formdata and return email  " + str(e)
+            return None
+    else:
+        ss = dbAPI(depID)
+        ret = ss.runSelectNQ(table='user_data', select=['email', 'role'], where={"dep_set_id": depID, "role": "valid"})
+        for r in ret:
+            return r[0]
+        return None
 
 def WFEsendEmail(email, frm, subject, message, bcc=None):
 
