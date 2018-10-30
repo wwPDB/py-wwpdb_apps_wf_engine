@@ -63,7 +63,7 @@ setup(
         ('data/wf_engine/bootstrap', ['wwpdb/apps/wf_engine/wf_engine_utils/test/test-pdb-codes.ids',
                                       'wwpdb/apps/wf_engine/wf_engine_utils/test/test-emdb-codes.ids',
                                       'wwpdb/apps/wf_engine/wf_engine_utils/test/test-bmrb-codes.ids']),
-        ('data/wf_engine/wf-defs', dfiles)
+        #('data/wf_engine/wf-defs', dfiles)
     ],
         
     #
