@@ -32,6 +32,45 @@ from email.mime.text import MIMEText
 
 logger = logging.getLogger()
 
+    
+
+def getPicklePath(depSetId = None):
+    """ Return path to deposition pkl files - to break circular dependency
+    if depSetId set, return deposition specific path
+    """
+
+    cI = ConfigInfo()
+    WWPDB_APP_VERSION_STRING = 'v-200'
+
+    depstrpath = cI.get("SITE_DEPOSIT_STORAGE_PATH")
+    if not depstrpath:
+        return None
+
+    file_upload_temp_dir = os.path.join(depstrpath, 
+                                    "deposit",
+                                    "temp_files")
+    storage_pickled_depositions = os.path.join(
+        file_upload_temp_dir,
+        "deposition" + "-" + WWPDB_APP_VERSION_STRING)
+
+    if depSetId:
+        fPath = os.path.join(storage_pickled_depositions, str(depID))
+    else:
+        fPath = storage_pickled_depositions
+        
+    return fPath
+
+def getNotesEmailAddr():
+    """Returns the email address for archiving messages"""
+    email = 'wwpdb-da-system@rcsb.rutgers.edu'
+
+    siteid  = getSiteId()
+    # Debugging at PDBe
+    if siteid == 'PDBE_DEV':
+        email = cI.get("ANNOTATION_EMAIL")
+
+    return email
+    
 def runOutOfBandWorkflow(DBstatusAPI, depSetId, classId, classFileName):
     '''    UPDATE status.communication SET  sender=%s, receiver=%s, wf_class_id=%s, wf_class_file=%s,
                                          command=%s, status=%s, actual_timestamp=%s, data_version=%s
@@ -318,25 +357,12 @@ def DepUIgetDepositorEmail(depID):
     '''
 
     # This code is here to break a dependence on DepUI code from WFE
-    siteId = getSiteId(defaultSiteId="WWPDB_DEPLOY_TEST")
-    cI = ConfigInfo(siteId)
-    WWPDB_APP_VERSION_STRING = 'v-200'
-
-    FILE_UPLOAD_TEMP_DIR = os.path.join(
-        cI.get("SITE_DEPOSIT_STORAGE_PATH"),
-        "deposit",
-        "temp_files")
-    STORAGE_PICKLED_DEPOSITIONS = os.path.join(
-        FILE_UPLOAD_TEMP_DIR,
-        "deposition" + "-" + WWPDB_APP_VERSION_STRING)
-
-    ret = cI.get('SITE_WF_PYTHON_PATH')
-
-    if STORAGE_PICKLED_DEPOSITIONS is None:
-        print " The storage location of the pickle file is not known"
+    fPath = getPicklePath(depId)
+    
+    if not fPath is None:
+        logger.error(" The storage location of the pickle file is not known")
         return None
 
-    fPath = os.path.join(STORAGE_PICKLED_DEPOSITIONS, str(depID))
     fName = os.path.join(fPath, "formdata.pkl")
 
     if os.path.isfile(fName):
@@ -349,7 +375,7 @@ def DepUIgetDepositorEmail(depID):
             else:
                 return None
         except Exception as e:
-            print "Tried to get the formdata and return email  " + str(e)
+            logger.exception("Tried to get the formdata and return email  " + str(e))
             return None
     else:
         ss = dbAPI(depID)
