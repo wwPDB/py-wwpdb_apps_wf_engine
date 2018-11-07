@@ -54,7 +54,7 @@ def getPicklePath(depSetId = None):
         "deposition" + "-" + WWPDB_APP_VERSION_STRING)
 
     if depSetId:
-        fPath = os.path.join(storage_pickled_depositions, str(depID))
+        fPath = os.path.join(storage_pickled_depositions, str(depSetId))
     else:
         fPath = storage_pickled_depositions
         
