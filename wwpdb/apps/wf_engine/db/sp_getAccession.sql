@@ -25,8 +25,8 @@ DELIMITER ;;
 /*!50003 CREATE*/ /*!50020 DEFINER=`wwpdbmgr`@`%`*/ /*!50003 PROCEDURE `getAccession`(IN col_name varchar(7), IN tbl_name varchar(6))
 BEGIN
     declare acc varchar(10);
-    
-    set @tmp=CONCAT("select ", col_name, " into @accession from ", tbl_name, " where used = 'n' order by ", col_name, " limit 1 for update;");
+
+    set @tmp=CONCAT("select ", col_name, " into @accession from ", tbl_name, " where used = 'n' order by ordinal limit 1 for update;");
     prepare stm from @tmp;
     execute stm;
     set @tmp=CONCAT("update ", tbl_name, " set used = 'y' where ", col_name, " = @accession;");
