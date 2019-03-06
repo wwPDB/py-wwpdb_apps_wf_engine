@@ -39,11 +39,14 @@ def getPicklePath(depSetId = None):
     if depSetId set, return deposition specific path
     """
 
+    #logger.debug("Getting PicklePath for %s" % depSetId)
+
     cI = ConfigInfo()
     WWPDB_APP_VERSION_STRING = 'v-200'
 
     depstrpath = cI.get("SITE_DEPOSIT_STORAGE_PATH")
     if not depstrpath:
+        logger.error("SITE_DEPOSIT_STORAGE_PATH not set")
         return None
 
     file_upload_temp_dir = os.path.join(depstrpath, 
@@ -356,10 +359,11 @@ def DepUIgetDepositorEmail(depID):
       go get the depositor email
     '''
 
+    logger.info("Getting email address for '%s'" % depID)
     # This code is here to break a dependence on DepUI code from WFE
-    fPath = getPicklePath(depId)
+    fPath = getPicklePath(depID)
     
-    if not fPath is None:
+    if not fPath:
         logger.error(" The storage location of the pickle file is not known")
         return None
 
@@ -389,7 +393,7 @@ def WFEsendEmail(email, frm, subject, message, bcc=None):
     import smtplib
 
     if email is None:
-        logger.info(" Invalid email " + str(email))
+        logger.error(" Invalid email " + str(email))
         return
 
     msg = MIMEText(message)
