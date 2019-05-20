@@ -405,13 +405,16 @@ def WFEsendEmail(email, frm, subject, message, bcc=None):
         sendTo = [email] + [bcc]
         logger.debug("send email (bcc) to " + str(bcc))
 
+    cI = ConfigInfo()
+    noreplyaddr = self.__cI.get("SITE_NOREPLY_EMAIL", 'noreply@mail.wwpdb.org')
+
     # Send the message via our own SMTP server, but don't include the
     # envelope header.
     logger.debug("send email from " + str(frm))
     logger.debug("send email to " + str(email))
     try:
         s = smtplib.SMTP('localhost')
-        s.sendmail('noreply@wwpdb.org', sendTo, msg.as_string())
+        s.sendmail('noreplyaddr', sendTo, msg.as_string())
         s.quit()
     except Exception as e:
         logger.error(" Exception in WFE.WFEsendEmail " + str(e))

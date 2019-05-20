@@ -195,6 +195,7 @@ class EngineUtils(WfDbApi):
         msg['Subject'] = subject
         msg['From'] = frm
         msg['To'] = email
+        noreplyaddr = self.__cI.get("SITE_NOREPLY_EMAIL", 'noreply@mail.wwpdb.org')
 
         # Send the message via our own SMTP server, but don't include the
         # envelope header.
@@ -202,7 +203,7 @@ class EngineUtils(WfDbApi):
         logger.info("+EngineUtils.__sendEmail send email to " + str(email))
         try:
             s = smtplib.SMTP('localhost')
-            s.sendmail('noreply@wwpdb.org', [email], msg.as_string())
+            s.sendmail(noreplyaddr, [email], msg.as_string())
             s.quit()
         except Exception as e:
             logger.error("+EngineUtils.__sendEmail failing with " + str(e))
