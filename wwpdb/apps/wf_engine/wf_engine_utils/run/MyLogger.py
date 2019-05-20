@@ -27,7 +27,8 @@ class MyLogger(object):
     def write(self, str):
         try:
             if self.__myLevel >= self.__currentLevel:
-                f = sys._current_frames().values()[0]
+                #f = sys._current_frames().values()[0]
+                f = sys._getframe()
                 # fN = f.f_back.f_globals['__file__']
                 tL = f.f_back.f_globals['__name__'].split('.')
                 mN = "      " + tL[-1]
