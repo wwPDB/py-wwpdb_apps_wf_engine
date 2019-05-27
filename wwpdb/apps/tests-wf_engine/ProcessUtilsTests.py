@@ -30,7 +30,6 @@ import platform
 
 from wwpdb.apps.wf_engine.wf_engine_utils.process.ProcessUtils import ProcessUtils
 
-@unittest.skipUnless(platform.system() != 'Darwin', 'psutils broken on MacOs')
 class ProcessUtilsTests(unittest.TestCase):
 
     def __init__(self, methodName='runTest'):
