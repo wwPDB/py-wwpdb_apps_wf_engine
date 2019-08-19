@@ -2,6 +2,7 @@
 import logging
 import types
 import sys
+from past.builtins import basestring
 
 logger = logging.getLogger(name='root')
 
@@ -32,7 +33,7 @@ class MyLogger(object):
                 # fN = f.f_back.f_globals['__file__']
                 tL = f.f_back.f_globals['__name__'].split('.')
                 mN = "      " + tL[-1]
-                if ((str is not None) and isinstance(str, types.StringTypes) and (str[-1] == '\n')):
+                if ((str is not None) and isinstance(str, basestring) and (str[-1] == '\n')):
                     logger.log(self.__myLevel, mN + " " + str[:-1])
                 else:
                     logger.log(self.__myLevel, mN + " " + str)
