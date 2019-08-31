@@ -548,7 +548,7 @@ class ServerMonitor(object):
         if len(self.monitorDict) > 0:
             # JDW 5-Apr-2015 -- change to parent_wf_class_id local to this method -
             sql = "select dep_set_id, parent_wf_class_id, wf_inst_id,status, activity, actual_timestamp from communication where  dep_set_id in ("
-            for id, value in self.monitorDict.iteritems():
+            for id, value in self.monitorDict.items():
                 sql = sql + "'" + id + "',"
             sql = sql[:-1] + ")"
             myList = self.__eUtil.runSelectSQL(sql)
@@ -1272,7 +1272,7 @@ class ServerMonitor(object):
 
     def __XcheckPIDstatus(self):
         # JDW ???
-        for id, mon in self.monitorDict.iteritems():
+        for id, mon in self.monitorDict.items():
             id = mon['pid']
 
     def __XstaleServer(self, report=0):

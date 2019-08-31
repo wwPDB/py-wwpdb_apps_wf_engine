@@ -497,7 +497,7 @@ def initilliseDepositDict(DBstatusAPI, id, pdb='?', data=None):
         sql = 'update deposition set '
         args = ()
         first = False
-        for key, value in data.iteritems():
+        for key, value in data.items():
             if not first:
                 first = True
             else:
@@ -515,10 +515,10 @@ def initilliseDepositDict(DBstatusAPI, id, pdb='?', data=None):
         # commas between keys and values - EP 2017-09-26
         logger.info("ID is new")
         sql = 'insert deposition (dep_set_id,'
-        for key, value in data.iteritems():
+        for key, value in data.items():
             sql = sql + str(key)
         sql = sql + ') values ("' + str(id) + '",'
-        for key, value in data.iteritems():
+        for key, value in data.items():
             sql = sql + '"' + str(value) + '"'
 
         sql = sql + ')'
@@ -929,7 +929,7 @@ def initilliseDB(metaData, depositionID, WorkflowClassID, WorkflowInstanceID, DB
         prt.write("WFE.WFEapplications.initialliseDB :  Requires input object \n")
         sys.exit(0)
 
-    for key, value in input.iteritems():
+    for key, value in input.items():
         if debug > 0:
             prt.write("WFE.WFEapplications.initialliseDB :  setting input " + str(key) + str(value.getReferenceType()) + "\n")
             prt.write("WFE.WFEapplications.initialliseDB :  setting input " + str(key) + str(value) + "\n")
