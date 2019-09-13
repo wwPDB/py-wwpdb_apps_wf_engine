@@ -406,7 +406,7 @@ def WFEsendEmail(email, frm, subject, message, bcc=None):
         logger.debug("send email (bcc) to " + str(bcc))
 
     cI = ConfigInfo()
-    noreplyaddr = self.__cI.get("SITE_NOREPLY_EMAIL", 'noreply@mail.wwpdb.org')
+    noreplyaddr = cI.get("SITE_NOREPLY_EMAIL", 'noreply@mail.wwpdb.org')
 
     # Send the message via our own SMTP server, but don't include the
     # envelope header.
