@@ -244,7 +244,7 @@ class ProcessManager(Thread):
                 process.setParameterDict(self.__taskParameterD)
 
             if self.input is not None:
-                for key, value in self.input.iteritems():
+                for key, value in self.input.items():
                     if self.debug > 1:
                         try:
                             cN = value.__class__.__name__
@@ -254,7 +254,7 @@ class ProcessManager(Thread):
                             logfh.write("+ProcessManager.__runProcess :  setting input %s with value %r\n" % (key, value))
                     process.setInput(key, value)
             if self.output is not None:
-                for key, value in self.output.iteritems():
+                for key, value in self.output.items():
                     if self.debug > 1:
                         try:
                             cN = value.__class__.__name__
@@ -277,7 +277,7 @@ class ProcessManager(Thread):
                 pass
 
         if self.debug > 0:
-            for key, value in self.output.iteritems():
+            for key, value in self.output.items():
                 try:
                     cN = value.__class__.__name__
                     logfh.write("+ProcessManager.__runProcess :  returned output %s has object type %s\n" % (key, cN))

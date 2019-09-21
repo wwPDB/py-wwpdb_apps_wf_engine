@@ -364,10 +364,10 @@ class mainEngine(object):
           3) If we are at the end of the loop then return 1 : the second "nextTask"
         '''
 
-        for key, data in value.iteritems():
+        for key, data in value.items():
             valueKey = key
             valueData = getObjectValue(data, self.debug, self.__lfh)
-        for key, data in iterator.iteritems():
+        for key, data in iterator.items():
             iteratorKey = key
             iteratorData = getObjectValue(data, self.debug, self.__lfh)
 
@@ -389,7 +389,7 @@ class mainEngine(object):
             if self.debug > 1:
                 logger.info("+mainEngine.__loopTest : ValueData  =  " + str(valueData))
                 logger.info("+mainEngine.__loopTest : task.param =  " + str(task.param))
-            for key, data in value.iteritems():
+            for key, data in value.items():
                 if len(iteratorData) < 1:
                     if self.debug > 1:
                         logger.info("+mainEngine.__loopTest :   Loop list of zero length \n")
@@ -409,7 +409,7 @@ class mainEngine(object):
                         logger.info("+mainEngine.__loopTest : (index return) found end of loop ")
                     return 1
                 else:
-                    for key, data in value.iteritems():
+                    for key, data in value.items():
                         data.data = str(index + 1)
                         if self.debug > 1:
                             logger.info("+mainEngine.__loopTest (index return) - Data value : " + str(data.data))
@@ -422,7 +422,7 @@ class mainEngine(object):
                                 logger.info("+mainEngine.__loopTest : (value return) found end of loop ")
                             return 1
                         else:
-                            for key, data in value.iteritems():
+                            for key, data in value.items():
                                 data.data = iteratorData[index + 1]
                                 if self.debug > 1:
                                     logger.info("+mainEngine.__loopTest :  (value return) data value " + str(data.data))

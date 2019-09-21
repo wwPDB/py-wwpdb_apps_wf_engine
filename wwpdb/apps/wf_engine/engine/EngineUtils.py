@@ -136,12 +136,12 @@ class EngineUtils(WfDbApi):
         input = None
         output = None
         if inputs is not None:
-            for key, value in inputs.iteritems():
+            for key, value in inputs.items():
                 if self.__verbose:
                     logger.info("+EngineUtils.testFilesExist :  testing input named " + str(key) + " content type " + str(type(value)))
                 input = value
         if outputs is not None:
-            for key, value in outputs.iteritems():
+            for key, value in outputs.items():
                 if self.__verbose:
                     logger.info("+EngineUtils.testFilesExist :   setting output named " + str(key) + " content type " + str(type(value)))
                 output = value
@@ -288,7 +288,7 @@ class EngineUtils(WfDbApi):
             logger.info("+EngineUtils.initDepositContext :  Requires input object \n")
             sys.exit(0)
 
-        for key, value in input.iteritems():
+        for key, value in input.items():
             if self.__verbose:
                 logger.info("+EngineUtils.initDepositContext :  setting input " + str(key) + str(value.getReferenceType()) + "\n")
                 logger.info("+EngineUtils.initDepositContext :  setting input " + str(key) + str(value) + "\n")
