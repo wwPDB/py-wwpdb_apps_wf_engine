@@ -11,9 +11,9 @@ def main(argv):
 
     runningSE = myProcessID()
 
-    if runningSE <> None:
+    if runningSE != None:
 #  panic - already running
-      print "This server is running a Workflow Daemon of process ID = " + str(runningSE)
+      print("This server is running a Workflow Daemon of process ID = " + str(runningSE))
       exit(0)
 
     path = wfClassDir() + 'wf-defs/'
@@ -44,7 +44,7 @@ def myProcessID():
 
         monitor = None
         if grep1 is None:
-          print "No process running"
+          print("No process running")
 
         if grep1 is None:
 #          print "monitor.py is not running"

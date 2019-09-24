@@ -43,8 +43,8 @@ def main(argv):
     opts, args = getopt.getopt(argv,"hp:c:s:d",["help","pdb=","cif=","sf="])
     for opt, arg in opts:
       if opt in ("-h", "--help"):
-        print " use  -p <PDB>"
-        print " use  -c <CIF>"
+        print(" use  -p <PDB>")
+        print(" use  -c <CIF>")
       elif opt in ("-p", "--pdb"):
         file = arg
         op = 'pdb2pdbx'
@@ -58,9 +58,9 @@ def main(argv):
 
     wfApi = WfDbApi(verbose = True)
     id = getDepID(wfApi)
-    print "**********************************"
-    print "        New ID  = %s" % id
-    print "**********************************"
+    print("**********************************")
+    print("        New ID  = %s" % id)
+    print("**********************************")
 
 #  make the folder
     wfo=WfDataObject()
@@ -75,12 +75,12 @@ def main(argv):
     pR=ProcessRunner(verbose=False) ;  
     pR.setInput("src",wfo) ;  
     ok=pR.setAction('mkdir');
-    if not ok: print "setAction() for mkdir returns status %r" % (ok)
+    if not ok: print("setAction() for mkdir returns status %r" % (ok))
     ok=pR.preCheck()
-    if not ok: print "preCheck() for mkdir returns status %r" % (ok)
+    if not ok: print("preCheck() for mkdir returns status %r" % (ok))
     ok=pR.run()
     if not ok: 
-	print "OpRun() for mkdir return status %r" % (ok)
+	print("OpRun() for mkdir return status %r" % (ok))
         return
 
 # copy file to folder
@@ -89,21 +89,21 @@ def main(argv):
     fInp.setExternalFilePath(file)
     fInp.setContentTypeAndFormat( 'model', format )
     fP=fInp.getFilePathReference();
-    print "Input file is %s" % fP
+    print("Input file is %s" % fP)
 
     fP=wfo.getFilePathReference();
-    print "Output file is %s" % fP
+    print("Output file is %s" % fP)
 
     pR=ProcessRunner(verbose=False);  
     pR.setInput("src",fInp);  
     pR.setOutput("dst",wfo);
     ok=pR.setAction('copy')
-    if not ok: print "setAction() for copy returns status %r" % (ok)
+    if not ok: print("setAction() for copy returns status %r" % (ok))
     ok=pR.preCheck()
-    if not ok: print "preCheck() for copy returns status %r" % (ok)
+    if not ok: print("preCheck() for copy returns status %r" % (ok))
     ok=pR.run()
     if not ok: 
-	print "OpRun() for copy return status %r" % (ok)
+	print("OpRun() for copy return status %r" % (ok))
         return
 
     if op == 'pdb2pdbx':
@@ -120,12 +120,12 @@ def main(argv):
       pR.setInput("src",wfi);  
       pR.setOutput("dst",wfo);
       ok=pR.setAction(op)
-      if not ok: print "setAction() for %s returns status %r" % (op,ok)
+      if not ok: print("setAction() for %s returns status %r" % (op,ok))
       ok=pR.preCheck()
-      if not ok: print "preCheck() for %s returns status %r" % (op,ok)
+      if not ok: print("preCheck() for %s returns status %r" % (op,ok))
       ok=pR.run()
       if not ok: 
-	print "OpRun() for %s return status %r" % (op,ok)
+	print("OpRun() for %s return status %r" % (op,ok))
         return
 
 # fill in the deposition detail as much as possible
@@ -147,13 +147,13 @@ def main(argv):
     if sf != None:
       if os.path.exists(sf):
         shutil.copyfile(sf,'/ebi/msd/services/DandA/data/archive/' + id + '/' + id + '_sf_P1.cif.V1')
-        print "copied SF file"
+        print("copied SF file")
 
 
-    print "finished"
+    print("finished")
   except getopt.GetoptError:
      # print help information and exit:
-    print " use  -i <depID>"
+    print(" use  -i <depID>")
 
 
 if __name__ == "__main__":

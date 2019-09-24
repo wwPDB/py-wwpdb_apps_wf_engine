@@ -19,9 +19,9 @@ def main(argv):
    try:
     opts, args = getopt.getopt(argv,"hi:a:d",["help","id="])
     for opt, arg in opts:
-      print opt,  ", ", arg
+      print(opt,  ", ", arg)
       if opt in ("-h", "--help"):
-        print " use  -i <depID>"
+        print(" use  -i <depID>")
       elif opt in ("-i", "--id"):
         depID =  arg
         depDB = {}
@@ -35,10 +35,10 @@ def main(argv):
           break;
 
         else:
-          print " skipping ", depID, " as it is already loaded"
+          print(" skipping ", depID, " as it is already loaded")
    except getopt.GetoptError:
         # print help information and exit:
-        print " use  -i <depID>"
+        print(" use  -i <depID>")
 
 
 if __name__ == "__main__":

@@ -6,6 +6,6 @@ if __name__ == "__main__":
   
   engine = mainEngine()
 
-  print"************ Loop test"
+  print("************ Loop test")
   engine.runNoThrow(normal)
 

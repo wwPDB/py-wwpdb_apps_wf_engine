@@ -33,18 +33,18 @@ def main(argv):
     opts, args = getopt.getopt(argv,"hi:a:d",["help","id="])
     for opt, arg in opts:
       if opt in ("-h", "--help"):
-        print " use  -i <depID>"
+        print(" use  -i <depID>")
       elif opt in ("-i", "--id"):
         id = arg
 # make sure the entry does not exist
         if True:
           sql = "update pdbID set used = 'n' where pdb_id = '" +id +"'"
           row = wfApi.runUpdateSQL(sql);
-          print "updated pdbID " + str(id) + ",  " +str(row)
+          print("updated pdbID " + str(id) + ",  " +str(row))
 
    except getopt.GetoptError:
         # print help information and exit:
-        print " use  -i <depID>"
+        print(" use  -i <depID>")
 
 
 if __name__ == "__main__":

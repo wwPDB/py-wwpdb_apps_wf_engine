@@ -12,7 +12,7 @@ def main(argv):
     opts, args = getopt.getopt(argv,"hi:",["help","id="])
     for opt, arg in opts:
       if opt in ("-h", "--help"):
-        print " use  -i <depID>"
+        print(" use  -i <depID>")
       elif opt in ("-i", "--id"):
         id = arg
         DBstatusAPI = WfDbApi(verbose=False)
@@ -20,7 +20,7 @@ def main(argv):
         resetComms(DBstatusAPI,id)
    except getopt.GetoptError:
         # print help information and exit:
-        print " use  -i <depID>"
+        print(" use  -i <depID>")
         
 
 if __name__ == "__main__":

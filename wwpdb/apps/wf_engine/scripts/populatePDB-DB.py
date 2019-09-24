@@ -24,9 +24,9 @@ def main(argv):
    try:
     opts, args = getopt.getopt(argv,"hi:a:d",["help","id="])
     for opt, arg in opts:
-      print opt,  ", ", arg
+      print(opt,  ", ", arg)
       if opt in ("-h", "--help"):
-        print " use  -i <depID>"
+        print(" use  -i <depID>")
       elif opt in ("-i", "--id"):
         accession = arg
         sql = "select max(idnum) from (select substr(dep_set_id,3,7) idnum from deposition where substr(dep_set_id,1,3) = 'D_3') as junk"
@@ -39,13 +39,13 @@ def main(argv):
           depID = "D_" + str(int(idnum) + 1)
         except:
           depID = "D_300000"
-        print "---------------<" + depID + ">"
+        print("---------------<" + depID + ">")
         depDB = {}
         depDB["DEP_SET_ID"]=depID
 # make sure the entry does not exist
         if not wfApi.exist(depDB):
 #        if 1 <> 1:
-          print "Converting deposition " + accession + " to  " + depID
+          print("Converting deposition " + accession + " to  " + depID)
           engine = mainEngine()
           normal = ['testAlign.py','-t','entry-point','-s',depID,'-a',accession,'-d','1','-w','PopulatePDBeDB.xml','-p',path]
           engine.run(normal)
@@ -55,10 +55,10 @@ def main(argv):
           break;
 
         else:
-          print " skipping ", depID, " as it is already loaded"
+          print(" skipping ", depID, " as it is already loaded")
    except getopt.GetoptError:
         # print help information and exit:
-        print " use  -i <depID>"
+        print(" use  -i <depID>")
 
 
 if __name__ == "__main__":

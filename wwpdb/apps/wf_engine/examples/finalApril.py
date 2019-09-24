@@ -8,7 +8,7 @@ if __name__ == "__main__":
   log = open("log/WFE_D_057750_SequenceModule.log","w");
   engine = mainEngine(debug = 0,prt = log)
 
-  print"************ April API test"
+  print("************ April API test")
   engine.runNoThrow(normal)
   log.close();
 

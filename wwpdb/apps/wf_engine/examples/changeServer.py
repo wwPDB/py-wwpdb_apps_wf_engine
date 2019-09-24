@@ -22,7 +22,7 @@ def main(argv):
     opts, args = getopt.getopt(argv,"hi:o:",["help","in","out"])
     for opt, arg in opts:
       if opt in ("-h", "--help"):
-        print " use  -i <depID>"
+        print(" use  -i <depID>")
       elif opt in ("-i", "--in"):
         hostin = arg
       elif opt in ("-o", "--out"):
@@ -31,22 +31,22 @@ def main(argv):
 
 
     if hostin and hostout:
-          print "Transfering host from %s to %s " % (hostin,hostout)
+          print("Transfering host from %s to %s " % (hostin,hostout))
           sql = "delete from engine_monitoring where hostname = '" +hostin +"'"
 #          sql = "select hostname from engine_monitoring where hostname = '" +hostin +"'"
           row = wfApi.runUpdateSQL(sql);
 #	  row = wfApi.runSelectSQL(sql);
-          print "Number of rows delete from engine_monitoring = " + str(row)
+          print("Number of rows delete from engine_monitoring = " + str(row))
 
           sql = "update communication set host = '" + str(hostout) + "' where host = '" + str(hostin) + "'"
 #          sql = "select count(1) from communication where host = '" + str(hostin) + "'"
           row = wfApi.runUpdateSQL(sql);
 #          row = wfApi.runSelectSQL(sql);
-          print "Number of rows communication changed in communication = " + str(row)
+          print("Number of rows communication changed in communication = " + str(row))
 
    except getopt.GetoptError:
         # print help information and exit:
-        print " use  -i <depID>"
+        print(" use  -i <depID>")
 
 
 if __name__ == "__main__":

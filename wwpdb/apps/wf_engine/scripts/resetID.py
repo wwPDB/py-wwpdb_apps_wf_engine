@@ -22,7 +22,7 @@ def main(argv):
     opts, args = getopt.getopt(argv,"hi:a:",["help","id=","an="])
     for opt, arg in opts:
       if opt in ("-h", "--help"):
-        print " use  -i <depID>  (optional  -a <annotator_initials>)"
+        print(" use  -i <depID>  (optional  -a <annotator_initials>)")
       elif opt in ("-i", "--id"):
         id = arg
       elif opt in ("-a", "--an"):
@@ -62,10 +62,10 @@ def main(argv):
 
 # This is the class file reference - necessary but neutral
     else:
-      print " use  -i <depID> (optional  -a <annotator_initials>)"
+      print(" use  -i <depID> (optional  -a <annotator_initials>)")
    except getopt.GetoptError:
         # print help information and exit:
-        print " use  -i <depID> (optional  -a <annotator_initials>)"
+        print(" use  -i <depID> (optional  -a <annotator_initials>)")
         
 
 if __name__ == "__main__":

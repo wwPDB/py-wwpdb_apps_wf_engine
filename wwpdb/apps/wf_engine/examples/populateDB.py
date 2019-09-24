@@ -24,7 +24,7 @@ def main(argv):
       depDB["DEP_SET_ID"]=depID
 # make sure the entry does not exist
       if not wfApi.exist(depDB):
-        print "Converting deposition " + k + " to  " + depID
+        print("Converting deposition " + k + " to  " + depID)
         engine = mainEngine()
         normal = ['testAlign.py','-t','entry-point','-s',depID,'-d','2','-w','PopulateDB.xml','-p',path]
         engine.runNoThrow(normal)
@@ -32,7 +32,7 @@ def main(argv):
         sql = "insert communication (sender,receiver,dep_set_id,command,status,actual_timestamp,parent_dep_set_id,parent_wf_class_id,paraent_wf_inst_id,data_version) values ('INSERT','LOAD','" + id + "','INIT','INIT'," + now + ")"
         wfApi.runInsertSQL(sql);
       else:
-        print " skipping ", depID, " as it is already loaded"
+        print(" skipping ", depID, " as it is already loaded")
 
 
 if __name__ == "__main__":

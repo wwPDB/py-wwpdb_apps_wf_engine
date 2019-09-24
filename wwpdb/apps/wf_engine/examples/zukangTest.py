@@ -20,9 +20,9 @@ def main(argv):
    try:
     opts, args = getopt.getopt(argv,"hi:d",["help","id="])
     for opt, arg in opts:
-        print opt,  ", ", arg
+        print(opt,  ", ", arg)
         if opt in ("-h", "--help"):
-          print " use  -i <depID>"
+          print(" use  -i <depID>")
           exit(0)
         if opt in ("-i", "--id"):
           depID = arg
@@ -30,7 +30,7 @@ def main(argv):
           depDB = {}
           depDB["DEP_SET_ID"]=depID
           if not wfApi.exist(depDB):
-            print " ID NOT FOUND " + str(depID)
+            print(" ID NOT FOUND " + str(depID))
           else:
             engine = mainEngine()
 #            normal = ['testAlign.py','-t','entry-point','-s',depID,'-d','4','-w','ReportsModuleUI.xml','-p',path]
@@ -39,10 +39,10 @@ def main(argv):
             normal = ['testAlign.py','-t','entry-point','-s',depID,'-d','4','-w','LigandModule.xml','-p',path]
 #            normal = ['testAlign.py','-t','entry-point','-s',depID,'-d','4','-w','SequenceModule.xml','-p',path]
             engine.runNoThrow(normal)
-          print "Finished "
+          print("Finished ")
    except getopt.GetoptError:
         # print help information and exit:
-        print " use  -i <depID>"
+        print(" use  -i <depID>")
 
 
 if __name__ == "__main__":

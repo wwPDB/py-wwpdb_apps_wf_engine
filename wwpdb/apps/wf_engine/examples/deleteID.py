@@ -32,7 +32,7 @@ def main(argv):
     opts, args = getopt.getopt(argv,"hi:a:d",["help","id="])
     for opt, arg in opts:
       if opt in ("-h", "--help"):
-        print " use  -i <depID>"
+        print(" use  -i <depID>")
       elif opt in ("-i", "--id"):
         id = arg
         depID =  id
@@ -42,39 +42,39 @@ def main(argv):
         sql = "select dep_set_id,email from deposition where dep_set_id = '" +id +"'"
         rows = wfApi.runSelectSQL(sql);
         for row in rows:
-          print "deposition " + str(rows)
+          print("deposition " + str(rows))
         sql = "select * from user_data where dep_set_id = '" +id +"'"
         rows = wfApi.runSelectSQL(sql);
         for row in rows:
-          print "deposition " + str(rows)
+          print("deposition " + str(rows))
 # make sure the entry does not exist
 
-        check = raw_input(' Are you sure you want to delete this data ')
+        check = input(' Are you sure you want to delete this data ')
         if check == 'Y' or check == 'y':
-          print "Deleting"
+          print("Deleting")
 
           sql = "delete from deposition where dep_set_id = '" +id +"'"
           row = wfApi.runUpdateSQL(sql);
-          print "Number of rows delete from deposition = " + str(row)
+          print("Number of rows delete from deposition = " + str(row))
           sql = "delete from communication where dep_set_id = '" +id +"'"
           row = wfApi.runUpdateSQL(sql);
-          print "Number of rows communication from deposition = " + str(row)
+          print("Number of rows communication from deposition = " + str(row))
           sql = "delete from wf_task where dep_set_id = '" +id +"'"
           row = wfApi.runUpdateSQL(sql);
-          print "Number of rows wf_task from deposition = " + str(row)
+          print("Number of rows wf_task from deposition = " + str(row))
           sql = "delete from wf_instance where dep_set_id = '" +id +"'"
           row = wfApi.runUpdateSQL(sql);
-          print "Number of rows wf_instance from deposition = " + str(row)
+          print("Number of rows wf_instance from deposition = " + str(row))
           sql = "delete from wf_instance_last where dep_set_id = '" +id +"'"
           row = wfApi.runUpdateSQL(sql);
-          print "Number of rows wf_instance_last from deposition = " + str(row)
+          print("Number of rows wf_instance_last from deposition = " + str(row))
           sql = "delete from user_data where dep_set_id = '" +id +"'"
           row = wfApi.runUpdateSQL(sql);
-          print "Number of rows user_data from deposition = " + str(row)
+          print("Number of rows user_data from deposition = " + str(row))
 
    except getopt.GetoptError:
         # print help information and exit:
-        print " use  -i <depID>"
+        print(" use  -i <depID>")
 
 
 

@@ -12,19 +12,19 @@ def main(argv):
 
     sm = ServerMonitor(None, None, None)
     proc = sm.myProcessID()
-    print "My process ID : " + str(proc)
+    print("My process ID : " + str(proc))
 
     if proc:
         try:
             pid = int(proc)
             os.kill(pid, signal.SIGKILL)
-            print "Workflow Server killed "
+            print("Workflow Server killed ")
         except Exception as e:
-            print "Failed to kill WF daemon" + str(id) + " because " + str(e)
+            print("Failed to kill WF daemon" + str(id) + " because " + str(e))
 
     host = socket.gethostname()
     logName = '/wwpdb_da/da_top/sessions/wfm-logs/monitor-' + str(host) + '.log'
-    print "Log will be written to " + str(logName)
+    print("Log will be written to " + str(logName))
 
     now = time.strftime("%Y-%m-%d-%H-%M-%S", time.gmtime())
 

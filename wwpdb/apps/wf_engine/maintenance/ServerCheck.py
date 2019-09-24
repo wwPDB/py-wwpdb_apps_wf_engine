@@ -21,14 +21,14 @@ class ServerCheck():
 
         while True:
             for siteID in self.siteIDs:
-                print " Checking " + siteID
+                print(" Checking " + siteID)
                 config = ConfigInfo(siteId=siteID)
 
                 con = self.getConnection(config)
 
                 self.getHosts(siteID)
 
-                print " "
+                print(" ")
                 self.closeConnection()
             time.sleep(600)
 
@@ -64,18 +64,18 @@ class ServerCheck():
         timeNow = getTimeNow()
         for row in list:
             if timeNow - row[1] > 60:
-                print " ERROR : very timestamp from host %s , delay = %8.2f" % (row[0], timeNow - row[1])
+                print(" ERROR : very timestamp from host %s , delay = %8.2f" % (row[0], timeNow - row[1]))
                 self.sendHelpEmails('WFdaemon response error ' + str(row[0]), 'WFdaemon on ' + str(row[0]) + ' has a response time > 60 seconds for SITE-ID = ' + str(siteID))
             else:
                 if timeNow - row[1] > 10:
-                    print " Warning : stale timestamp from host %s , delay = %8.2f" % (row[0], timeNow - row[1])
+                    print(" Warning : stale timestamp from host %s , delay = %8.2f" % (row[0], timeNow - row[1]))
             if row[2] > 0:
                 # available physical memory is that used - buffers and cache which are available to use
                 # print " test : host = %s,  total =  %s , used = %s,  buffers = %s,
                 # cached = %s , fraction = %8.2f" % (row[0] , row[2] , row[3] , row[4] ,
                 # row[5], (row[3] - row[4] - row[5]) / row[2])
                 if (row[3] - row[4] - row[5]) / row[2] > 0.9:
-                    print " ERROR : Physical memory usage very large on host %s , fraction = %8.2f" % (row[0], row[3] / (row[2] - row[4] - row[5]))
+                    print(" ERROR : Physical memory usage very large on host %s , fraction = %8.2f" % (row[0], row[3] / (row[2] - row[4] - row[5])))
                     self.sendHelpEmails('High memory usage on ' +
                                         str(row[0]), 'High physical memory usage on ' +
                                         str(row[0]) +
@@ -88,9 +88,9 @@ class ServerCheck():
                                              row[5])))
                 else:
                     if (row[3] - row[4] - row[5]) / row[2] > 0.5:
-                        print " Warning : Physical memory usage large on host %s , fraction = %8.2f" % (row[0], row[3] / (row[2] - row[4] - row[5]))
+                        print(" Warning : Physical memory usage large on host %s , fraction = %8.2f" % (row[0], row[3] / (row[2] - row[4] - row[5])))
             if row[7] / row[6] > 0.8:
-                print " ERROR : CPU usage very large on host %s , nCPU = %d, Usage  = %8.2f" % (row[0], row[4], row[5])
+                print(" ERROR : CPU usage very large on host %s , nCPU = %d, Usage  = %8.2f" % (row[0], row[4], row[5]))
                 self.sendHelpEmails('CPU usage on ' +
                                     str(row[0]), 'CPU usage on ' +
                                     str(row[0]) +
@@ -100,7 +100,7 @@ class ServerCheck():
                                     (row[4], row[5]))
             else:
                 if row[7] / row[6] > 0.5:
-                    print " Warngin : CPU usage large on host %s , nCPU = %d, Usage  = %8.2f" % (row[0], row[4], row[5])
+                    print(" Warngin : CPU usage large on host %s , nCPU = %d, Usage  = %8.2f" % (row[0], row[4], row[5]))
 
     def sendHelpEmails(self, subject, message):
 

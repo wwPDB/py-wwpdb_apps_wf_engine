@@ -32,9 +32,9 @@ class ServerTransfer(object):
         sql = "update communication set host = '" + str(toHost) + "' where host = '" + str(fromHost) + "'"
         ok = self.wfCon.runUpdateSQL(sql)
         if ok > 0:
-            print "Number of hostname changes : " + str(ok)
+            print("Number of hostname changes : " + str(ok))
         else:
-            print "No hosts transfered"
+            print("No hosts transfered")
 
         return ok
 
@@ -58,7 +58,7 @@ class ServerTransfer(object):
         sql = "select count(1),host from communication group by host order by host"
         rows = self.wfCon.runSelectSQL(sql)
         if self.verbose:
-            print "getAllHosts : " + str(rows)
+            print("getAllHosts : " + str(rows))
 
         return rows
 
@@ -80,7 +80,7 @@ class ServerTransfer(object):
         try:
             ret = 100.0 * float(physical - buffers - cache) / float(totalPhysical)
             if self.verbose:
-                print "Contention = " + str(ret)
+                print("Contention = " + str(ret))
             return ret
         except:
             return 0.0
@@ -96,12 +96,12 @@ class ServerTransfer(object):
             # set the time now so we don't get this stolen by another server and get bouncing
             sql = "update communication set host = '" + str(self.hostname) + "' , actual_timestamp = " + str(timeNow) + " where ordinal = " + str(ordinal)
             if self.verbose:
-                print "StealControl " + str(sql)
+                print("StealControl " + str(sql))
             ok = self.wfCon.runUpdateSQL(sql)
             if ok > 0:
-                print " Servertransfer : Updated ordinal = " + str(ordinal)
+                print(" Servertransfer : Updated ordinal = " + str(ordinal))
         except Exception as e:
-            print "Exception : StealControl " + str(e)
+            print("Exception : StealControl " + str(e))
 
     def pingDBforStale(self):
         '''
@@ -120,11 +120,11 @@ class ServerTransfer(object):
                 self.hostname) + "' and (" + str(timeNow) + " - actual_timestamp)  > " + str(self.shortResponse) + " order by actual_timestamp desc limit 1"
 
             if self.verbose:
-                print "pingDBSQL " + str(sql)
+                print("pingDBSQL " + str(sql))
 
             rows = self.wfCon.runSelectSQL(sql)
             if self.verbose:
-                print "Query Return  " + str(rows)
+                print("Query Return  " + str(rows))
 
             if rows is not None and len(rows) > 0:
                 # yes there is one at least
@@ -140,7 +140,7 @@ class ServerTransfer(object):
                     else:
                         return row[0]
         except Exception as e:
-            print "Exception : pingDBforStayle " + str(e)
+            print("Exception : pingDBforStayle " + str(e))
 
         return 0
 
@@ -148,15 +148,15 @@ class ServerTransfer(object):
 
         min = int(seconds) / 60
         if min == 0:
-            print " Stale = " + str(seconds) + " sec"
+            print(" Stale = " + str(seconds) + " sec")
         else:
             sec = int(seconds) % min
             hour = min / 60
             if hour == 0:
-                print " Stale = " + str(min) + ":" + str(sec) + " m:s"
+                print(" Stale = " + str(min) + ":" + str(sec) + " m:s")
             else:
                 min = min % hour
-                print " Stale = " + str(hour) + ":" + str(min) + ":" + str(sec) + " h:m:s"
+                print(" Stale = " + str(hour) + ":" + str(min) + ":" + str(sec) + " h:m:s")
 
 
 def main(argv):
@@ -165,7 +165,7 @@ def main(argv):
 
     while True:
         ordinal = st.pingDBforStale()
-        print " Ping " + str(ordinal)
+        print(" Ping " + str(ordinal))
         if ordinal > 0:
             st.StealControl(ordinal)
 

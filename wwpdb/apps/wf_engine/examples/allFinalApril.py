@@ -13,6 +13,6 @@ if __name__ == "__main__":
   
     engine = mainEngine()
 
-    print"************ April API test - console interface"
+    print("************ April API test - console interface")
     engine.runNoThrow(normal)
 

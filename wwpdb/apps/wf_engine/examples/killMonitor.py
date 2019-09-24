@@ -6,15 +6,15 @@ def main(argv):
 
   sm = ServerMonitor(None,None,None)
   proc = sm.myProcessID()
-  print "Process ID : " + str(proc)
+  print("Process ID : " + str(proc))
 
   if proc:
     try:
       pid = int(proc)
       os.kill(pid,signal.SIGKILL)
-      print "Workflow Server killed "
-    except Exception,e:
-      print "Failed to kill WF daemon" + str(id) + " because " + str(e)
+      print("Workflow Server killed ")
+    except Exception as e:
+      print("Failed to kill WF daemon" + str(id) + " because " + str(e))
 
 
 if __name__ == "__main__":

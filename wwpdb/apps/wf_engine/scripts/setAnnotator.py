@@ -30,7 +30,7 @@ def main(argv):
     opts, args = getopt.getopt(argv,"hi:a:s:d",["help","id=","an=","site="])
     for opt, arg in opts:
       if opt in ("-h", "--help"):
-        print " use  -i <depID> -a <initials>"
+        print(" use  -i <depID> -a <initials>")
       elif opt in ("-i", "--id"):
         depID =  arg
       elif opt in ("-a", "--an"):
@@ -40,18 +40,18 @@ def main(argv):
 
 
     if ann is None or depID is None:
-        print " use  -i <depID> -a <annotator_initials>"
+        print(" use  -i <depID> -a <annotator_initials>")
     else:
         depDB = {}
         depDB["DEP_SET_ID"]=depID
         if wfApi.exist(depDB):
           WFEsetAnnotator(wfApi,depID,ann)
-          print "Done"
+          print("Done")
         else:
-          print " That ID is not loaded "
+          print(" That ID is not loaded ")
    except getopt.GetoptError:
         # print help information and exit:
-        print " use  -i <depID> -a <initials>"
+        print(" use  -i <depID> -a <initials>")
 
 
 if __name__ == "__main__":

@@ -6,6 +6,6 @@ if __name__ == "__main__":
   
   engine = mainEngine()
 
-  print"************ select test 1"
+  print("************ select test 1")
   engine.runNoThrow(normal)
 

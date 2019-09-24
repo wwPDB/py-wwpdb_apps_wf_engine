@@ -15,11 +15,11 @@ def main(argv):
     while True:
       list = sm.staleServer(report = 2)
 
-      print "-------" + strftime("%Y-%m-%d %H:%M:%S", gmtime()) + "---------------"
+      print("-------" + strftime("%Y-%m-%d %H:%M:%S", gmtime()) + "---------------")
       for item in list:
-        print str(item)
+        print(str(item))
  
-      print time.sleep(10)
+      print(time.sleep(10))
 
 if __name__ == "__main__":
 

@@ -6,6 +6,6 @@ if __name__ == "__main__":
   
   engine = mainEngine()
 
-  print"************ test of 1UIS : 14 errors , no GUI, full debug"
+  print("************ test of 1UIS : 14 errors , no GUI, full debug")
   engine.runNoThrow(normal)
 

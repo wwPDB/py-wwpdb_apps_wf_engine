@@ -371,7 +371,7 @@ class mainEngine(object):
             iteratorKey = key
             iteratorData = getObjectValue(data, self.debug, self.__lfh)
 
-        if not isinstance(iteratorData, types.ListType):
+        if not isinstance(iteratorData, list):
             logger.info("+mainEngine.__loopTest : *** Error in WF - can only use a list for loop " + str(type(iteratorData)) + "\n")
             logger.info("+mainEngine.__loopTest : *** Error in WF - This is the data " + str(iteratorData) + "\n")
             return -1

@@ -20,9 +20,9 @@ def main(argv):
    try:
     opts, args = getopt.getopt(argv,"hi:a:d",["help","id="])
     for opt, arg in opts:
-      print opt,  ", ", arg
+      print(opt,  ", ", arg)
       if opt in ("-h", "--help"):
-        print " use  -i <depID>"
+        print(" use  -i <depID>")
       elif opt in ("-i", "--id"):
         id = arg
         depID = id
@@ -30,7 +30,7 @@ def main(argv):
         depDB["DEP_SET_ID"]=depID
 # make sure the entry does not exist
         if not wfApi.exist(depDB):
-          print "Converting deposition " + id + " to  " + depID
+          print("Converting deposition " + id + " to  " + depID)
           engine = mainEngine()
           normal = ['testAlign.py','-t','entry-point','-s',depID,'-d','1','-w','PopulateDB.xml','-p',path]
           engine.run(normal)
@@ -40,10 +40,10 @@ def main(argv):
           break;
 
         else:
-          print " skipping ", depID, " as it is already loaded"
+          print(" skipping ", depID, " as it is already loaded")
    except getopt.GetoptError:
         # print help information and exit:
-        print " use  -i <depID>"
+        print(" use  -i <depID>")
 
 
 if __name__ == "__main__":

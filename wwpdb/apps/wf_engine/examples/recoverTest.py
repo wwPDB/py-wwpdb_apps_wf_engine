@@ -8,6 +8,6 @@ if __name__ == "__main__":
   
   engine = mainEngine()
 
-  print"************ April API test"
+  print("************ April API test")
   engine.runNoThrow(normal)
 

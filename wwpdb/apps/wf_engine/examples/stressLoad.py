@@ -22,18 +22,18 @@ def main(argv):
     start = 900010
     loop = 1
     for opt, arg in opts:
-        print opt,  ", ", arg
+        print(opt,  ", ", arg)
         if opt in ("-h", "--help"):
-          print " use  -n <size-of-stress>"
+          print(" use  -n <size-of-stress>")
           exit(0)
         if opt in ("-n", "--num"):
           loop = int(arg)
         if opt in ("-s", "--start"):
           start = int(arg)
           if start < 900010: 
-            print " Invalid start value 900010 < start < 999999 " + str(start)
+            print(" Invalid start value 900010 < start < 999999 " + str(start))
             exit(0)
-    print " ************** starting at " + str(start) + "  finish at " + str(start+loop)
+    print(" ************** starting at " + str(start) + "  finish at " + str(start+loop))
     if loop > 0 and start > 900000:
         for i in range(start,start+loop):
           depID = "D_" + str(i)
@@ -51,13 +51,13 @@ def main(argv):
             engine.runNoThrow(normal)
             initialiseComms(wfApi,depID)
           else:
-            print " skipping ", depID, " as it is already loaded"
+            print(" skipping ", depID, " as it is already loaded")
           engine = mainEngine()
           normal = ['testAlign.py','-t','entry-point','-s',depID,'-d','1','-w','Stress.xml','-p',path]
           engine.runNoThrow(normal)
    except getopt.GetoptError:
         # print help information and exit:
-        print " use  -i <depID>"
+        print(" use  -i <depID>")
 
 
 if __name__ == "__main__":

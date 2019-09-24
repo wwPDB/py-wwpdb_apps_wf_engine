@@ -15,7 +15,7 @@ def main(argv):
    engine = mainEngine(debug=1,prt=log)
    normal = ['engine.py','-t','entry-point','-s',id,'-a',acc,'-d','2','-w','testException.xml','-p',path]
    engine.runNoThrow(normal)
-   print "finished"
+   print("finished")
         
 
 if __name__ == "__main__":

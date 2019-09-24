@@ -20,7 +20,7 @@ def main(argv):
     id = argv[0]
 
     if id is None:
-      print "Please provide a depsetid "
+      print("Please provide a depsetid ")
       sys.exit(0)
    
     host = None
@@ -31,24 +31,24 @@ def main(argv):
         host = r[0]
 
       if not host:
-        print " Could not get hostname ?? " + host
+        print(" Could not get hostname ?? " + host)
         sys.exit(0)
       else:
-        print "Will assign " + str(id) + " to this host " + str(host)
+        print("Will assign " + str(id) + " to this host " + str(host))
 
       now =   getTimeNow()
-    except Exception,e:
-      print "failed to get host " + str(e)
+    except Exception as e:
+      print("failed to get host " + str(e))
       sys.exit(0)
 
     try:
       sql = "update communication set sender='INSERT',receiver='LOAD',wf_class_id=NULL,wf_inst_id=NULL,wf_class_file='Annotation.bf.xml',command='INIT',status='INIT',actual_timestamp='" + str(now) + "',parent_dep_set_id='" + str(id) + "',parent_wf_class_id='Annotate',parent_wf_inst_id='W_001',data_version=NULL,host='" + str(host) + "',activity='FINISHED' where dep_set_id = '" + str(id) + "'"
-      print sql
+      print(sql)
       ok = wfApi.runUpdateSQL(sql);
       if ok < 1:
-        print " Please check that you have run this script on the right server - ID was not found for this host " + str(host)
-    except Exception,e:
-      print "Failed to update the database " + str(e)
+        print(" Please check that you have run this script on the right server - ID was not found for this host " + str(host))
+    except Exception as e:
+      print("Failed to update the database " + str(e))
 
 
 if __name__ == "__main__":
