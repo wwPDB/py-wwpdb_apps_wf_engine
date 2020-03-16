@@ -46,6 +46,8 @@ def main():
     #
 
     wfLogDirPath = os.path.join(topSessionPath, "wf-logs")
+    if not os.path.exists(wfLogDirPath):
+        os.makedirs(wfLogDirPath)
     pidFilePath = os.path.join(wfLogDirPath, myHostName + '.pid')
     #
     stdoutFilepath = os.path.join(wfLogDirPath, myHostName + '-stdout.log')
