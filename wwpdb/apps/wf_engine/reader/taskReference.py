@@ -21,6 +21,7 @@ import sys
 import time
 from wwpdb.apps.wf_engine.reader.TaskComparitor import TaskComparitor
 from wwpdb.apps.wf_engine.reader.TaskParameter import TaskParameter
+from wwpdb.apps.wf_engine.reader.parseTimeDelta import parseTimeDelta
 
 from wwpdb.utils.wf.process.ActionRegistry import ActionRegistry
 
@@ -107,11 +108,9 @@ class taskModule():
                 self.file = taskType.getAttribute("file")
                 self.outputName.append(taskNode.getAttribute("nextTask"))
                 temp = taskType.getAttribute("runTime")
-                t = time.strptime(temp, '%H:%M:%S')
-                self.runTime = 3600 * t[3] + 60 * t[4] + t[5]
+                self.runTime = int(parseTimeDelta(temp).total_seconds())
                 temp = taskType.getAttribute("failTime")
-                t = time.strptime(temp, '%H:%M:%S')
-                self.failTime = 3600 * t[3] + 60 * t[4] + t[5]
+                self.failTime = int(parseTimeDelta(temp).total_seconds())
             elif taskType.nodeName == "wf:handler":
                 self.parseException(taskType)
             elif taskType.nodeName == "wf:manual":
@@ -219,11 +218,9 @@ class taskModule():
 
         self.type = "Process"
         temp = process.getAttribute("runTime")
-        t = time.strptime(temp, '%H:%M:%S')
-        self.runTime = 3600 * t[3] + 60 * t[4] + t[5]
+        self.runTime = int(parseTimeDelta(temp).total_seconds())
         temp = process.getAttribute("failTime")
-        t = time.strptime(temp, '%H:%M:%S')
-        self.failTime = 3600 * t[3] + 60 * t[4] + t[5]
+        self.failTime = int(parseTimeDelta(temp).total_seconds())
 
         for info in process.childNodes:
             if info.nodeName == "wf:detail":
