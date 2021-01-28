@@ -248,7 +248,7 @@ class ServerMonitor(object):
             sql = "select dep_set_id from wf_instance_last where dep_set_id = '" + depID + "'"
             ok = self.__eUtil.runSelectSQL(sql)
 
-            if ok < 1:
+            if ok is None or len(ok) < 1:
                 sql = "insert into wf_instance_last (wf_inst_id, wf_class_id, dep_set_id, owner, inst_status, status_timestamp) values ('" +\
                     wfInstId + "','" + classID + "','" + depID + "','" + file + "','init','" + str(now) + "')"
                 ok = self.__eUtil.runUpdateSQL(sql)
