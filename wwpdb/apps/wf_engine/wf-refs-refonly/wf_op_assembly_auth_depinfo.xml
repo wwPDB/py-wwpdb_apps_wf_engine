@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <wf:wwPDBworkflow xmlns:wf="http://pdbml.wwpdb.org/schema-wf" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pdbml.wwpdb.org/schema-wf wwpdb-workflow-v100.xsd">
     <wf:metadata>
-        <wf:version major="1.51" author="smat" date="22-02-2021" id="assembly_auth_depinfo" name="wf_op_assembly_auth_depinfo.xml"/>
+        <wf:version major="1.51" author="Ahsan" date="22-02-2021" id="ASB_AUTH" name="wf_op_assembly_auth_depinfo.xml"/>
         <wf:description>
             <wf:short>Short Description of assembly_auth_depinfo</wf:short>
             <wf:subtext>Subtext for assembly_auth_depinfo</wf:subtext>
@@ -11,11 +11,11 @@
     <wf:workflow>
         <wf:dataObjects>
             <wf:dataObject dataID="D1" name="pdbxmodelfile" type="string" container="list" mutable="true" >
-                <wf:description>PDBX format model data file</wf:description>
+                <wf:description>PDBX format model data file (latest)</wf:description>
                 <wf:location where="deposit" content="model" format="pdbx"  version="latest" />
             </wf:dataObject>
             <wf:dataObject dataID="D2" name="pdbxmodelfile" type="string" container="list" mutable="true" >
-                <wf:description>PDBx format model data file</wf:description>
+                <wf:description>PDBx format model data file (next)</wf:description>
                 <wf:location where="deposit" content="model" format="pdbx"  version="next" />
             </wf:dataObject>
 
