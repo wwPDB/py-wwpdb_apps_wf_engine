@@ -217,24 +217,6 @@ def wfLogDirectory(self, depID):
     return logDir
 
 
-def startWFonSubmit(depid):
-    '''
-     UPDATE communication as c  SET c.sender='WFM' ,c.receiver ='WFE', c.dep_set_id='D_1100201165', c.wf_class_id= Null, c.wf_inst_id = Null,c.wf_class_file='ValidModule.xml',c.command='restartGoWF', c.status ='pending',c.actual_timestamp= Null, c.parent_dep_set_id='D_1100201165', c.parent_wf_class_id='ValMod', c.parent_wf_inst_id='None', c.data_version='latest'  WHERE c.ordinal = '17686'
-
-    try:
-          sql = "update communication set sender='DEP', receiver = 'WFE', wf_class_id=Null, wf_inst_id = Null, wf_class_file='Annotation.bf.xml', command='restartGoWF', status='pending', actual_timestamp=Null, parent_dep_set_id = '" + str(depid) + "', parent_wf_class_id='Annotate', parent_wf_inst_id='None', data_version='latest' where dep_set_id = '" + str(depid) +"'"
-          ok = DBstatusAPI.runUpdateSQL(sql)
-          if int(ok) == 1:
-            logger.info("Updated 1 row to start the WFE annotation ")
-          else:
-            logger.info("DID NOT UPDATE status")
-    except Exception,e:
-       logger.error("failed to start WF from deposition")
-    '''
-
-    pass
-
-
 def getNextInstanceId(DBstatusAPI, depID, prt=sys.stderr):
     """
       Create new workflow instance from the statusDB
@@ -343,17 +325,6 @@ def updateInitialStateDB(DBstatusAPI, depID, debug=0, prt=sys.stderr):
                 prt.write("+updateInitialStateDB - %s status=%r for updating Annotate class in wf_instance \n" % (depID, ok))
 
 
-def DepUIsendDepositorEmail(depID, data):
-
-    data = data.replace("$DEPID", depID)
-    data = data.replace("$LINEFEED", '\n')
-
-    words = data.split('|')
-    email = DepUIgetDepositorEmail(depID)
-
-    WFEsendEmail(email, words[0], words[1], words[2])
-
-
 def DepUIgetDepositorEmail(depID):
     '''
       go get the depositor email
@@ -427,18 +398,6 @@ def resetComms(DBstatusAPI, id):
         str(t) + "',parent_dep_set_id='" + str(id) + "',parent_wf_class_id='Annotate',wf_class_file = 'Annotation.bf.xml',parent_wf_inst_id='W_001' where dep_set_id = '" + id + "'"
     logger.info(sql)
     DBstatusAPI.runUpdateSQL(sql)
-
-
-def startAnnotation(DBstatusAPI, id):
-    '''
-      method to start Annotation
-
-      set  restartWFGo foe depID
-    '''
-
-    logger.info(" ******** call to startAnnotation stub for " + str(id))
-
-    return
 
 
 def initialiseComms(DBstatusAPI, id):
@@ -541,34 +500,11 @@ def getdepUIPassword(DBstatusAPI, id):
             if allList is not None:
                 for allRow in allList:
                     pw = allRow[0]
-                    if pw == 'unknown':
-                        pw = getHardwiredPW(str(id))
                     return pw
     except Exception as e:
         logger.exception("Failed to get depUI PW in status DB")
 
     return None
-
-
-def getHardwiredPW(id):
-    '''
-      these PW are too long for the DB
-    '''
-
-    pw = {'D_1100201846': 'thisisalongpasswordmorethan16char',
-          'D_1000200215': 'AYx34NmKhcLQLtxMj64n',
-          'D_1000200727': 'projectcomponent4',
-          'D_1000200796': 'pdbdepositicshinsnu',
-          'D_1000203715': 'Assamaou1234Assamaou1234',
-          'D_1000203789': 'mzc1hAdDGW5JyJ7pvS87Ouu',
-          'D_1000204348': 'mangustotslovamango',
-          'D_1000204349': 'mangustotsolvamango'}
-
-    if id in pw:
-        return pw[id]
-    else:
-        logger.error("Another unknown PW for ID = " + str(id))
-        return 'unknown'
 
 
 def setdepUIPassword(DBstatusAPI, id, pw):
@@ -618,6 +554,7 @@ def initilliseDepositV2(DBstatusAPI, id, pdb='?', date=None, initials='unknown',
             DBstatusAPI.runInsertSQL(sql)
 
 
+# Deprecated - but need to cleanup WF examples
 def initilliseDeposit(DBstatusAPI, id, pdb='?', date=None, initials='unknown', deposit_site='?', process_site='?', status_code='DEP',
                       author_code='?', title='?', author_list='?', expt='?', status_code_exp='?', SG_center='?', ann='dep', email=''):
     '''
@@ -639,45 +576,6 @@ def initilliseDeposit(DBstatusAPI, id, pdb='?', date=None, initials='unknown', d
             deposit_site) + "','" + str(process_site) + "','" + str(status_code) + "','" + str(author_code) + "','" + str(title) + "','" + str(author_list) + "','" + str(expt) + "','" + str(status_code_exp) + "','" + str(SG_center) + "','" + str(ann) + "','" + str(email) + "')"
         logger.info(sql)
         DBstatusAPI.runInsertSQL(sql)
-
-
-def runWorkflowValidationServer(DBstatusAPI, id):
-    '''
-       Add request to run WF  : ValidDeposit .xml
-    '''
-
-    logger.info(" Engine.WFEapplications.ValidDeposit " + str(id))
-    now = getTimeNow()
-
-    logger.info(" Engine.WFEapplications.runWorkflowValidationServer " + str(now))
-
-    sql = "update communication set sender = 'DEP', receiver = 'WFE', wf_class_file = 'ValidDeposit.xml', command = 'runWF', status = 'PENDING', actual_timestamp = '" + \
-        str(now) + "', parent_dep_set_id = '" + str(id) + "', parent_wf_class_id = 'ValDep', parent_wf_inst_id = 'W_001' where dep_set_id = '" + id + "'"
-
-    logger.info(" Engine.WFEapplications.runWorkflowValidationServer - ")
-    logger.info(" Engine.WFEapplications.runWorkflowValidationServer - " + str(sql))
-
-    nrow = DBstatusAPI.runUpdateSQL(sql)
-    logger.info(" WFE.runWorkflowValidationServer :  Rows affected: %i" % nrow)
-
-
-def runWorkflowOnSubmit(DBstatusAPI, id):
-    '''
-       Add request to run WF  : depRunOnUpload.xml
-    '''
-
-    logger.info(" Engine.WFEapplications.runWorkflowOnUpload " + str(id))
-    now = getTimeNow()
-
-    logger.info(" Engine.WFEapplications.runWorkflowOnUpload " + str(now))
-
-    sql = "update communication set sender = 'DEP', receiver = 'WFE', wf_class_file = 'depRunOnSubmit.xml', command = 'runWF', status = 'PENDING', actual_timestamp = '" + \
-        str(now) + "', parent_dep_set_id = '" + str(id) + "', parent_wf_class_id = 'DepUpload', parent_wf_inst_id = 'W_001' where dep_set_id = '" + id + "'"
-
-    logger.info(" Engine.WFEapplications.runWorkflowOnUpload - " + str(sql))
-
-    nrow = DBstatusAPI.runUpdateSQL(sql)
-    logger.info(" WFE.runWorkflowOnUpload :  Rows affected: %i" % nrow)
 
 
 def runValidationUpload(DBstatusAPI, id, validation_server=False):
