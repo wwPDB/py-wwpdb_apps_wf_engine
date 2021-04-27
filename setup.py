@@ -20,8 +20,8 @@ if not version:
     raise RuntimeError('Cannot find version information')
 
 # We need data for bootstrap
-#datadir = os.path.join('share','data','wf_engine_utils')
-#datafiles =
+# datadir = os.path.join('share','data','wf_engine_utils')
+# datafiles =
 dfiles = glob.glob('wwpdb/apps/wf_engine/wf-defs/*.xml')
 
 setup(
@@ -52,21 +52,21 @@ setup(
     #
     install_requires=['psutil', 'python-dateutil', 'mmcif.utils',
                       'wwpdb.utils.db', 'wwpdb.utils.config',
-                      'wwpdb.utils.wf >= 0.5', 'wwpdb.utils.detach', 'wwpdb.io',
+                      'wwpdb.utils.wf >= 0.5', 'wwpdb.utils.detach', 'wwpdb.io', 'wwpdb.apps.workmanager',
                       'tabulate', 'future'],
     packages=find_packages(exclude=['wwpdb.apps.tests-wf_engine', 'wwpdb.apps.wf_engine.examples']),
     package_data={
         # If any package contains *.md or *.rst ...  files, include them:
         '': ['*.md', '*.rst', "*.txt", "*.cfg"]
     },
-    data_files = [
+    data_files=[
         # Data for bootstrap
         ('data/wf_engine/bootstrap', ['wwpdb/apps/wf_engine/wf_engine_utils/test/test-pdb-codes.ids',
                                       'wwpdb/apps/wf_engine/wf_engine_utils/test/test-emdb-codes.ids',
                                       'wwpdb/apps/wf_engine/wf_engine_utils/test/test-bmrb-codes.ids']),
-        #('data/wf_engine/wf-defs', dfiles)
+        # ('data/wf_engine/wf-defs', dfiles)
     ],
-        
+
     #
     # These basic tests require no database services -
     test_suite="wwpdb.apps.tests-wf_engine",
