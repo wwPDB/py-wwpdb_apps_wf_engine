@@ -24,7 +24,7 @@ class AutoRun(object):
         self.dep_id = dep_id
         self.__cI = ConfigInfo(self.__siteId)
         self.db_api = self.make_db_connection()
-        self.current_status = None
+        self.wf_status = None
         self.ordinal = None
 
     def make_db_connection(self):
@@ -42,12 +42,12 @@ class AutoRun(object):
                          dbUser=db_user, dbPw=db_pw, dbSocket=db_socket, dbPort=db_port,
                          verbose=self.__verbose, log=self.__lfh)
 
-    def update_status_and_ordinal(self):
+    def get_status_and_ordinal(self):
         sql = self.__queries['SELECT_COMMUNICATION'].format(dep_id=self.dep_id)
         rows = self.db_api.runSelectSQL(sql)
         if rows:
-            self.current_status = rows.get('status', None)
-            self.current_ordinal = rows.get('ordinal', None)
+            self.wf_status = rows.get('status', None)
+            self.ordinal = rows.get('ordinal', None)
         else:
             self.__lfh("Couldn't get Status of current workflow")
 
