@@ -5,10 +5,10 @@ import sys
 
 class AutoRun(object):
     __queries = {
-        "LAST_STATUS_AND_ORDINAL": f'''
+        "LAST_STATUS_AND_ORDINAL": '''
                                 select status, ordinal from communication where parent_dep_set_id = '{dep_id}' order by actual_timestamp desc limit 1
                                 ''',
-        "START_ANNOTATION_WORKFLOW": f'''
+        "START_ANNOTATION_WORKFLOW": '''
                                 UPDATE communication set sender='WFM' receiver='WFE' dep_set_id='{dep_id}' wf_class_file= 'Annotation.bf.xml', 
                                 command='runWF', status='pending', parent_dep_set_id='{dep_id}', parent_wf_class_id='Annotate' 
                                 WHERE ordinal = f{ordinal}'''
