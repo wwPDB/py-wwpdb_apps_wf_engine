@@ -43,7 +43,7 @@ class AutoRun(object):
                          verbose=self.__verbose, log=self.__lfh)
 
     def get_status_and_ordinal(self):
-        sql = self.__queries['SELECT_COMMUNICATION'].format(dep_id=self.dep_id)
+        sql = self.__queries['LAST_STATUS_AND_ORDINAL'].format(dep_id=self.dep_id)
         rows = self.db_api.runSelectSQL(sql)
         if rows:
             self.wf_status = rows.get('status', None)
