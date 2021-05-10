@@ -66,7 +66,7 @@ setup(
                                       'wwpdb/apps/wf_engine/wf_engine_utils/test/test-bmrb-codes.ids']),
         #('data/wf_engine/wf-defs', dfiles)
     ],
-        
+
     #
     # These basic tests require no database services -
     test_suite="wwpdb.apps.tests-wf_engine",
