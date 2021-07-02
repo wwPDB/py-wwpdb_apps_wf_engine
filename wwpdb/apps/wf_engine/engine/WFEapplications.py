@@ -44,9 +44,9 @@ def getPicklePath(depSetId = None):
     cI = ConfigInfo()
     WWPDB_APP_VERSION_STRING = 'v-200'
 
-    depstrpath = cI.get("SITE_DEPOSIT_STORAGE_PATH")
+    depstrpath = cI.get("SITE_ARCHIVE_STORAGE_PATH")
     if not depstrpath:
-        logger.error("SITE_DEPOSIT_STORAGE_PATH not set")
+        logger.error("SITE_ARCHIVE_STORAGE_PATH not set")
         return None
 
     file_upload_temp_dir = os.path.join(depstrpath, 
