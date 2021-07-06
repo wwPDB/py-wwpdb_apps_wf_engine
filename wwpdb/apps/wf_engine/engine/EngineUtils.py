@@ -210,13 +210,13 @@ class EngineUtils(WfDbApi):
 
     def sendDepositorEmail(self, depID, data):
         #  JDW - for compatibility WFE running under a host based site id needs to determine the e-mail path for each case -
-        if os.access(os.path.join(self.__cI.get('SITE_DEPOSIT_STORAGE_PATH'), 'deposit', 'temp_files', 'deposition-v-200', str(depID), "citation.pkl"), os.R_OK):
+        if os.access(os.path.join(self.__cI.get('SITE_ARCHIVE_STORAGE_PATH'), 'deposit', 'temp_files', 'deposition-v-200', str(depID), "citation.pkl"), os.R_OK):
             url = self.__cI.get('SITE_CURRENT_DEP_EMAIL_URL')
             logger.info("+EngineUtils.sendDepositorEmail - %s  site %s return v200 url %s" % (depID, self.__siteId, url))
-        elif os.access(os.path.join(self.__cI.get('SITE_DEPOSIT_STORAGE_PATH'), 'deposit', 'temp_files', 'deposition-v-152', str(depID), "formdata.pkl"), os.R_OK):
+        elif os.access(os.path.join(self.__cI.get('SITE_ARCHIVE_STORAGE_PATH'), 'deposit', 'temp_files', 'deposition-v-152', str(depID), "formdata.pkl"), os.R_OK):
             url = self.__cI.get('SITE_LEGACY_DEP_EMAIL_URL')
             logger.info("+EngineUtils.sendDepositorEmail - %s  site %s return v152 url %s" % (depID, self.__siteId, url))
-        elif os.access(os.path.join(self.__cI.get('SITE_DEPOSIT_STORAGE_PATH'), 'deposit', 'temp_files', 'deposition', str(depID), "formdata.pkl"), os.R_OK):
+        elif os.access(os.path.join(self.__cI.get('SITE_ARCHIVE_STORAGE_PATH'), 'deposit', 'temp_files', 'deposition', str(depID), "formdata.pkl"), os.R_OK):
             url = self.__cI.get('SITE_DEP_EMAIL_URL')
             logger.info("+EngineUtils.sendDepositorEmail - %s  site %s return legacy url %s" % (depID, self.__siteId, url))
         else:
@@ -242,9 +242,9 @@ class EngineUtils(WfDbApi):
 
           ## JDW modified to work in V152/V200 compatibility mode -
         '''
-        fName = os.path.join(self.__cI.get('SITE_DEPOSIT_STORAGE_PATH'), 'deposit', 'temp_files', 'deposition', str(depID), "formdata.pkl")
+        fName = os.path.join(self.__cI.get('SITE_ARCHIVE_STORAGE_PATH'), 'deposit', 'temp_files', 'deposition', str(depID), "formdata.pkl")
         if not os.access(fName, os.R_OK):
-            fName = os.path.join(self.__cI.get('SITE_DEPOSIT_STORAGE_PATH'), 'deposit', 'temp_files', 'deposition-v-152', str(depID), "formdata.pkl")
+            fName = os.path.join(self.__cI.get('SITE_ARCHIVE_STORAGE_PATH'), 'deposit', 'temp_files', 'deposition-v-152', str(depID), "formdata.pkl")
         #
         logger.info("+EngineUtils.__getDepositorEmail - %s at %s searching for email in file %s " % (depID, self.__siteId, fName))
         if os.path.isfile(fName):
