@@ -65,7 +65,7 @@ from wwpdb.apps.wf_engine.wf_engine_utils.time.TimeStamp import TimeStamp
 
 from wwpdb.apps.wf_engine.wf_engine_utils.run.MyLogger import MyLogger
 from wwpdb.apps.wf_engine.wf_engine_utils.process.ProcessUtils import ProcessUtils
-from wwpdb.utils.wf.DataReference import DataFileReference
+from wwpdb.io.locator.DataReference import DataFileReference
 
 logger = logging.getLogger(name='root')
 
