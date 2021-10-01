@@ -22,13 +22,15 @@ __license__ = "Creative Commons Attribution 3.0 Unported"
 __version__ = "V0.01"
 
 import sys
-import os
 import time
 import unittest
 import traceback
-import platform
+import logging
 
 from wwpdb.apps.wf_engine.wf_engine_utils.process.ProcessUtils import ProcessUtils
+
+logger = logging.getLogger(__name__)
+
 
 class ProcessUtilsTests(unittest.TestCase):
 
@@ -47,10 +49,9 @@ class ProcessUtilsTests(unittest.TestCase):
     def testProcessList(self):
         """Test case -  for listing process details and finding processes by feature
         """
-        startTime = time.clock()
-        self.__lfh.write("\nStarting %s %s at %s\n" % (self.__class__.__name__,
-                                                       sys._getframe().f_code.co_name,
-                                                       time.strftime("%Y %m %d %H:%M:%S", time.localtime())))
+        startTime = time.time()
+        logger.info("Starting at %s",
+                    time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
         try:
             pU = ProcessUtils(verbose=self.__verbose, log=self.__lfh)
             pU.setDebug(flag=False)
@@ -63,23 +64,21 @@ class ProcessUtilsTests(unittest.TestCase):
             for t in tL:
                 pidL = pU.findProcesses(key=t[0], value=t[1], op=t[2])
                 self.__lfh.write("ProcessUtilsTests.testProcessList() for  %r  process list length is %d\n" % (t, len(pidL)))
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self.__lfh)
             self.fail()
 
-        endTime = time.clock()
-        self.__lfh.write("\nCompleted %s %s at %s (%.3f seconds)\n" % (self.__class__.__name__,
-                                                                       sys._getframe().f_code.co_name,
-                                                                       time.strftime("%Y %m %d %H:%M:%S", time.localtime()),
-                                                                       endTime - startTime))
+        endTime = time.time()
+        logger.info("Completed at %s (%.3f seconds)",
+                    time.strftime("%Y %m %d %H:%M:%S", time.localtime()),
+                    endTime - startTime)
 
     def testProcessChildren(self):
         """Test case -  for listing process details and finding processes by feature
         """
-        startTime = time.clock()
-        self.__lfh.write("\nStarting %s %s at %s\n" % (self.__class__.__name__,
-                                                       sys._getframe().f_code.co_name,
-                                                       time.strftime("%Y %m %d %H:%M:%S", time.localtime())))
+        startTime = time.time()
+        logger.info("Starting at %s",
+                    time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
         try:
             pU = ProcessUtils(verbose=self.__verbose, log=self.__lfh)
             pidL = pU.findProcesses(key="username", value="jwest")
@@ -88,23 +87,21 @@ class ProcessUtilsTests(unittest.TestCase):
                 cL = pU.getChildren(pidTup[0])
                 if len(cL) > 0:
                     self.__lfh.write("ProcessUtilsTests.testProcessChildren()) process %d has %d children\n" % (pidTup[0], len(cL)))
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self.__lfh)
             self.fail()
 
-        endTime = time.clock()
-        self.__lfh.write("\nCompleted %s %s at %s (%.3f seconds)\n" % (self.__class__.__name__,
-                                                                       sys._getframe().f_code.co_name,
-                                                                       time.strftime("%Y %m %d %H:%M:%S", time.localtime()),
-                                                                       endTime - startTime))
+        endTime = time.time()
+        logger.info("Completed at %s (%.3f seconds)",
+                    time.strftime("%Y %m %d %H:%M:%S", time.localtime()),
+                    endTime - startTime)
 
     def testProcessWfeChildren(self):
         """Test case -  for listing wfe
         """
-        startTime = time.clock()
-        self.__lfh.write("\nStarting %s %s at %s\n" % (self.__class__.__name__,
-                                                       sys._getframe().f_code.co_name,
-                                                       time.strftime("%Y %m %d %H:%M:%S", time.localtime())))
+        startTime = time.time()
+        logger.info("Starting at %s",
+                    time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
         myName = "WFEngineRunnerExec"
         try:
             pU = ProcessUtils(verbose=self.__verbose, log=self.__lfh)
@@ -114,38 +111,35 @@ class ProcessUtilsTests(unittest.TestCase):
                 cL = pU.getChildren(pidTup[0])
                 if len(cL) > 0:
                     self.__lfh.write("ProcessUtilsTests.testProcessChildren()) process %d has %d children\n" % (pidTup[0], len(cL)))
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self.__lfh)
             self.fail()
 
-        endTime = time.clock()
-        self.__lfh.write("\nCompleted %s %s at %s (%.3f seconds)\n" % (self.__class__.__name__,
-                                                                       sys._getframe().f_code.co_name,
-                                                                       time.strftime("%Y %m %d %H:%M:%S", time.localtime()),
-                                                                       endTime - startTime))
+        endTime = time.time()
+        logger.info("Completed at %s (%.3f seconds)",
+                    time.strftime("%Y %m %d %H:%M:%S", time.localtime()),
+                    endTime - startTime)
 
     def testSystemInfo(self):
         """Test case -  system details --
         """
-        startTime = time.clock()
-        self.__lfh.write("\nStarting %s %s at %s\n" % (self.__class__.__name__,
-                                                       sys._getframe().f_code.co_name,
-                                                       time.strftime("%Y %m %d %H:%M:%S", time.localtime())))
+        startTime = time.time()
+        logger.info("Starting at %s",
+                    time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
         try:
             pU = ProcessUtils(verbose=self.__verbose, log=self.__lfh)
             dM = pU.getMemoryInfo()
             dC = pU.getCpuInfo()
             self.__lfh.write("+ProcessUtilsTests - cpuInfo    = %r\n" % dC.items())
             self.__lfh.write("+ProcessUtilsTests - memoryInfo = %r\n" % dM.items())
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self.__lfh)
             self.fail()
 
-        endTime = time.clock()
-        self.__lfh.write("\nCompleted %s %s at %s (%.3f seconds)\n" % (self.__class__.__name__,
-                                                                       sys._getframe().f_code.co_name,
-                                                                       time.strftime("%Y %m %d %H:%M:%S", time.localtime()),
-                                                                       endTime - startTime))
+        endTime = time.time()
+        logger.info("Completed at %s (%.3f seconds)\n",
+                    time.strftime("%Y %m %d %H:%M:%S", time.localtime()),
+                    endTime - startTime)
 
 
 def processInfoSuite():
@@ -155,14 +149,16 @@ def processInfoSuite():
     suiteSelect.addTest(ProcessUtilsTests("testSystemInfo"))
     return suiteSelect
 
+
 def processWfeSuite():
     suiteSelect = unittest.TestSuite()
     suiteSelect.addTest(ProcessUtilsTests("testProcessWfeChildren"))
     return suiteSelect
 
+
 if __name__ == '__main__':
     #
-    if False:
+    if False:  # pylint: disable=using-constant-test
         mySuite = processInfoSuite()
         unittest.TextTestRunner(verbosity=2).run(mySuite)
         #

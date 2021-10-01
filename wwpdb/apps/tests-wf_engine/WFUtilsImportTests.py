@@ -14,10 +14,10 @@ __version__ = "V0.01"
 
 import unittest
 
-from wwpdb.apps.wf_engine.wf_engine_utils.process.ProcessUtils import ProcessUtils
+from wwpdb.apps.wf_engine.wf_engine_utils.process.ProcessUtils import ProcessUtils  # noqa: F401 pylint: disable=unused-import
 from wwpdb.apps.wf_engine.wf_engine_utils.run.MyLogger import MyLogger
 from wwpdb.apps.wf_engine.wf_engine_utils.run.WFEngineRunner import WFEngineRunner
-from wwpdb.apps.wf_engine.wf_engine_utils.tasks.WFTaskRequest import WFTaskRequest
+from wwpdb.apps.wf_engine.wf_engine_utils.tasks.WFTaskRequest import WFTaskRequest  # noqa: F401 pylint: disable=unused-import
 from wwpdb.apps.wf_engine.wf_engine_utils.time.TimeStamp import TimeStamp
 
 
@@ -26,14 +26,12 @@ class ImportTests(unittest.TestCase):
         pass
 
     def testInstantiate(self):
-#        vc = ProcessUtils()
-        vc = MyLogger()
-        vc = WFEngineRunner()
-        #vc = WFTaskRequest()
-        vc = TimeStamp()
+        # vc = ProcessUtils()
+        _vc = MyLogger()  # noqa: F841
+        _vc = WFEngineRunner()  # noqa: F841
+        # vc = WFTaskRequest()
+        _vc = TimeStamp()  # noqa: F841
+
 
 if __name__ == '__main__':
     unittest.main()
-
-
-    

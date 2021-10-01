@@ -1,3 +1,6 @@
+# pylint: disable=no-value-for-parameter
+# XXXXXXX Needs to be redone due to code changes
+
 ##
 # File:    WFTaskRequestTests.py
 # Author:  J. Westbrook
@@ -24,11 +27,14 @@ __license__ = "Creative Commons Attribution 3.0 Unported"
 __version__ = "V0.01"
 
 import sys
-import os
 import time
 import unittest
 import traceback
+import logging
 from wwpdb.apps.wf_engine.wf_engine_utils.tasks.WFTaskRequest import WFTaskRequest
+from wwpdb.utils.config.ConfigInfo import getSiteId
+
+logger = logging.getLogger(__name__)
 
 
 @unittest.skip("Until test code adapted to code base")
@@ -43,6 +49,7 @@ class WFTaskRequestTests(unittest.TestCase):
         self.__lfh = sys.stderr
         self.__verbose = True
         self.__databaseName = 'status_test'
+        self.__siteId = getSiteId()
 
     def tearDown(self):
         pass
@@ -50,95 +57,88 @@ class WFTaskRequestTests(unittest.TestCase):
     def testSchemaCreate(self):
         """Test case -  create table schema ---
         """
-        startTime = time.clock()
-        self.__lfh.write("\nStarting %s %s at %s\n" % (self.__class__.__name__,
-                                                       sys._getframe().f_code.co_name,
-                                                       time.strftime("%Y %m %d %H:%M:%S", time.localtime())))
+        startTime = time.time()
+        logger.debug("Starting at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
         try:
-            wftr = WFTaskRequest(verbose=self.__verbose, log=self.__lfh)
+            wftr = WFTaskRequest(siteId=self.__siteId, verbose=self.__verbose, log=self.__lfh)
             wftr.setDataStore(dataStoreName=self.__databaseName)
             wftr.createDataStore()
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self.__lfh)
             self.fail()
 
-        endTime = time.clock()
-        self.__lfh.write("\nCompleted %s %s at %s (%.3f seconds)\n" % (self.__class__.__name__,
-                                                                       sys._getframe().f_code.co_name,
-                                                                       time.strftime("%Y %m %d %H:%M:%S", time.localtime()),
-                                                                       endTime - startTime))
+        endTime = time.time()
+        logger.debug("Completed at %s (%.3f seconds)",
+                     time.strftime("%Y %m %d %H:%M:%S", time.localtime()),
+                     endTime - startTime)
 
     def testDeleteTransactions(self):
         """Test case -  request transactions
         """
-        startTime = time.clock()
-        self.__lfh.write("\nStarting %s %s at %s\n" % (self.__class__.__name__,
-                                                       sys._getframe().f_code.co_name,
-                                                       time.strftime("%Y %m %d %H:%M:%S", time.localtime())))
+        startTime = time.time()
+        logger.debug("Starting at %s",
+                     time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
         try:
-            wftr = WFTaskRequest(verbose=self.__verbose, log=self.__lfh)
+            wftr = WFTaskRequest(siteId=self.__siteId, verbose=self.__verbose, log=self.__lfh)
             wftr.setDataStore(dataStoreName=self.__databaseName)
             #
             for depId in ['D_0000000000', 'D_0000000001', 'D_0000000002', 'D_0000000003', 'D_0000000004', 'D_0000000005']:
-                ok = wftr.deleteDataSet(depId=depId)
+                _ok = wftr.deleteDataSet(depSetId=depId)  # noqa: F841
             #
-            rdList = wftr.getStatus()
-            for rd in rdList:
-                self.__lfh.write(" +++ full status = %r\n" % rd.items())
+            # rdList = wftr.getStatus()
+            # for rd in rdList:
+            #     logger.debug(" +++ full status = %r", rd.items())
 
-        except:
-            traceback.print_exc(file=self.__lfh)
+        except Exception as _e:  # noqa: F841
+            logger.exception("Failure")
             self.fail()
 
-        endTime = time.clock()
-        self.__lfh.write("\nCompleted %s %s at %s (%.3f seconds)\n" % (self.__class__.__name__,
-                                                                       sys._getframe().f_code.co_name,
-                                                                       time.strftime("%Y %m %d %H:%M:%S", time.localtime()),
-                                                                       endTime - startTime))
+        endTime = time.time()
+        logger.debug("Completed at %s (%.3f seconds)\n",
+                     time.strftime("%Y %m %d %H:%M:%S", time.localtime()),
+                     endTime - startTime)
 
     def testTransactions(self):
         """Test case -  request transactions
         """
-        startTime = time.clock()
-        self.__lfh.write("\nStarting %s %s at %s\n" % (self.__class__.__name__,
-                                                       sys._getframe().f_code.co_name,
-                                                       time.strftime("%Y %m %d %H:%M:%S", time.localtime())))
+        startTime = time.time()
+        logger.debug("Starting %s",
+                     time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
         try:
-            wftr = WFTaskRequest(verbose=self.__verbose, log=self.__lfh)
+            wftr = WFTaskRequest(siteId=self.__siteId, verbose=self.__verbose, log=self.__lfh)
             wftr.setDataStore(dataStoreName=self.__databaseName)
             #
             for depId in ['D_0000000001', 'D_0000000002', 'D_0000000003', 'D_0000000004', 'D_0000000005']:
-                wftr.addDataSet(depId=depId, hostName='localhost', wfInstId='W_001', wfClassId='Annotate', wfClassFileName='annotate.xml')
-                if False:
+                wftr.addDataSet(depSetId=depId, hostName='localhost', wfInstId='W_001', wfClassId='Annotate', wfClassFileName='annotate.xml')
+                if False:  # pylint: disable=using-constant-test
                     continue
-                for ii in range(1, 5):
-                    rdL = wftr.getTaskStatus(depId=depId)
-                    for rd in rdL:
-                        self.__lfh.write(" +++ row (%s):  %r\n" % (depId, rd.items()))
+                for _ii in range(1, 5):
+                    # rdL = wftr.getTaskStatus(depId=depId)
+                    # for rd in rdL:
+                    #     logger.debug(" +++ row (%s):  %r", depId, rd.items())
                     #
-                    ok = wftr.assignTask(depId=depId, hostName='localhost', wfInstId='W_002', wfClassId='Sequence', wfClassFileName='sequence.xml')
-                    rdL = wftr.getTaskStatus(depId=depId)
-                    for rd in rdL:
-                        self.__lfh.write(" +++ row (%s):  %r\n" % (depId, rd.items()))
+                    _ok = wftr.assignTask(depSetId=depId, hostName='localhost', wfInstId='W_002', wfClassId='Sequence', wfClassFileName='sequence.xml')  # noqa: F841
+                    # rdL = wftr.getTaskStatus(depId=depId)
+                    # for rd in rdL:
+                    #     logger.debug(" +++ row (%s):  %r", depId, rd.items())
 
-                    ok = wftr.assignTask(depId=depId, hostName='localhost', wfInstId='W_003', wfClassId='Entity', wfClassFileName='entity.xml')
-                    rdL = wftr.getTaskStatus(depId=depId)
-                    for rd in rdL:
-                        self.__lfh.write(" +++ row (%s):  %r\n" % (depId, rd.items()))
+                    _ok = wftr.assignTask(depSetId=depId, hostName='localhost', wfInstId='W_003', wfClassId='Entity', wfClassFileName='entity.xml')  # noqa: F841
+                    # rdL = wftr.getTaskStatus(depId=depId)
+                    # for rd in rdL:
+                    #     logger.debug(" +++ row (%s):  %r", depId, rd.items())
             #
-            rdL = wftr.getStatus()
-            for rd in rdL:
-                self.__lfh.write(" +++ row:  %r\n" % (rd.items()))
+            # rdL = wftr.getStatus()
+            # for rd in rdL:
+            #     logger.debug(" +++ row:  %r", rd.items())
 
-        except:
+        except Exception as _e:  # noqa: F841
             traceback.print_exc(file=self.__lfh)
             self.fail()
 
-        endTime = time.clock()
-        self.__lfh.write("\nCompleted %s %s at %s (%.3f seconds)\n" % (self.__class__.__name__,
-                                                                       sys._getframe().f_code.co_name,
-                                                                       time.strftime("%Y %m %d %H:%M:%S", time.localtime()),
-                                                                       endTime - startTime))
+        endTime = time.time()
+        logger.debug("Completed at %s (%.3f seconds)",
+                     time.strftime("%Y %m %d %H:%M:%S", time.localtime()),
+                     endTime - startTime)
 
 
 def createSuite():
@@ -161,7 +161,7 @@ def deleteTransactionsSuite():
 
 if __name__ == '__main__':
     #
-    if True:
+    if True:  # pylint: disable=using-constant-test
         mySuite = createSuite()
         unittest.TextTestRunner(verbosity=2).run(mySuite)
         #
