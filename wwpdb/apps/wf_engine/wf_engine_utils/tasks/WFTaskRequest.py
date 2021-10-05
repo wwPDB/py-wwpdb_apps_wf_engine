@@ -46,16 +46,12 @@ class WFTaskRequest(MyDbAdapter):
 
     def __init__(self, siteId, verbose=False, log=sys.stderr):
         super(WFTaskRequest, self).__init__(schemaDefObj=WorkflowSchemaDef(verbose=verbose, log=log), verbose=verbose, log=log)
-        self.__verbose = verbose
+        # self.__verbose = verbose
         self.__lfh = log
         self.__siteId = siteId
         self.__cI = ConfigInfo(self.__siteId)
         #
-        self.__topPath = self.__cI.get('SITE_WEB_APPS_TOP_PATH')
-        self.__topSessionPath = self.__cI.get('SITE_WEB_APPS_TOP_SESSIONS_PATH')
-        self.__wfXmlPath = self.__cI.get('SITE_WF_XML_PATH')
         self.__myFullHostName = platform.uname()[1]
-        self.__myHostName = self.__myFullHostName.split('.')[0]
         #
         self.__timeStamp = TimeStamp()
         self.__setup()
@@ -137,7 +133,7 @@ class WFTaskRequest(MyDbAdapter):
             wfOpts["author"] = wfMetaData.getAuthor()
             wfOpts["version"] = wfMetaData.getVersionMajor() + wfMetaData.getVersionMinor()
             #
-            ok = self._deleteRequest(tableId='WF_CLASS_DICT', wfClassId=wfMetaData.getID())
+            _ok = self._deleteRequest(tableId='WF_CLASS_DICT', wfClassId=wfMetaData.getID())
             return self._insertRequest(tableId='WF_CLASS_DICT', contextId=None, ** wfOpts)
         else:
             return False
@@ -288,11 +284,11 @@ class WFTaskRequest(MyDbAdapter):
                     self._insertRequest(tableId=tableId, contextId=None, **options)
                     iCount += 1
             self.__lfh.write("WFTaskRequest.loadAccessions() loaded %d codes\n" % iCount)
-        except:
+        except:  # pylint: disable=bare-except
             self.__lfh.write("WFTaskRequest.loadAccessions() failed \n")
             traceback.print_exc(file=self.__lfh)
             return False
 
 
 if __name__ == "__main__":
-    wfr = WFTaskRequest(verbose=True, log=sys.stderr)
+    wfr = WFTaskRequest(None, verbose=True, log=sys.stderr)

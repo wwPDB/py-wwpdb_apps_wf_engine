@@ -50,13 +50,13 @@ class WFEngineRunner(DetachedProcessBase):
     def run(self):
         """  Start a new workflow engine process  -
         """
-        logger.info("+WFEngingeRunner.run() Start workflow engine  with %s\n" % (self.__pidFile))
+        logger.info("+WFEngingeRunner.run() Start workflow engine  with %s\n", self.__pidFile)
 
         engine = mainEngine(self.__debugLevel, sys.stderr)
         normal = ['WFRunner', '-x', '-k', 'WF', '-t', 'entry-point', '-s', 'monitor', '-w', 'MonitorDB.xml', '-p', self.__wfXmlPath]
         engine.runNoThrow(normal)
 
-        logger.info("+WFEngineRunner.run() Leaving with %s\n" % (self.__pidFile))
+        logger.info("+WFEngineRunner.run() Leaving with %s\n", self.__pidFile)
         return True
 
     def setDebugLevel(self, level=0):

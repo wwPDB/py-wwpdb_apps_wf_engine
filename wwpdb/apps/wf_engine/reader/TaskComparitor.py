@@ -15,7 +15,7 @@ import sys
 
 class TaskComparitor(object):
 
-    def __init__(self, debug=0, prt=sys.stderr):
+    def __init__(self, debug=0, prt=sys.stderr):  # pylint: disable=unused-argument
 
         self.__dataId = None
         self.min = 0
@@ -28,7 +28,7 @@ class TaskComparitor(object):
         self.__compareAs = None
 
         self.debug = debug
-        self.__lfh = prt
+        # self.__lfh = prt
 
     def addDataName(self, name):
         self.__dataId = name
@@ -86,7 +86,7 @@ class TaskComparitor(object):
         elif self.__compareCode in [77]:
             ret = self.__checkString(value)
         elif self.__compareCode in [78]:
-            ret = self.__checkSubString(value)
+            ret = self.__checkSubString(value)  # XX Not implemented yet  pylint: disable=no-member
         elif self.__compareCode in [55]:
             ret = self.__checkStringInList(value)
         elif self.__compareCode in [56]:
@@ -136,7 +136,7 @@ class TaskComparitor(object):
                 if str(self.string).lower() == str(val).lower():
                     return 1
             return 0
-        except:
+        except:  # pylint: disable=bare-except
             return 0
 
     def __checkSubStringInList(self, valList):
@@ -149,7 +149,7 @@ class TaskComparitor(object):
                 if str(self.string).lower() in str(val).lower():
                     return 1
             return 0
-        except:
+        except:  # pylint: disable=bare-except
             return 0
 
     def __checkValue(self, sValue):

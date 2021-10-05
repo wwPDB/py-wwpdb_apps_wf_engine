@@ -21,7 +21,6 @@ from wwpdb.utils.wf.WfDataObject import WfDataObject
 from wwpdb.utils.wf.dbapi.WfDbApi import WfDbApi
 from wwpdb.utils.wf.dbapi.dbAPI import dbAPI
 
-from wwpdb.utils.wf.dbapi.WFEtime import *
 from email.mime.text import MIMEText
 from wwpdb.utils.config.ConfigInfo import ConfigInfo, getSiteId
 from wwpdb.apps.wf_engine.wf_engine_utils.time.TimeStamp import TimeStamp
@@ -43,7 +42,6 @@ class EngineUtils(WfDbApi):
         super(EngineUtils, self).__init__(log=MyLogger(level=logging.INFO), verbose=False)
         #
         self.__verbose = verbose
-        self.__timeOutSeconds = 3600
         self.__number = 0
         self.__timeStamp = TimeStamp()
         self.__when = self.__timeStamp.getSecondsFromReference()
@@ -56,7 +54,7 @@ class EngineUtils(WfDbApi):
             self.__SKIP_EMAIL = True
         else:
             self.__SKIP_EMAIL = False
-        logger.info("+EngineUtils.__init__ Starting ----------------------- (%s) ---------------------------------" % self.__siteId)
+        logger.info("+EngineUtils.__init__ Starting ----------------------- (%s) ---------------------------------", self.__siteId)
 
     def updateConnection(self, timeOutSeconds=3600):
         '''  Update database connection if down or expired (older than timeOutSeconds).
@@ -65,11 +63,11 @@ class EngineUtils(WfDbApi):
         if ((not self.isConnected()) or ((self.__timeStamp.getSecondsFromReference() - self.__when) > timeOutSeconds)):
             ok = self.reConnect()
             if not ok:
-                logger.info("+EngineUtils.checkConnection : database connection failed at connenction number = %d\n" % self.__number)
+                logger.info("+EngineUtils.checkConnection : database connection failed at connenction number = %d\n", self.__number)
                 return False
             self.__when = self.__timeStamp.getSecondsFromReference()
             self.__number += 1
-            logger.info("+EngineUtils.checkConnection : creating new database connection number = %d" % self.__number)
+            logger.info("+EngineUtils.checkConnection : creating new database connection number = %d", self.__number)
         return True
 
     def resetInitialStateDB(self, depID):
@@ -86,7 +84,7 @@ class EngineUtils(WfDbApi):
         if allList is not None:
             for allRow in allList:
                 ordinal = allRow[0]
-                logger.info("Ordinal found for ID " + str(depID) + " , ordinal = " + str(ordinal))
+                logger.info("Ordinal found for ID %s , ordinal = %s", str(depID), str(ordinal))
                 sql = "update wf_instance set owner = 'Annotation.bf.xml', wf_class_id = 'Annotate' , inst_status = 'init' where ordinal = " + str(ordinal)
                 ok = self.runUpdateSQL(sql)
                 # update the wf_instance_last table
@@ -127,32 +125,32 @@ class EngineUtils(WfDbApi):
         ok = self.runUpdateSQL(sql)
 
         if ok == 1:
-            logger.info("Set the communication to " + str(status) + " for dep_set_id = " + str(depID))
+            logger.info("Set the communication to %s for dep_set_id = %s", str(status), str(depID))
         else:
-            logger.info("Failed to set the communication table to " + str(status) + " for dep_set_id = " + str(depID))
+            logger.info("Failed to set the communication table to %s for dep_set_id = %s", str(status), str(depID))
 
     def testFilesExist(self, inputs, outputs):
 
-        input = None
+        dinput = None
         output = None
         if inputs is not None:
             for key, value in inputs.items():
                 if self.__verbose:
-                    logger.info("+EngineUtils.testFilesExist :  testing input named " + str(key) + " content type " + str(type(value)))
-                input = value
+                    logger.info("+EngineUtils.testFilesExist :  testing input named %s content type %s", str(key), str(type(value)))
+                dinput = value
         if outputs is not None:
             for key, value in outputs.items():
                 if self.__verbose:
-                    logger.info("+EngineUtils.testFilesExist :   setting output named " + str(key) + " content type " + str(type(value)))
+                    logger.info("+EngineUtils.testFilesExist :   setting output named %s content type %s", str(key), str(type(value)))
                 output = value
 
-        if input is None:
+        if dinput is None:
             logger.info("+EngineUtils.testFilesExist :   missing input data object")
         if output is None:
             logger.info("+EngineUtils.testFilesExist :  missing output data object ")
 
-        fp = input.getFilePathReference()
-        if input.getFilePathExists(fp):
+        fp = dinput.getFilePathReference()
+        if dinput.getFilePathExists(fp):
             #output.data = "true"
             output.setValue("true")
         else:
@@ -166,12 +164,12 @@ class EngineUtils(WfDbApi):
     def setReleaseStatus(self, depID, status):
 
         sql = "update deposition set author_release_status_code = '" + status + "' where dep_set_id = '" + depID + "'"
-        ok = self.runUpdateSQL(sql)
+        _ok = self.runUpdateSQL(sql)
 
     def WFEsetAnnotator(self, depID, annotator):
 
         sql = "update deposition set annotator_initials = '" + annotator + "' where dep_set_id = '" + depID + "'"
-        ok = self.runUpdateSQL(sql)
+        _ok = self.runUpdateSQL(sql)
 
     def setRandomAnnotator(self, depID):
 
@@ -183,12 +181,12 @@ class EngineUtils(WfDbApi):
         annotator = allList[n][0]
 
         sql = "update deposition set annotator_initials = '" + annotator + "' where dep_set_id = '" + depID + "'"
-        ok = self.runUpdateSQL(sql)
+        _ok = self.runUpdateSQL(sql)
 
     def __sendEmail(self, email, frm, subject, message):
 
         if email is None:
-            logger.error("+EngineUtils.__sendEmail Invalid email " + str(email))
+            logger.error("+EngineUtils.__sendEmail Invalid email %s", str(email))
             return
 
         msg = MIMEText(message)
@@ -199,29 +197,29 @@ class EngineUtils(WfDbApi):
 
         # Send the message via our own SMTP server, but don't include the
         # envelope header.
-        logger.info("+EngineUtils.__sendEmail send email from " + str(frm))
-        logger.info("+EngineUtils.__sendEmail send email to " + str(email))
+        logger.info("+EngineUtils.__sendEmail send email from %s", str(frm))
+        logger.info("+EngineUtils.__sendEmail send email to %s", str(email))
         try:
             s = smtplib.SMTP('localhost')
             s.sendmail(noreplyaddr, [email], msg.as_string())
             s.quit()
         except Exception as e:
-            logger.error("+EngineUtils.__sendEmail failing with " + str(e))
+            logger.error("+EngineUtils.__sendEmail failing with %s", str(e))
 
     def sendDepositorEmail(self, depID, data):
         #  JDW - for compatibility WFE running under a host based site id needs to determine the e-mail path for each case -
         if os.access(os.path.join(self.__cI.get('SITE_ARCHIVE_STORAGE_PATH'), 'deposit', 'temp_files', 'deposition-v-200', str(depID), "citation.pkl"), os.R_OK):
             url = self.__cI.get('SITE_CURRENT_DEP_EMAIL_URL')
-            logger.info("+EngineUtils.sendDepositorEmail - %s  site %s return v200 url %s" % (depID, self.__siteId, url))
-        elif os.access(os.path.join(self.__cI.get('SITE_ARCHIVE_STORAGE_PATH'), 'deposit', 'temp_files', 'deposition-v-152', str(depID), "formdata.pkl"), os.R_OK):
-            url = self.__cI.get('SITE_LEGACY_DEP_EMAIL_URL')
-            logger.info("+EngineUtils.sendDepositorEmail - %s  site %s return v152 url %s" % (depID, self.__siteId, url))
+            logger.info("+EngineUtils.sendDepositorEmail - %s  site %s return v200 url %s", depID, self.__siteId, url)
+        # elif os.access(os.path.join(self.__cI.get('SITE_ARCHIVE_STORAGE_PATH'), 'deposit', 'temp_files', 'deposition-v-152', str(depID), "formdata.pkl"), os.R_OK):
+        #     url = self.__cI.get('SITE_LEGACY_DEP_EMAIL_URL')
+        #     logger.info("+EngineUtils.sendDepositorEmail - %s  site %s return v152 url %s", depID, self.__siteId, url)
         elif os.access(os.path.join(self.__cI.get('SITE_ARCHIVE_STORAGE_PATH'), 'deposit', 'temp_files', 'deposition', str(depID), "formdata.pkl"), os.R_OK):
             url = self.__cI.get('SITE_DEP_EMAIL_URL')
-            logger.info("+EngineUtils.sendDepositorEmail - %s  site %s return legacy url %s" % (depID, self.__siteId, url))
+            logger.info("+EngineUtils.sendDepositorEmail - %s  site %s return legacy url %s", depID, self.__siteId, url)
         else:
             url = self.__cI.get('SITE_DEP_EMAIL_URL')
-            logger.info("+EngineUtils.sendDepositorEmail path tests failing - %s  site %s using default url %s" % (depID, self.__siteId, url))
+            logger.info("+EngineUtils.sendDepositorEmail path tests failing - %s  site %s using default url %s", depID, self.__siteId, url)
         #
 
         data = data.replace("$DEPID", depID)
@@ -230,9 +228,9 @@ class EngineUtils(WfDbApi):
 
         words = data.split('|')
         email = self.__getDepositorEmail(depID)
-        logger.info("+EngineUtils.sendDepositorEmail - %s sending to email %s " % (depID, email))
+        logger.info("+EngineUtils.sendDepositorEmail - %s sending to email %s ", depID, email)
         if (self.__SKIP_EMAIL):
-            logger.info("+EngineUtils.sendDepositorEmail - Skipped sending email to %s " % email)
+            logger.info("+EngineUtils.sendDepositorEmail - Skipped sending email to %s ", email)
         else:
             self.__sendEmail(email, words[0], words[1], words[2])
 
@@ -246,10 +244,10 @@ class EngineUtils(WfDbApi):
         if not os.access(fName, os.R_OK):
             fName = os.path.join(self.__cI.get('SITE_ARCHIVE_STORAGE_PATH'), 'deposit', 'temp_files', 'deposition-v-152', str(depID), "formdata.pkl")
         #
-        logger.info("+EngineUtils.__getDepositorEmail - %s at %s searching for email in file %s " % (depID, self.__siteId, fName))
+        logger.info("+EngineUtils.__getDepositorEmail - %s at %s searching for email in file %s ", depID, self.__siteId, fName)
         if os.path.isfile(fName):
             try:
-                logger.info("+EngineUtils.__getDepositorEmail - %s s opening serialized file %s " % (depID, fName))
+                logger.info("+EngineUtils.__getDepositorEmail - %s s opening serialized file %s ", depID, fName)
                 f = open(fName, 'rb')
                 dat = pickle.load(f)
                 f.close()
@@ -258,24 +256,24 @@ class EngineUtils(WfDbApi):
                 else:
                     return None
             except Exception as e:
-                logger.exception("+EngineUtils.__getDepositorEmail failed to recover formdata and return email  " + str(e))
+                logger.exception("+EngineUtils.__getDepositorEmail failed to recover formdata and return email  %s", str(e))
                 return None
         else:
-            logger.info("+EngineUtils.__getDepositorEmail - %s searching for email in database" % depID)
+            logger.info("+EngineUtils.__getDepositorEmail - %s searching for email in database", depID)
             ss = dbAPI(depID)
             ret = ss.runSelectNQ(table='user_data', select=['email', 'role'], where={"dep_set_id": depID, "role": "valid"})
             for r in ret:
                 return r[0]
             return None
 
-    def initDepositContext(self, depositionID, WorkflowClassID, WorkflowInstanceID, input):
+    def initDepositContext(self, depositionID, WorkflowClassID, WorkflowInstanceID, dinput):
         '''
           method to extract information from the current model file and load this into the status database.
         '''
 
-        logger.info("+EngineUtils.initDepositContext : ============================================\n")
-        logger.info("+EngineUtils.initDepositContext : depID = " + str(depositionID) + "\n")
-        logger.info("+EngineUtils.initDepositContext : ============================================\n")
+        logger.info("+EngineUtils.initDepositContext : ============================================")
+        logger.info("+EngineUtils.initDepositContext : depID = %s", str(depositionID))
+        logger.info("+EngineUtils.initDepositContext : ============================================")
 
         if self.__verbose:
             process = ProcessRunner(True, self.__lfh)
@@ -284,14 +282,14 @@ class EngineUtils(WfDbApi):
 
         process.setAction("status")
 
-        if input is None:
+        if dinput is None:
             logger.info("+EngineUtils.initDepositContext :  Requires input object \n")
             sys.exit(0)
 
-        for key, value in input.items():
+        for key, value in dinput.items():
             if self.__verbose:
-                logger.info("+EngineUtils.initDepositContext :  setting input " + str(key) + str(value.getReferenceType()) + "\n")
-                logger.info("+EngineUtils.initDepositContext :  setting input " + str(key) + str(value) + "\n")
+                logger.info("+EngineUtils.initDepositContext :  setting input %s %s", str(key), str(value.getReferenceType()))
+                logger.info("+EngineUtils.initDepositContext :  setting input %s %s", str(key), str(value))
             process.setInput("src", value)
 
         wfoOut = WfDataObject()
@@ -368,7 +366,7 @@ class EngineUtils(WfDbApi):
             elif isinstance(auth, str):
                 depDB["AUTHOR_LIST"] = auth
             else:
-                logger.info(" Unknown type of author list " + str(type(auth)))
+                logger.info(" Unknown type of author list %s", str(type(auth)))
             depDB["AUTHOR_LIST"] = depDB["AUTHOR_LIST"].replace("'", " ")
         else:
             depDB["AUTHOR_LIST"] = "unknown"
@@ -399,7 +397,6 @@ class EngineUtils(WfDbApi):
             constDict = {}
             constDict["DEP_SET_ID"] = depositionID
             self.saveObject(depDB, 'update', constDict)
-            pass
         else:
             self.saveObject(depDB, 'insert')
             if self.__verbose:
@@ -443,7 +440,7 @@ class EngineUtils(WfDbApi):
         ret = "W_" + str(instID).zfill(3)
 
         if self.__verbose > 0:
-            logger.info("+mainEngine.__getNewInstanceIDDB : for data set ID = %s next workflow instance ID = %s" % (dataSetId, ret))
+            logger.info("+mainEngine.__getNewInstanceIDDB : for data set ID = %s next workflow instance ID = %s", dataSetId, ret)
 
         return ret
 ##

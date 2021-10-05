@@ -4,18 +4,11 @@
 #
 # #
 
-import sys
 from wwpdb.utils.wf.dbapi.WfDbApi import WfDbApi
-
-'''
-
-Grab bag of methods to execute SQL commands on various WF status tables -
-
-'''
 
 
 class dbAPI(object):
-
+    ''' Grab bag of methods to execute SQL commands on various WF status tables -'''
     def __init__(self, depID, connection=None, verbose=False):
 
         if connection:
@@ -266,7 +259,7 @@ class dbAPI(object):
             return False
 
 
-def main(argv):
+def main(): 
 
     print("starting DBAPI test")
 
@@ -326,6 +319,6 @@ def main(argv):
 
     print("finished")
 
-if __name__ == "__main__":
 
-    main(sys.argv[1:])
+if __name__ == "__main__":
+    main()

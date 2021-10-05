@@ -23,7 +23,6 @@ class AutoRun(object):
         self.__verbose = verbose
         self.__siteId = site_id
         self.dep_id = dep_id
-        self.__cI = ConfigInfo(self.__siteId)
         self.db_api = self.make_db_connection()
         self.wf_status = None
         self.ordinal = None

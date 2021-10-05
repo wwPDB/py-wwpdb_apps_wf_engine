@@ -53,10 +53,10 @@ class ExternalTask(object):
         self.__timeStamp = TimeStamp()
         self.__eUtil = eUtil
         logger.info("\n+ExternalTask.__init__ : ------------------------------------------------------------------------------------")
-        logger.info("+ExternalTask.__init__ : depositionId %r workflowclassid %r workflowinstanceid %r task.name %r recovery %r\n" %
-                    (depositionID, WorkflowClassID, WorkflowInstanceID, task.name, recovery))
+        logger.info("+ExternalTask.__init__ : depositionId %r workflowclassid %r workflowinstanceid %r task.name %r recovery %r\n",
+                    depositionID, WorkflowClassID, WorkflowInstanceID, task.name, recovery)
 
-    def __setDBTaskStatus(self, type, mode):
+    def __setDBTaskStatus(self, typein, mode):  # pylint: disable=unused-argument
         '''
           Method to update the wf_task table - audit trail data for WFE
 
@@ -72,7 +72,7 @@ class ExternalTask(object):
 
         self.__eUtil.updateStatus(taskID, mode)
 
-    def __setDBInstStatus(self, type, mode):
+    def __setDBInstStatus(self, typein, mode):  # pylint: disable=unused-argument
         '''
           Method to update the wf_instance table - WFM communication
 
@@ -107,34 +107,13 @@ class ExternalTask(object):
 
         if instID is None:
             logger.info("+ExternalTask.__getDBInstStatus :  *** Database went away ***\n")
-            fname = self.depositionID + self.WorkflowClassID + ".exception"
             logger.info("+ExternalTask.__getDBInstStatus : Exception : database went away\n")
             logger.info("+ExternalTask.__getDBInstStatus : Manual task : getDBInstStatus \n")
-            logger.info("+ExternalTask.__getDBInstStatus : UTC time = " + str(datetime.datetime.utcnow()) + "\n")
+            logger.info("+ExternalTask.__getDBInstStatus : UTC time = %s\n", str(datetime.datetime.utcnow()))
             sys.exit(0)
 
         else:
             ret = self.__eUtil.getStatus(instID)
-
-        return ret
-
-    def __getDBTaskStatus(self):
-        '''
-          Method to get the status of the task - audit trail and WFE
-        '''
-        self.__eUtil.updateConnection()
-
-        taskID = self.__eUtil.getObject(self.depositionID, self.WorkflowClassID, self.WorkflowInstanceID, self.task.name)
-
-        if taskID is None:
-            logger.info("+ExternalTask.getDBTaskStatus :  *** Database went away ***\n")
-            fname = self.depositionID + self.WorkflowClassID + ".exception"
-            logger.info("+ExternalTask.getDBInstStatus : Exception : database went away\n")
-            logger.info("+ExternalTask.getDBInstStatus : Manual task : getDBTaskStatus \n")
-            logger.info("+ExternalTask.getDBInstStatus : UTC time = " + str(datetime.datetime.utcnow()) + "\n")
-            sys.exit(0)
-        else:
-            ret = self.__eUtil.getStatus(taskID)
 
         return ret
 
@@ -146,24 +125,24 @@ class ExternalTask(object):
           Note that the wait is on the instance state (to reduce contention for  WFM and interfaces)
 
         '''
-        logger.info("\n+ExternalTask.handleExternalTask : starts with id %s  class %s instance %s task.name %r recovery %r"
-                    % (self.depositionID, self.WorkflowClassID, self.WorkflowInstanceID, self.task.name, self.recovery))
+        logger.info("\n+ExternalTask.handleExternalTask : starts with id %s  class %s instance %s task.name %r recovery %r",
+                    self.depositionID, self.WorkflowClassID, self.WorkflowInstanceID, self.task.name, self.recovery)
         # set the instance and task  status to waiting
         if self.recovery == 0:
-            logger.info("+ExternalTask.handleExternalTask : depositionID %r task.name %r set task status WAITING" % (self.depositionID, self.task.name))
+            logger.info("+ExternalTask.handleExternalTask : depositionID %r task.name %r set task status WAITING", self.depositionID, self.task.name)
             self.__setDBTaskStatus("manual", "waiting")
 
         # put in a passthrough for restarting interfaces - ie if the UI has put closed into
         # the status DB then we don't want to overwrite this - just pass stright through and capture this
         if self.recovery == 0:
-            logger.info("+ExternalTask.handleExternalTask : depositionID %r task.name %r set instance status WAITING" % (self.depositionID, self.task.name))
+            logger.info("+ExternalTask.handleExternalTask : depositionID %r task.name %r set instance status WAITING", self.depositionID, self.task.name)
             self.__setDBInstStatus("manual", "waiting")
 
         # A short sleep to make sure everyone is up and waiting.
         try:
             time.sleep(1.0)
-        except:
-            logger.info("+ExternalTask.handleExternalTask :  Exception during timer %s " % self.depositionID)
+        except Exception as _e:
+            logger.info("+ExternalTask.handleExternalTask :  Exception during timer %s ", self.depositionID)
             return str(-1)
 
         startTime = datetime.datetime.now()
@@ -174,8 +153,8 @@ class ExternalTask(object):
 
             if self.__debug > 3:
                 elapsedT = datetime.datetime.now() - startTime
-                logger.debug("+ExternalTask.handleExternalTask :  id %s  class %s instance %s elapsed (secs) %d state %r "
-                             % (self.depositionID, self.WorkflowClassID, self.WorkflowInstanceID, elapsedT.total_seconds(), str(state)))
+                logger.debug("+ExternalTask.handleExternalTask :  id %s  class %s instance %s elapsed (secs) %d state %r ",
+                             self.depositionID, self.WorkflowClassID, self.WorkflowInstanceID, elapsedT.total_seconds(), str(state))
 
             if state[:6] == "closed":
                 n1 = state.find("(")
@@ -187,53 +166,52 @@ class ExternalTask(object):
                     ret = "0"
                 # reset the instance state for the WFM
                 self.__setDBInstStatus("manual", "running")
-                logger.info("+ExternalTask.handleExternalTask : depositionID %r detected CLOSED instance status - reset to running" % self.depositionID)
+                logger.info("+ExternalTask.handleExternalTask : depositionID %r detected CLOSED instance status - reset to running", self.depositionID)
                 break
             elif state == "close(o)" or state == "close(0)" or state == "closed()":
                 # cludge from wrong interface return - probably don't need this
                 ret = "0"
                 # reset the instance state for the WFM
                 self.__setDBInstStatus("manual", "running")
-                logger.info("+ExternalTask.handleExternalTask : depositionID %r detected CLOSED instance status - set to running" % self.depositionID)
+                logger.info("+ExternalTask.handleExternalTask : depositionID %r detected CLOSED instance status - set to running", self.depositionID)
                 break
             elif state == "open":
                 # still waiting - but the interface is now open
                 if not opened:
-                    logger.info("+ExternalTask.handleExternalTask : depositionID %r detected OPEN instance status - update LAST instance" % self.depositionID)
+                    logger.info("+ExternalTask.handleExternalTask : depositionID %r detected OPEN instance status - update LAST instance", self.depositionID)
                     opened = True
                     # manage the UI not knowing about this new table
                     sql = "update wf_instance_last set status_timestamp=" + \
                         str(self.__timeStamp.getSecondsFromReference()) + ", inst_status='open', wf_class_id = '" + self.WorkflowClassID + \
                         "', wf_inst_id = '" + self.WorkflowInstanceID + "' where dep_set_id = '" + self.depositionID + "'"
 
-                    ok = self.__eUtil.runUpdateSQL(sql)
-                pass
+                    _ok = self.__eUtil.runUpdateSQL(sql)
             elif state == "waiting":
                 # still waiting - no one has opened the interface
-                pass
+                pass  # pylint: disable=unnecessary-pass
             elif state == "exception":
                 # the interface threw and exception code
-                logger.info("+ExternalTask.handleExternalTask : depositionID %r detected EXCEPTION instance status - reset to exception" % self.depositionID)
+                logger.info("+ExternalTask.handleExternalTask : depositionID %r detected EXCEPTION instance status - reset to exception", self.depositionID)
                 self.__setDBInstStatus("manual", "exception")
                 ret = str(-1)
                 break
             elif state == "aborted":
                 # the interface threw and exception code
-                logger.info("+ExternalTask.handleExternalTask : depositionID %r detected ABORTED instance status - reset to ABORTED" % self.depositionID)
+                logger.info("+ExternalTask.handleExternalTask : depositionID %r detected ABORTED instance status - reset to ABORTED", self.depositionID)
                 self.__setDBInstStatus("manual", "aborted")
                 ret = str(-1)
                 break
 
             try:
                 time.sleep(0.7)
-            except:
+            except Exception as _e:
                 # someone killed the WFE wait : register an exception
-                logger.info("+ExternalTask.handleExternalTask :  Exception during timer %s " % self.depositionID)
+                logger.info("+ExternalTask.handleExternalTask :  Exception during timer %s ", self.depositionID)
                 self.__setDBInstStatus("manual", "exception")
                 ret = str(-1)
                 break
 
-        logger.info("\n+ExternalTask.handleExternalTask : ENDS for id %s  class %s instance %s task.name %r recovery %r return value %r"
-                    % (self.depositionID, self.WorkflowClassID, self.WorkflowInstanceID, self.task.name, self.recovery, ret))
+        logger.info("\n+ExternalTask.handleExternalTask : ENDS for id %s  class %s instance %s task.name %r recovery %r return value %r",
+                    self.depositionID, self.WorkflowClassID, self.WorkflowInstanceID, self.task.name, self.recovery, ret)
         #
         return int(ret)

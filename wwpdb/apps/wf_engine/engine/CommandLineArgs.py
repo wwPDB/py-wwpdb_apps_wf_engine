@@ -42,7 +42,7 @@ class CommandLineArgs(object):
         self.wfDepth = 0  # which WF file name to get back from a nested name
 
         try:
-            opts, args = getopt.getopt(
+            opts, _args = getopt.getopt(
                 argv[
                     1:], "hd:l:s:t:i:w:p:a:k:z:xr", [
                     "help", "debug=", "log=", "session=", "task=", "instance=", "workflow=",

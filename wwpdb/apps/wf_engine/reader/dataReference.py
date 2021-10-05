@@ -7,17 +7,17 @@
 #
 ##
 
-import sys
-
-"""
-data object definition
-"""
+#
+# data object definition
+#
 
 __docformat__ = "restructuredtext en"
 __author__ = "Tom Oldfield"
 __email__ = "oldfield@ebi.ac.uk"
 __license__ = "Creative Commons Attribution 3.0 Unported"
 __version__ = "V0.24"
+
+import sys
 
 from wwpdb.utils.wf.WfDataObject import WfDataObject
 

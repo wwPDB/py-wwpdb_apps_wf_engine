@@ -24,77 +24,76 @@ __version__ = "V0.24"
 
 
 import sys
-import types
 import traceback
 
 
-def getObjectType(object, debug=0, prt=sys.stderr):
+def getObjectType(obj, debug=0, prt=sys.stderr):  # pylint: disable=unused-argument
     value = None
     try:
-        prt.write("+InterpretDataObject.getObjectType : %s\n" % object.__class__.__name__)
-        if object.__class__.__name__ == "dataModule":
-            value = object.type
+        prt.write("+InterpretDataObject.getObjectType : %s\n" % obj.__class__.__name__)
+        if obj.__class__.__name__ == "dataModule":
+            value = obj.type
         else:
-            value = object.getValueTypeName()
-    except:
-        prt.write("+InterpretDataObject.getObjectCType : failed for object = %s \n" % str(type(object)))
+            value = obj.getValueTypeName()
+    except Exception as _e:
+        prt.write("+InterpretDataObject.getObjectCType : failed for object = %s \n" % str(type(obj)))
         traceback.print_exc(file=prt)
 
     return value
 
 
-def getObjectContainerType(object, debug=0, prt=sys.stderr):
+def getObjectContainerType(obj, debug=0, prt=sys.stderr):  # pylint: disable=unused-argument
     value = None
     try:
-        prt.write("+InterpretDataObject.getObjectContainerType : %s\n" % object.__class__.__name__)
-        if object.__class__.__name__ == "dataModule":
-            value = object.valueContainer
+        prt.write("+InterpretDataObject.getObjectContainerType : %s\n" % obj.__class__.__name__)
+        if obj.__class__.__name__ == "dataModule":
+            value = obj.valueContainer
         else:
-            value = object.getContainerTypeName()
-    except:
-        prt.write("+InterpretDataObject.getObjectContainerType : failed for object = %s \n" % str(type(object)))
+            value = obj.getContainerTypeName()
+    except Exception as _e:
+        prt.write("+InterpretDataObject.getObjectContainerType : failed for object = %s \n" % str(type(obj)))
         traceback.print_exc(file=prt)
 
     return value
 
 
-def getObjectValue(object, debug, prt=sys.stderr):
+def getObjectValue(obj, debug, prt=sys.stderr):
 
     value = None
 
     try:
-        prt.write("+InterpretDataObject.getObjectValue : class name %s\n" % object.__class__.__name__)
-        if object.__class__.__name__ == "dataModule":
-            value = object.data
+        prt.write("+InterpretDataObject.getObjectValue : class name %s\n" % obj.__class__.__name__)
+        if obj.__class__.__name__ == "dataModule":
+            value = obj.data
         else:
-            value = __getObject(object, debug, prt)
-    except:
-        prt.write("+InterpretDataObject.getObjectValue : Failed for object = %s\n" % str(type(object)))
+            value = __getObject(obj, debug, prt)
+    except Exception as _e:
+        prt.write("+InterpretDataObject.getObjectValue : Failed for object = %s\n" % str(type(obj)))
         traceback.print_exc(file=prt)
     return value
 
 
-def __getObject(object, debug, prt=sys.stderr):
+def __getObject(obj, debug, prt=sys.stderr):
 
     if debug > 0:
-        prt.write("+InterpretDataObject.__getObject : object class                  %s\n" % object.__class__.__name__)
-        prt.write("+InterpretDataObject.__getObject : object.getValueTypeName()     %s\n" % object.getValueTypeName())
-        prt.write("+InterpretDataObject.__getObject : object.isValueValid()         %s\n" % object.isValueValid())
-        prt.write("+InterpretDataObject.__getObject : object.getContainerTypeName() %s\n" % object.getContainerTypeName())
-        prt.write("+InterpretDataObject.__getObject : object.isValueSet()           %r\n" % object.isValueSet())
-        prt.write("+InterpretDataObject.__getObject : object.getValue()             %r\n" % object.getValue())
+        prt.write("+InterpretDataObject.__getObject : obj class                  %s\n" % obj.__class__.__name__)
+        prt.write("+InterpretDataObject.__getObject : obj.getValueTypeName()     %s\n" % obj.getValueTypeName())
+        prt.write("+InterpretDataObject.__getObject : obj.isValueValid()         %s\n" % obj.isValueValid())
+        prt.write("+InterpretDataObject.__getObject : obj.getContainerTypeName() %s\n" % obj.getContainerTypeName())
+        prt.write("+InterpretDataObject.__getObject : obj.isValueSet()           %r\n" % obj.isValueSet())
+        prt.write("+InterpretDataObject.__getObject : obj.getValue()             %r\n" % obj.getValue())
 
-    if object.getValueTypeName() is None or not object.isValueValid() or not object.isValueSet():
+    if obj.getValueTypeName() is None or not obj.isValueValid() or not obj.isValueSet():
         prt.write("+InterpretDataObject.__getObject : unitialized or unset value\n")
         return None
 
-    if object.getContainerTypeName() in ['list', 'dict', 'boolean']:
-        return object.getValue()
+    if obj.getContainerTypeName() in ['list', 'dict', 'boolean']:
+        return obj.getValue()
     else:
-        return str(object.getValue())
+        return str(obj.getValue())
 
 
-def __replaceVariable(allData, type, dat, debug, prt=sys.stderr):
+def __replaceVariable(allData, dtype, dat, debug, prt=sys.stderr):  # pylint: disable=unused-argument
 
     if dat is not None:
         if dat[:1] == "$":
@@ -151,11 +150,11 @@ def __fillInputOutput(allData, wfData, depID, mode, debug, prt=sys.stderr):
 
     if wfData.content is not None:
         if wfData.format is not None:
-            format = __replaceVariable(allData, wfData.type, wfData.format, debug, prt)
+            fmt = __replaceVariable(allData, wfData.type, wfData.format, debug, prt)
             content = __replaceVariable(allData, wfData.type, wfData.content, debug, prt)
-            wfData.ApiData.setContentTypeAndFormat(content, format)
+            wfData.ApiData.setContentTypeAndFormat(content, fmt)
             if debug > 1:
-                prt.write("+InterpretDataObject.__fillInputOutput : content  " + str(content) + ", format " + str(format) + "\n")
+                prt.write("+InterpretDataObject.__fillInputOutput : content  " + str(content) + ", format " + str(fmt) + "\n")
         else:
             prt.write("+InterpretDataObject.__fillInputOutput :  WARNING - no format defined for data " + str(wfData.nameHumanReadable) + "\n")
     else:
@@ -249,9 +248,9 @@ def getTaskParameterDict(allData, data, debug, prt=sys.stderr):
         return None
 
 
-def fillAPIinputObject(allData, wfData, id, debug=0, prt=sys.stderr):
+def fillAPIinputObject(allData, wfData, depID, debug=0, prt=sys.stderr):
 
-    __fillInputOutput(allData, wfData, id, 'input', debug, prt)
+    __fillInputOutput(allData, wfData, depID, 'input', debug, prt)
 
     if wfData.selectConditionAttribute is not None:
         if debug > 1:
@@ -283,8 +282,8 @@ def fillAPIinputObject(allData, wfData, id, debug=0, prt=sys.stderr):
                     prt.write("+InterpretDataObject.fillApiInputObject :  addSelectionAttributeName " + str(l) + "\n")
 
 
-def fillAPIoutputObject(allData, wfData, id, debug=0, prt=sys.stderr):
-    __fillInputOutput(allData, wfData, id, 'output', debug, prt)
+def fillAPIoutputObject(allData, wfData, depID, debug=0, prt=sys.stderr):
+    __fillInputOutput(allData, wfData, depID, 'output', debug, prt)
 
 
 def setRuntimeVariable(allData, value, debug=0, prt=sys.stderr):

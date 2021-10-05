@@ -35,10 +35,10 @@ import sys
 import os
 import time
 from tabulate import tabulate
-from optparse import OptionParser
+from optparse import OptionParser  # pylint: disable=deprecated-module
 
 from wwpdb.io.locator.PathInfo import PathInfo
-from wwpdb.utils.config.ConfigInfo import ConfigInfo, getSiteId
+from wwpdb.utils.config.ConfigInfo import getSiteId
 from wwpdb.apps.wf_engine.wf_engine_utils.tasks.WFTaskRequest import WFTaskRequest
 from mmcif_utils.pdbx.PdbxIo import PdbxEntryInfoIo
 
@@ -54,7 +54,6 @@ class WFTaskRequestWorker(object):
         self.__lfh = log
         self.__debug = False
         self.__siteId = getSiteId(defaultSiteId="WWPDB_DEPLOY_MACOSX")
-        self.__cI = ConfigInfo(self.__siteId)
         #
         self.__wftr = WFTaskRequest(siteId=self.__siteId, verbose=self.__verbose, log=self.__lfh)
         if databaseName is not None:
@@ -67,7 +66,6 @@ class WFTaskRequestWorker(object):
                         'SUBMIT': {'wfClassId': 'depRunOnSubmit', 'wfClassFile': 'depRunOnSubmit.xml'},
                         'UPLOAD': {'wfClassId': 'depRunOnUpload', 'wfClassFile': 'depRunOnUpload.xml'},
                         'SEQUENCE_MODULE': {'wfClassId': 'SeqMod', 'wfClassFile': 'SequenceModule.xml'},
-                        'ANNOTATE_MODULE': {'wfClassId': 'AnnMod', 'wfClassFile': 'AnnotateModule.xml'},
                         'PDBX2PDBX_DEP': {'wfClassId': 'PDBX2PDBX_DEP', 'wfClassFile': 'wf_op_pdbx2pdbx_fs_deposit.xml'},
                         'MTZSF2PDBX_DEP': {'wfClassId': 'MTZSF2PDBX_DEP', 'wfClassFile': 'wf_op_mtzsf2pdbx_fs_deposit.xml'},
                         'MASKMPFX_DEP': {'wfClassId': 'MASKMPFX_DEP', 'wfClassFile': 'wf_op_maskmpfx_fs_deposit.xml'},
@@ -121,7 +119,7 @@ class WFTaskRequestWorker(object):
             for tableId in tableIdList:
                 self.__wftr.deleteDataSet(depSetId=depSetId, tableId=tableId)
             return True
-        except:
+        except:  # pylint: disable=bare-except
             return False
 
     def writeTruncateScript(self, dbName, tableNameList, suffix=None):
@@ -136,7 +134,7 @@ class WFTaskRequestWorker(object):
             for tableName in tableNameList:
                 fp.write("truncate table %s ;\n" % tableName)
             fp.close()
-        except:
+        except:  # pylint: disable=bare-except
             return False
 
     def clearAll(self, tableIdList):
@@ -147,7 +145,7 @@ class WFTaskRequestWorker(object):
             for tableId in tableIdList:
                 self.__wftr.clearTable(tableId=tableId)
             return True
-        except:
+        except:  # pylint: disable=bare-except
             return False
 
     def assignTask(self, depSetId, taskOp=None):
@@ -172,7 +170,7 @@ class WFTaskRequestWorker(object):
             options['command'] = 'waitWF'
             return self.__wftr.assignTask(depSetId=depSetId, **options)
         elif taskOp.lower() in ['delete', 'remove']:
-            return self.__wftr.deleteDataSet(depSetId=depSetId)
+            return self.__wftr.deleteDataSet(depSetId=depSetId) # THIS IS MISSING AN ARGUMENT  pylint: disable=no-value-for-parameter
         else:
             return False
 
@@ -193,10 +191,12 @@ class WFTaskRequestWorker(object):
                     depSetId = rd['DEP_SET_ID']
                 ofh.write(" ++ (%12s) ++    %-40s :  %s\n" % (depSetId, k, v))
 
-    def report(self, ofh=sys.stdout, reportType='COMMUNICATION', depSetId=None, attributeIdList=[]):
+    def report(self, ofh=sys.stdout, reportType='COMMUNICATION', depSetId=None, attributeIdList=None):
         """  Formatted tabular reports of rdbms tables defined via SchemaDefBase() and related
             classes -
         """
+        if attributeIdList is None:
+            attributeIdList = []
         if depSetId is not None:
             ofh.write("\nTable identifer: %s for data set %s\n" % (reportType, depSetId))
         else:
@@ -285,7 +285,7 @@ class WFTaskRequestWorker(object):
                 uD[mt[1]] = mD[mt[0]]
         return uD
 
-    def reloadDepositionStatus(self, depSetId, fileSource='archive', contentType='model', mileStone=None, versionId='latest'):
+    def reloadDepositionStatus(self, depSetId, fileSource='archive', contentType='model', mileStone=None, versionId='latest'):  # pylint: disable=unused-argument
         """ Load/reload deposition status database with domain details extracted from the input
             model file.
 
@@ -351,7 +351,6 @@ def main():
     #
     # Table subsets for workflow and depositon
     #
-    workflowDatabaseName = 'status'
     workflowTableIdList = ["COMMUNICATION", "WF_TASK", "WF_INSTANCE", "WF_INSTANCE_LAST", "WF_REFERENCE", "ENGINE_MONITORING"]
     depositionTableIdList = ["DEPOSITION"]
     userDataTableIdList = ["USER_DATA"]
@@ -422,7 +421,7 @@ def main():
     parser.add_option("-v", "--verbose", default=False, action="store_true", dest="verbose", help="Enable verbose output")
     parser.add_option("-d", "--debug", default=False, action="store_true", dest="debug", help="Enable debug output")
 
-    (options, args) = parser.parse_args()
+    (options, _args) = parser.parse_args()
 
     trw = WFTaskRequestWorker(databaseName=options.databaseName, verbose=options.verbose, log=sys.stderr)
     lt = time.strftime("%Y %m %d %H:%M:%S", time.localtime())
@@ -495,9 +494,3 @@ def main():
 if __name__ == "__main__":
     main()
 #
-
-['PDB_status_information', 'audit_author', 'chem_comp', 'citation', 'citation_author', 'database_2', 'diffrn_source',
- 'em_admin', 'entity', 'entity_poly', 'ndb_struct_conf_na', 'pdbx_contact_author', 'pdbx_database_PDB_obs_spr',
- 'pdbx_database_related', 'pdbx_database_status_history', 'pdbx_deposit_group', 'pdbx_depui_entry_details',
- 'pdbx_entity_nonpoly', 'pdbx_molecule', 'pdbx_molecule_features', 'pdbx_prerelease_seq', 'processing_status',
- 'rcsb_status', 'struct', 'struct_keywords', 'struct_site_keywords']

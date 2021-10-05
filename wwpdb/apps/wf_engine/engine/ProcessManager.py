@@ -35,7 +35,7 @@ from wwpdb.apps.wf_engine.engine.ServerMonitor import ServerMonitor
 
 from wwpdb.utils.wf.process.ProcessRunner import ProcessRunner
 from wwpdb.apps.wf_engine.engine.EngineUtils import EngineUtils
-from wwpdb.apps.wf_engine.wf_engine_utils.run.MyLogger import MyLogger
+#from wwpdb.apps.wf_engine.wf_engine_utils.run.MyLogger import MyLogger
 from wwpdb.apps.wf_engine.wf_engine_utils.time.TimeStamp import TimeStamp
 
 logger = logging.getLogger(name='root')
@@ -58,7 +58,12 @@ class ProcessManager(Thread):
         self.elapsedTime = None
         self.task = task
         self.result = -1
-        self.__myLog = MyLogger()
+        self._thetime = 0
+        # self.__myLog = MyLogger()
+        self.depositionID = None
+        self.WorkflowClassID = None
+        self.WorkflowInstanceID = None
+        #
         self.__timeStamp = TimeStamp()
         #
         # input data for process : these are key / value pairs - of the input data
@@ -77,22 +82,18 @@ class ProcessManager(Thread):
     def setInput(self, valueD, taskParamD):
         if self.debug > 0:
             if valueD is not None:
-                logger.info("+ProcessManager.setInput() value dictionary %r\n" % valueD.items())
+                logger.info("+ProcessManager.setInput() value dictionary %r\n", valueD.items())
             if taskParamD is not None:
-                logger.info("+ProcessManager.setInput() task parameter dictionary %r\n" % taskParamD.items())
+                logger.info("+ProcessManager.setInput() task parameter dictionary %r\n", taskParamD.items())
         self.__taskParameterD = taskParamD
         self.input = valueD
 
     def setOutput(self, valueD):
         if self.debug > 0:
             if valueD is not None:
-                logger.info("+ProcessManager.setOutput() value dictionary %r\n" % valueD.items())
+                logger.info("+ProcessManager.setOutput() value dictionary %r\n", valueD.items())
 
         self.output = valueD
-
-    def getValues(self):
-
-        return self.values
 
     def setStatsInfo(self, depositionID, WorkflowClassID, WorkflowInstanceID):
 
@@ -143,12 +144,12 @@ class ProcessManager(Thread):
         self.__setDBTaskStatus("running", eUtilObj)
 
         if self.debug > 1:
-            logger.info("+ProcessManager.run : " + str(self.status) + " : " + str(self.__getElapsedTime()) + "\n")
+            logger.info("+ProcessManager.run : %s : %s", str(self.status), str(self.__getElapsedTime()))
 
         self.__runProcess(eUtilObj)
 
         if self.debug > 1:
-            logger.info("+ProcessManager.run :  " + str(self.status) + "  " + str(self.__getElapsedTime()) + "\n")
+            logger.info("+ProcessManager.run :  %s %s", str(self.status), str(self.__getElapsedTime()))
 
         self.elapsedTime = None
         return self.status
@@ -250,7 +251,7 @@ class ProcessManager(Thread):
                             cN = value.__class__.__name__
                             logfh.write("+ProcessManager.__runProcess :  setting input %s using object type %s\n" % (key, cN))
                             value.printMe()
-                        except:
+                        except Exception as _e:
                             logfh.write("+ProcessManager.__runProcess :  setting input %s with value %r\n" % (key, value))
                     process.setInput(key, value)
             if self.output is not None:
@@ -260,7 +261,7 @@ class ProcessManager(Thread):
                             cN = value.__class__.__name__
                             logfh.write("+ProcessManager.__runProcess :  setting output %s using object type %s\n" % (key, cN))
                             value.printMe()
-                        except:
+                        except Exception as _e:
                             logfh.write("+ProcessManager.__runProcess :  setting output %s with value %r\n" % (key, value))
 
                     process.setOutput(key, value)
@@ -282,7 +283,7 @@ class ProcessManager(Thread):
                     cN = value.__class__.__name__
                     logfh.write("+ProcessManager.__runProcess :  returned output %s has object type %s\n" % (key, cN))
                     value.printMe(logfh)
-                except:
+                except Exception as _e:
                     traceback.print_exc(file=logfh)
                     logfh.write("+ProcessManager.__runProcess :  returned output %s has value %r\n" % (key, value))
 

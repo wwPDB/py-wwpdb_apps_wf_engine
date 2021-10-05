@@ -22,7 +22,7 @@ import os
 import time
 import logging
 
-from optparse import OptionParser
+from optparse import OptionParser  # pylint: disable=deprecated-module
 from wwpdb.apps.wf_engine.wf_engine_utils.run.WFEngineRunner import WFEngineRunner
 
 import platform
@@ -77,7 +77,7 @@ def main():
     parser.add_option("--debug", default=1, type="int", dest="debugLevel", help="Debug level [0-4]")
     parser.add_option("--xmlpath", default=None, dest="wfXmlPath", help="Workflow XML definition file path")
 
-    (options, args) = parser.parse_args()
+    (options, _args) = parser.parse_args()
     lt = time.strftime("%Y %m %d %H:%M:%S", time.localtime())
     #
     if options.debugLevel > 2:
@@ -93,12 +93,12 @@ def main():
 
     if options.startOp:
         sys.stdout.write("+WFEngineRunnerExec(main) starting workflow engine at %s\n" % lt)
-        logger.info("+WFEngineRunnerExec(main) starting workflow engine at %s\n" % lt)
+        logger.info("+WFEngineRunnerExec(main) starting workflow engine at %s\n", lt)
         wfr.setDebugLevel(level=options.debugLevel)
         wfr.start()
     elif options.stopOp:
         sys.stdout.write("+WFEngineRunnerExec(main) stopping workflow engine at %s\n" % lt)
-        logger.info("+WFEngineRunnerExec(main) starting workflow engine at %s\n" % lt)
+        logger.info("+WFEngineRunnerExec(main) starting workflow engine at %s\n", lt)
         wfr.stop()
     elif options.restartOp:
         sys.stdout.write("+WFEngineRunnerExec(main) restarting workflow engine at %s\n" % lt)

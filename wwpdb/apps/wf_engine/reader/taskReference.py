@@ -18,7 +18,6 @@ __license__ = "Creative Commons Attribution 3.0 Unported"
 __version__ = "V0.24"
 
 import sys
-import time
 from wwpdb.apps.wf_engine.reader.TaskComparitor import TaskComparitor
 from wwpdb.apps.wf_engine.reader.TaskParameter import TaskParameter
 from wwpdb.apps.wf_engine.reader.parseTimeDelta import parseTimeDelta
@@ -285,10 +284,10 @@ class taskModule():
                         datum.append(data.getAttribute("type"))
                         self.data.append(datum)
 
-    def failTime(self):
+    def failTime(self):  # pylint: disable=method-hidden
         return self.failTime
 
-    def runTime(self):
+    def runTime(self):  # pylint: disable=method-hidden
         return self.runTime
 
     def printName(self):

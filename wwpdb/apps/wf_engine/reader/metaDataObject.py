@@ -29,9 +29,10 @@ class metaDataObject():
         self.name = None
         self.date = None
         self.description = None
+        self.author = None
 
-    def setID(self, id):
-        self.ID = id
+    def setID(self, did):
+        self.ID = did
 
     def setVersionMajor(self, version):
         self.versionMajor = version

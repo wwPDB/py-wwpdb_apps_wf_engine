@@ -33,8 +33,8 @@ class WorkflowManager(threading.Thread):
         self.__cI = ConfigInfo(self.__siteId)
         self.__wfXmlPath = self.__cI.get('SITE_WF_XML_PATH')
 
-    def setCommand(self, command):
-        self.command = command
+    # def setCommand(self, command):
+    #     self.command = command
 
     def abort(self):
         self.status = 8
@@ -46,13 +46,13 @@ class WorkflowManager(threading.Thread):
         logDir = self.__getLogDirectoryPath(self.depID)
         logFile = os.path.join(logDir, str(self.depID) + '_WF_' + str(self.file[:-4]) + ".log")
         logger.info("+WorkflowManager.runWF() -------------------------------------------------------")
-        logger.info("+workflowManager.runWF() :    siteID       = " + str(self.__siteId))
-        logger.info("+workflowManager.runWF() :     depID       = " + str(self.depID))
-        logger.info("+workflowManager.runWF() :  WF class file  = " + str(self.file))
-        logger.info("+workflowManager.runWF() :   taskID        = " + str(self.taskID))
-        logger.info("+workflowManager.runWF() :  XML path       = " + self.__wfXmlPath)
-        logger.info("+workflowManager.runWF() :   logfile       = " + str(logFile))
-        logger.info("+workflowManager.runWF() : wait flag       = " + str(wait))
+        logger.info("+workflowManager.runWF() :    siteID       = %s", str(self.__siteId))
+        logger.info("+workflowManager.runWF() :     depID       = %s", str(self.depID))
+        logger.info("+workflowManager.runWF() :  WF class file  = %s", str(self.file))
+        logger.info("+workflowManager.runWF() :   taskID        = %s", str(self.taskID))
+        logger.info("+workflowManager.runWF() :  XML path       = %s", self.__wfXmlPath)
+        logger.info("+workflowManager.runWF() :   logfile       = %s", str(logFile))
+        logger.info("+workflowManager.runWF() : wait flag       = %s", str(wait))
 
         if self.instID is None:
             args = ["python",
@@ -98,7 +98,7 @@ class WorkflowManager(threading.Thread):
 
         self.status = 2
         time.sleep(1)
-        logger.info("+WorkflowManager.runWF() workflow subprocess for %s task %r with pid %r" % (self.depID, self.taskID, str(istat)))
+        logger.info("+WorkflowManager.runWF() workflow subprocess for %s task %r with pid %r", self.depID, self.taskID, str(istat))
         logger.info("+WorkflowManager.runWF() -------------------------------------------------------")
         return istat
 
@@ -107,12 +107,12 @@ class WorkflowManager(threading.Thread):
         self.status = 1
         logDir = self.__getLogDirectoryPath(self.depID)
         logFile = os.path.join(logDir, str(self.depID) + '_WF_' + str(self.file[:-4]) + ".log")
-        logger.info("+workflowManager.run() :   siteID      = " + str(self.__siteId))
-        logger.info("+WorkFlowManager.run() :   depID       = " + str(self.depID))
-        logger.info("+WorkFlowManager.run() : WF class file = " + str(self.file))
-        logger.info("+WorkFlowManager.run() :  taskID       = " + str(self.taskID))
-        logger.info("+WorkFlowManager.run() : XML path      = " + self.__wfXmlPath)
-        logger.info("+WorkFLowManager.run() : logfile       = " + str(logFile))
+        logger.info("+workflowManager.run() :   siteID      = %s", str(self.__siteId))
+        logger.info("+WorkFlowManager.run() :   depID       = %s", str(self.depID))
+        logger.info("+WorkFlowManager.run() : WF class file = %s", str(self.file))
+        logger.info("+WorkFlowManager.run() :  taskID       = %s", str(self.taskID))
+        logger.info("+WorkFlowManager.run() : XML path      = %s", self.__wfXmlPath)
+        logger.info("+WorkFLowManager.run() : logfile       = %s", str(logFile))
 
         if self.instID is None:
             args = ["python",
@@ -157,7 +157,7 @@ class WorkflowManager(threading.Thread):
             self.status = 3
         time.sleep(1)
         #
-        logger.info("+WorkflowManager.run() workflow subprocess for %s task %r returns value %r " % (self.depID, str(self.taskID), str(istat)))
+        logger.info("+WorkflowManager.run() workflow subprocess for %s task %r returns value %r ", self.depID, str(self.taskID), str(istat))
         logger.info("+WorkflowManager.run() -------------------------------------------------------")
         return
 

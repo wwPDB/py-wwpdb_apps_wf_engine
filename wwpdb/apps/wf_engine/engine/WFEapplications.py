@@ -19,7 +19,6 @@ import sys
 import os
 import pickle
 import datetime
-import random
 import logging
 
 from wwpdb.utils.wf.process.ProcessRunner import ProcessRunner
@@ -27,12 +26,11 @@ from wwpdb.utils.wf.WfDataObject import WfDataObject
 from wwpdb.utils.wf.dbapi.WfDbApi import WfDbApi
 from wwpdb.utils.wf.dbapi.dbAPI import dbAPI
 from wwpdb.utils.config.ConfigInfo import ConfigInfo, getSiteId
-from wwpdb.utils.wf.dbapi.WFEtime import *
+from wwpdb.utils.wf.dbapi.WFEtime import getTimeNow
 from email.mime.text import MIMEText
 
 logger = logging.getLogger()
 
-    
 
 def getPicklePath(depSetId = None):
     """ Return path to deposition pkl files - to break circular dependency
@@ -70,6 +68,7 @@ def getNotesEmailAddr():
     siteid  = getSiteId()
     # Debugging at PDBe
     if siteid == 'PDBE_DEV':
+        cI = ConfigInfo()
         email = cI.get("ANNOTATION_EMAIL")
 
     return email
@@ -114,7 +113,7 @@ def reRunWorkflow(depID):
     except Exception as e:
         status = "Kill WF error " + str(e)
 
-    logger.info("Restart WF request:  " + str(depID) + " : " + str(status))
+    logger.info("Restart WF request:  %s : %s", str(depID), str(status))
 
     return status
 
@@ -156,8 +155,8 @@ def getWfStatus(depID, wfApi=None):
     if rows is not None and len(rows) > 0:
         # if rows[0][0] != 'WORKING':
         if rows[0][0] == 'FINISHED':
-            logger.info("wf_engine.engine.WFEapplications.getWfStatus: " + sql)
-            logger.info("wf_engine.engine.WFEapplications.getWfStatus: " + str(rows))
+            logger.info("wf_engine.engine.WFEapplications.getWfStatus: %s", sql)
+            logger.info("wf_engine.engine.WFEapplications.getWfStatus: %s", str(rows))
         for row in rows:
             return row
             # return row[0].lower()
@@ -182,7 +181,7 @@ def killAllWF(depID, who):
     except Exception as e:
         status = "Kill WF error " + str(e)
 
-    logger.info("Kill WF request:  " + str(depID) + " from " + str(who))
+    logger.info("Kill WF request:  %s from %s", str(depID), str(who))
 
     return status
 
@@ -202,19 +201,6 @@ def wfClassDir():
     ret = cI.get('SITE_WF_PYTHON_PATH')
     #ret = os.path.abspath(os.path.join(os.path.abspath(__file__), '../../')) + '/'
     return ret
-
-
-def wfLogDirectory(self, depID):
-    siteId = getSiteId(defaultSiteId="WWPDB_DEPLOY_TEST")
-    cI = ConfigInfo(siteId)
-
-    topSessionPath = cI.get('SITE_WEB_APPS_TOP_SESSIONS_PATH')
-    logDir = os.path.join(topSessionPath, "wf-logs", depID)
-
-    if not os.path.exists(logDir):
-        os.makedirs(logDir)
-
-    return logDir
 
 
 def getNextInstanceId(DBstatusAPI, depID, prt=sys.stderr):
@@ -299,7 +285,7 @@ def resetInitialStateDB(DBstatusAPI, depID, debug=0, prt=sys.stderr):
         return insertInitialStateDB(DBstatusAPI, depID, debug=debug, prt=prt)
 
 
-def updateInitialStateDB(DBstatusAPI, depID, debug=0, prt=sys.stderr):
+def updateInitialStateDB(DBstatusAPI, depID, debug=0, prt=sys.stderr):  # pylint: disable=unused-argument
     '''
       Method to reset the annoation workflow back to init state by setting the owner, status and class
     '''
@@ -330,7 +316,7 @@ def DepUIgetDepositorEmail(depID):
       go get the depositor email
     '''
 
-    logger.info("Getting email address for '%s'" % depID)
+    logger.info("Getting email address for '%s'", depID)
     # This code is here to break a dependence on DepUI code from WFE
     fPath = getPicklePath(depID)
     
@@ -350,7 +336,7 @@ def DepUIgetDepositorEmail(depID):
             else:
                 return None
         except Exception as e:
-            logger.exception("Tried to get the formdata and return email  " + str(e))
+            logger.exception("Tried to get the formdata and return email %s", str(e))
             return None
     else:
         ss = dbAPI(depID)
@@ -360,11 +346,11 @@ def DepUIgetDepositorEmail(depID):
         return None
 
 def WFEsendEmail(email, frm, subject, message, bcc=None):
-
+    # Used when enabling FTP from WFM
     import smtplib
 
     if email is None:
-        logger.error(" Invalid email " + str(email))
+        logger.error(" Invalid email %s", str(email))
         return
 
     msg = MIMEText(message)
@@ -374,24 +360,24 @@ def WFEsendEmail(email, frm, subject, message, bcc=None):
     sendTo = [email]
     if bcc:
         sendTo = [email] + [bcc]
-        logger.debug("send email (bcc) to " + str(bcc))
+        logger.debug("send email (bcc) to %s", str(bcc))
 
     cI = ConfigInfo()
     noreplyaddr = cI.get("SITE_NOREPLY_EMAIL", 'noreply@mail.wwpdb.org')
 
     # Send the message via our own SMTP server, but don't include the
     # envelope header.
-    logger.debug("send email from " + str(frm))
-    logger.debug("send email to " + str(email))
+    logger.debug("send email from %s", str(frm))
+    logger.debug("send email to %s", str(email))
     try:
         s = smtplib.SMTP('localhost')
-        s.sendmail('noreplyaddr', sendTo, msg.as_string())
+        s.sendmail(noreplyaddr, sendTo, msg.as_string())
         s.quit()
     except Exception as e:
-        logger.error(" Exception in WFE.WFEsendEmail " + str(e))
+        logger.error(" Exception in WFE.WFEsendEmail %s", str(e))
 
 
-def resetComms(DBstatusAPI, id):
+def resetComms(DBstatusAPI, id):  # pylint: disable=redefined-builtin
 
     t = getTimeNow()
     sql = "update communication set sender='INSERT',receiver='LOAD',command='INIT',status='INIT',actual_timestamp='" + \
@@ -400,13 +386,13 @@ def resetComms(DBstatusAPI, id):
     DBstatusAPI.runUpdateSQL(sql)
 
 
-def initialiseComms(DBstatusAPI, id):
+def initialiseComms(DBstatusAPI, id):  # pylint: disable=redefined-builtin
 
     sql = "select dep_set_id from communication where dep_set_id = '" + str(id) + "'"
 
     allList = DBstatusAPI.runSelectSQL(sql)
 
-    logger.info("****************" + str(allList))
+    logger.info("****************%s", str(allList))
 
     if allList is None or len(allList) < 1:
         # The normal case - insert a new value
@@ -420,7 +406,7 @@ def initialiseComms(DBstatusAPI, id):
         resetComms(DBstatusAPI, id)
 
 
-def initilliseInstance(DBstatusAPI, id):
+def initilliseInstance(DBstatusAPI, id):  # pylint: disable=redefined-builtin
     """  If there is no existing wf_instance for the input id then add a placeholder instance -
     """
     sql = "select dep_set_id from wf_instance where dep_set_id = '" + str(id) + "'"
@@ -441,11 +427,9 @@ def initilliseInstance(DBstatusAPI, id):
         pass
 
 
-def initilliseDepositDict(DBstatusAPI, id, pdb='?', data=None):
+def initilliseDepositDict(DBstatusAPI, id, pdb='?', data=None):  # pylint: disable=unused-argument,redefined-builtin
     '''
         raw deposition table inialisation
-        nrow = updateDeposit(wfApi,depid, title = dep_title, site = THIS_SITE, auth = dep_authors)
-
     '''
 
     depDB = {}
@@ -467,7 +451,7 @@ def initilliseDepositDict(DBstatusAPI, id, pdb='?', data=None):
         sql = sql + ' where dep_set_id = %s' 
         args += (str(id),)
 
-        logger.info("%s %s" % (sql, args))
+        logger.info("%s %s", sql, args)
         DBstatusAPI.runUpdateSQL(sql, args)
     else:
         # I do not think this code path is used - missing
@@ -485,7 +469,7 @@ def initilliseDepositDict(DBstatusAPI, id, pdb='?', data=None):
         DBstatusAPI.runInsertSQL(sql)
 
 
-def getdepUIPassword(DBstatusAPI, id):
+def getdepUIPassword(DBstatusAPI, id):  # pylint: disable=redefined-builtin
 
     depDB = {}
     depDB["DEP_SET_ID"] = id
@@ -501,13 +485,13 @@ def getdepUIPassword(DBstatusAPI, id):
                 for allRow in allList:
                     pw = allRow[0]
                     return pw
-    except Exception as e:
+    except Exception as _e:
         logger.exception("Failed to get depUI PW in status DB")
 
     return None
 
 
-def setdepUIPassword(DBstatusAPI, id, pw):
+def setdepUIPassword(DBstatusAPI, id, pw):  # pylint: disable=redefined-builtin
     '''
       keep this separate so we never overwrite the PW
     '''
@@ -517,24 +501,25 @@ def setdepUIPassword(DBstatusAPI, id, pw):
 
     try:
         if DBstatusAPI.exist(depDB):
-            #       print "ID exists "
             sql = "update deposition set depPW = '" + str(pw) + "' where dep_set_id = '" + str(id) + "'"
             DBstatusAPI.runUpdateSQL(sql)
         else:
             logger.info(" Cannot set depUI password - depID does not exist")
     except Exception as e:
-        logger.exception("Failed to set depUI PW in status DB " + str(e))
+        logger.exception("Failed to set depUI PW in status DB %s", str(e))
 
 
-def initilliseDepositV2(DBstatusAPI, id, pdb='?', date=None, initials='unknown', deposit_site='?', process_site='?', status_code='DEP',
+# API in use - references id by name...
+def initilliseDepositV2(DBstatusAPI, id, pdb='?', date=None, initials='unknown', deposit_site='?', process_site='?', status_code='DEP',  # pylint: disable=redefined-builtin,unused-argument
                         author_code='?', title='?', author_list='?', expt='?',
                         status_code_exp='?', SG_center='?', ann='dep', email='',
-                        requested_codes=[]):
+                        requested_codes=None):
     '''
       raw deposition table inialisation
-        nrow = updateDeposit(wfApi,depid, title = dep_title, site = THIS_SITE, auth = dep_authors)
-
     '''
+
+    if requested_codes is None:
+        requested_codes = []
 
     depDB = {}
     depDB["DEP_SET_ID"] = id
@@ -554,31 +539,7 @@ def initilliseDepositV2(DBstatusAPI, id, pdb='?', date=None, initials='unknown',
             DBstatusAPI.runInsertSQL(sql)
 
 
-# Deprecated - but need to cleanup WF examples
-def initilliseDeposit(DBstatusAPI, id, pdb='?', date=None, initials='unknown', deposit_site='?', process_site='?', status_code='DEP',
-                      author_code='?', title='?', author_list='?', expt='?', status_code_exp='?', SG_center='?', ann='dep', email=''):
-    '''
-      raw deposition table inialisation
- nrow = updateDeposit(wfApi,depid, title = dep_title, site = THIS_SITE, auth = dep_authors)
-
-    '''
-
-    depDB = {}
-    depDB["DEP_SET_ID"] = id
-
-    if DBstatusAPI.exist(depDB):
-        logger.info("ID exists ")
-        sql = "update deposition set process_site = '" + str(process_site) + "', exp_method = '" + str(expt) + "' where dep_set_id = '" + str(id) + "'"
-        logger.info(sql)
-        DBstatusAPI.runUpdateSQL(sql)
-    else:
-        sql = "insert deposition (dep_set_id, pdb_id, deposit_site, process_site, status_code, author_release_status_code, title, author_list, exp_method, status_code_exp, SG_center, annotator_initials,email) values ('" + str(id) + "','" + str(pdb) + "','" + str(
-            deposit_site) + "','" + str(process_site) + "','" + str(status_code) + "','" + str(author_code) + "','" + str(title) + "','" + str(author_list) + "','" + str(expt) + "','" + str(status_code_exp) + "','" + str(SG_center) + "','" + str(ann) + "','" + str(email) + "')"
-        logger.info(sql)
-        DBstatusAPI.runInsertSQL(sql)
-
-
-def runValidationUpload(DBstatusAPI, id, validation_server=False):
+def runValidationUpload(DBstatusAPI, id, validation_server=False):  # pylint: disable=redefined-builtin
     '''
        (old: Add request to run WF  : DepValModule.xml)
        Add request to run WF  : wf_op_validdeposit_fs_deposit.xml
@@ -589,9 +550,9 @@ def runValidationUpload(DBstatusAPI, id, validation_server=False):
     status = getValidationStatus(id, wfApi=DBstatusAPI)
     now = getTimeNow()
 
-    logger.info(" Engine.WFEapplications.runValidationUpload " + str(now))
-    logger.info(" Engine.WFEapplications.runValidationUpload " + str(id))
-    logger.info(" Engine.WFEapplications.runValidationUpload " + str(status))
+    logger.info(" Engine.WFEapplications.runValidationUpload %s", str(now))
+    logger.info(" Engine.WFEapplications.runValidationUpload %s", str(id))
+    logger.info(" Engine.WFEapplications.runValidationUpload %s", str(status))
 
     if validation_server:
         wfName = "wf_op_validserver_fs_deposit.xml"
@@ -599,24 +560,19 @@ def runValidationUpload(DBstatusAPI, id, validation_server=False):
         wfName = "wf_op_validdeposit_fs_deposit.xml"
 
     if status == 'working':
-        # sql = "update communication set command = 'restartGoWF',  wf_class_file = 'DepValModule.xml', status = 'PENDING', actual_timestamp = '" + \
-        #    str(now) + "' where dep_set_id = '" + id + "'"
         sql = "update communication set command = 'restartGoWF',  wf_class_file = '" + wfName + "', wf_class_id = 'DepVal', status = 'PENDING', actual_timestamp = '" + \
             str(now) + "' where dep_set_id = '" + id + "'"
-
     else:
-        # sql = "update communication set sender = 'DEP', receiver = 'WFE', wf_class_file = 'DepValModule.xml', command = 'runWF', status = 'PENDING', actual_timestamp = '" + \
-        #    str(now) + "', parent_dep_set_id = '" + str(id) + "', parent_wf_class_id = 'DepUpload', parent_wf_inst_id = 'W_001' where dep_set_id = '" + id + "'"
         sql = "update communication set sender = 'DEP', receiver = 'WFE', wf_class_file = '" + wfName + "', wf_class_id = 'DepVal', command = 'runWF', status = 'PENDING', actual_timestamp = '" + \
             str(now) + "', parent_dep_set_id = '" + str(id) + "', parent_wf_class_id = 'DepUpload', parent_wf_inst_id = 'W_001' where dep_set_id = '" + id + "'"
 
-    logger.info(" Engine.WFEapplications.runValidationUpload - " + str(sql))
+    logger.info(" Engine.WFEapplications.runValidationUpload - %s", str(sql))
 
     nrow = DBstatusAPI.runUpdateSQL(sql)
-    logger.info(" WFE.runValidationUpload :  Rows affected: %i" % nrow)
+    logger.info(" WFE.runValidationUpload :  Rows affected: %i", nrow)
 
 
-def runWorkflowOnUpload(DBstatusAPI, id, validation_server=False):
+def runWorkflowOnUpload(DBstatusAPI, id, validation_server=False):  # pylint: disable=redefined-builtin
     '''
        (old: Add request to run WF  : depRunOnUpload.xml)
        Add request to run WF  : wf_op_uploaddep_fs_deposit.xml
@@ -627,9 +583,9 @@ def runWorkflowOnUpload(DBstatusAPI, id, validation_server=False):
     try:
         status = getValidationStatus(id, wfApi=DBstatusAPI)
         now = getTimeNow()
-        logger.info(" Engine.WFEapplications.runWorkflowOnUpload " + str(now))
-        logger.info(" Engine.WFEapplications.runWorkflowOnUpload " + str(id))
-        logger.info(" Engine.WFEapplications.runWorkflowOnUpload " + str(status))
+        logger.info(" Engine.WFEapplications.runWorkflowOnUpload %s", str(now))
+        logger.info(" Engine.WFEapplications.runWorkflowOnUpload %s", str(id))
+        logger.info(" Engine.WFEapplications.runWorkflowOnUpload %s", str(status))
         if validation_server:
             wfName = "wf_op_uploadvalsrv_fs_deposit.xml"
         else:
@@ -647,15 +603,127 @@ def runWorkflowOnUpload(DBstatusAPI, id, validation_server=False):
             sql = "update communication set sender = 'DEP', receiver = 'WFE', wf_class_file = '" + wfName + "', wf_class_id = 'uploadMod', command = 'runWF', status = 'PENDING', actual_timestamp = '" + \
                 str(now) + "', parent_dep_set_id = '" + str(id) + "', parent_wf_class_id = 'DepUpload', parent_wf_inst_id = 'W_001' where dep_set_id = '" + id + "'"
 
-        logger.info(" Engine.WFEapplications.runWorkflowOnUpload - " + str(sql))
+        logger.info(" Engine.WFEapplications.runWorkflowOnUpload - %s", str(sql))
 
         nrow = DBstatusAPI.runUpdateSQL(sql)
-        logger.info(" WFE.runWorkflowOnUpload :  Rows affected: %i" % nrow)
+        logger.info(" WFE.runWorkflowOnUpload :  Rows affected: %i", nrow)
     except Exception as e:
-        logger.exception("Exception Engine.WFEapplications.runWorkflowOnUpload " + str(e))
+        logger.exception("Exception Engine.WFEapplications.runWorkflowOnUpload %s", str(e))
 
 
-def populateDeposit(DBstatusAPI, id):
+
+
+def WFEsetAnnotator(DBstatusAPI, depID, annotator):
+
+    sql = "update deposition set annotator_initials = '" + annotator + "' where dep_set_id = '" + depID + "'"
+    _ok = DBstatusAPI.runUpdateSQL(sql)
+
+
+def WFEexception(DBstatusAPI, depID):
+
+    WFEsetCommunication(DBstatusAPI, "EXCEPTION", "EXCEPTION", depID)
+
+
+def WFEfinished(DBstatusAPI, depID):
+
+    WFEsetCommunication(DBstatusAPI, "FINISHED", "FINISHED", depID)
+
+
+def WFEsetCommunication(DBstatusAPI, status, activity, depID):
+
+    timeNow = getTimeNow()
+    sql = "update communication set status = '" + str(status) + "', activity = '" + str(activity) + "', actual_timestamp = " + \
+        str(timeNow) + " where dep_set_id  = '" + str(depID) + "'"
+
+    ok = DBstatusAPI.runUpdateSQL(sql)
+
+    if ok == 1:
+        logger.info("Set the communication to %s doe dep_set_id = %s", str(status), str(depID))
+    else:
+        logger.info("Failed to set the communication table to %s for dep_set_id = %s", str(status), str(depID))
+
+
+def getInitialDate(depid):
+
+    ret = 'error'
+    if depid is not None:
+        wfApi = WfDbApi(verbose=True)
+        sql = "select initial_deposition_date from deposition where dep_set_id = '" + depid + "'"
+        dat = wfApi.runSelectSQL(sql)
+        if dat is not None and len(dat) > 0:
+            for r in dat:
+                ret = r[0]
+
+    return ret
+
+
+def getAnnotatorInitials(depid):
+
+    ret = 'error'
+    if depid is not None:
+        wfApi = WfDbApi(verbose=True)
+        sql = "select annotator_initials from deposition where dep_set_id = '" + depid + "'"
+        dat = wfApi.runSelectSQL(sql)
+        if dat is not None and len(dat) > 0:
+            for r in dat:
+                ret = r[0]
+
+    return ret
+
+
+def getStatusCode(depid):
+
+    ret = 'error'
+    if depid is not None:
+        wfApi = WfDbApi(verbose=True)
+        sql = "select status_code from deposition where dep_set_id = '" + depid + "'"
+        dat = wfApi.runSelectSQL(sql)
+        if dat is not None and len(dat) > 0:
+            for r in dat:
+                ret = r[0]
+
+    return ret
+
+
+def getStatusCodeEMDB(depid):
+
+    ret = 'error'
+    if depid is not None:
+        wfApi = WfDbApi(verbose=True)
+        sql = "select status_code_emdb from deposition where dep_set_id = '" + depid + "'"
+        dat = wfApi.runSelectSQL(sql)
+        if dat is not None and len(dat) > 0:
+            for r in dat:
+                ret = r[0]
+
+    return ret
+
+
+def setStatusCode(depID, code):
+
+    valid = ['PROC', 'AUTH', 'DEP', 'VAL', 'HPUB', 'REL', 'REPL', 'HOLD', 'OBS', 'WAIT', 'WDRN', 'REFI']
+
+    if code not in valid:
+        return False, "Invalid status code"
+
+    try:
+        wfApi = WfDbApi(verbose=True)
+        sql = "update deposition set status_code = '" + str(code) + "' where dep_set_id = '" + depID + "'"
+        n = wfApi.runUpdateSQL(sql)
+        if n == 0:
+            return False, "Update did not occur - possible invalid dep_set_id or no change to code "
+        else:
+            return True, "Status updated"
+    except Exception as e:
+        return False, "Exception : " + str(e)
+
+
+# ############################################
+#  Believed not in use - except for examples
+# ############################################
+
+# Only used by examples - not in production
+def populateDeposit(DBstatusAPI, depositionID):
     '''
      Entry point added to the workflow system to create an object within
      the state system
@@ -673,13 +741,13 @@ def populateDeposit(DBstatusAPI, id):
     process.setAction("status")
 
     wfoInp = WfDataObject()
-    wfoInp.setDepositionDataSetId(id)
+    wfoInp.setDepositionDataSetId(depositionID)
     wfoInp.setStorageType('archive')
     wfoInp.setContentTypeAndFormat('model', 'pdbx')
     wfoInp.setVersionId('latest')
-    dP = wfoInp.getDirPathReference()
-    fP = wfoInp.getFilePathReference()
-    oVn = wfoInp.getFileVersionNumber()
+    # dP = wfoInp.getDirPathReference()
+    # fP = wfoInp.getFilePathReference()
+    # oVn = wfoInp.getFileVersionNumber()
     process.setInput("src", wfoInp)
 
     wfoOut = WfDataObject()
@@ -696,14 +764,6 @@ def populateDeposit(DBstatusAPI, id):
     dataDict = wfoOut.getValue()
 
     if dataDict is not None:
-        if 'recvd_initial_deposition_date' in dataDict:
-            depDate = dataDict['recvd_initial_deposition_date']
-        else:
-            # JDW JDW
-            today = datetime.datetime.utcnow().strftime("%Y-%m-%d")
-            #depDate = 'unknown'
-            depDate = today
-
         if 'title' in dataDict:
             title = dataDict['title'].replace("'", " ")
         else:
@@ -717,7 +777,7 @@ def populateDeposit(DBstatusAPI, id):
             elif isinstance(auth, str):
                 author_list = auth
             else:
-                logger.info(" Unknown type of author list " + str(type(auth)))
+                logger.info(" Unknown type of author list %s", str(type(auth)))
             author_list = author_list.replace("'", " ")
         else:
             author_list = "unknown"
@@ -746,61 +806,14 @@ def populateDeposit(DBstatusAPI, id):
         now = datetime.datetime.utcnow().strftime("%Y-%m-%d")
 
         sql = "update deposition set initial_deposition_date = '" + str(now) + "',title = '" + str(title) + "', author_list = '" + str(
-            author_list) + "', exp_method = '" + str(expt) + "',sg_center = '" + str(sg_center) + "' where dep_set_id = '" + str(id) + "' and status_code = 'DEP'"
+            author_list) + "', exp_method = '" + str(expt) + "',sg_center = '" + str(sg_center) + "' where dep_set_id = '" + str(depositionID) + "' and status_code = 'DEP'"
         logger.info(sql)
         nrow = DBstatusAPI.runUpdateSQL(sql)
-        logger.info("rows change " + str(nrow))
+        logger.info("rows change %s", str(nrow))
 
 
-def updateDeposit(DBstatusAPI, id, site='pdbe', title='?', auth='?', method='?'):
-    '''
-      update deposition communications table
-    '''
-
-    depDB = {}
-    depDB["DEP_SET_ID"] = id
-    timeNow = getTimeNow()
-
-    if DBstatusAPI.exist(depDB):
-
-        logger.info(" -> Running SQL 1 : update deposition")
-        if title is None:
-            sql = "update deposition set annotator_initials = 'unknown',status_code = 'PROC'   where dep_set_id = '%s' and status_code = 'DEP'" % (id)
-        else:
-            sql = "update deposition set annotator_initials = 'unknown',status_code = 'PROC', deposit_site = '%s', title = '%s', author_list = '%s', exp_method = '%s' where dep_set_id = '%s' and status_code = 'DEP'" % (
-                site, title, auth, method, id)
-        logger.info(sql)
-        nrow = DBstatusAPI.runUpdateSQL(sql)
-        logger.info("Rows affected: %i" % nrow)
-
-        logger.info(" -> Running SQL 2 : insert wf_instance")
-# make sure we only get the last in case processing was done with new instance data
-        sql = "select ordinal from wf_instance where dep_set_id = '" + str(id) + "'  order by status_timestamp desc limit 1"
-        allList = DBstatusAPI.runSelectSQL(sql)
-
-        if allList is not None:
-            for allRow in allList:
-                ordinal = allRow[0]
-                sql = "update wf_instance set wf_inst_id = 'W_001', wf_class_id = 'Annotate', owner = 'Annotation.bf.xml', inst_status = 'init', status_timestamp = '%s' where ordinal = '%s'" % (
-                    timeNow, str(ordinal))
-                logger.info(sql)
-                nrow = DBstatusAPI.runInsertSQL(sql)
-                logger.info("Rows affected: %i" % nrow)
-                break
-
-        logger.info(" -> Running SQL 3 : insert wf_instance_last")
-        sql = "update wf_instance_last set wf_inst_id = 'W_001', wf_class_id = 'Annotate', owner = 'Annotation.bf.xml', inst_status = 'init', status_timestamp = '%s' where dep_set_id = '%s'" % (
-            timeNow, str(id))
-        logger.info(sql)
-        nrow = DBstatusAPI.runInsertSQL(sql)
-        logger.info("Rows affected: %i" % nrow)
-
-        return nrow
-
-    return 0
-
-
-def initilliseDB(metaData, depositionID, WorkflowClassID, WorkflowInstanceID, DBstatusAPI, input, debug=0, prt=sys.stderr):
+# NOT IN USE EXCEPT IN A SAMPLE SCRIPT in WFE XXXXX
+def initilliseDB(metaData, depositionID, WorkflowClassID, WorkflowInstanceID, DBstatusAPI, dinput, debug=0, prt=sys.stderr):
     '''
       method to extract information from the domain data
       using a depositionDB and put this into the statusDB
@@ -813,7 +826,7 @@ def initilliseDB(metaData, depositionID, WorkflowClassID, WorkflowInstanceID, DB
     if (prt == sys.stderr):
         log = sys.stderr
     else:
-        processLog = "log/status_" + str(depositionID) + "_" + WorkflwClassID + "_" + WorkflowInstanceID + ".log"
+        processLog = "log/status_" + str(depositionID) + "_" + WorkflowClassID + "_" + WorkflowInstanceID + ".log"
         log = open(processLog, "w")
 
     if debug > 0:
@@ -823,11 +836,11 @@ def initilliseDB(metaData, depositionID, WorkflowClassID, WorkflowInstanceID, DB
 
     process.setAction("status")
 
-    if input is None:
+    if dinput is None:
         prt.write("WFE.WFEapplications.initialliseDB :  Requires input object \n")
         sys.exit(0)
 
-    for key, value in input.items():
+    for key, value in dinput.items():
         if debug > 0:
             prt.write("WFE.WFEapplications.initialliseDB :  setting input " + str(key) + str(value.getReferenceType()) + "\n")
             prt.write("WFE.WFEapplications.initialliseDB :  setting input " + str(key) + str(value) + "\n")
@@ -906,7 +919,7 @@ def initilliseDB(metaData, depositionID, WorkflowClassID, WorkflowInstanceID, DB
         elif isinstance(auth, str):
             depDB["AUTHOR_LIST"] = auth
         else:
-            logger.info(" Unknown type of author list " + str(type(auth)))
+            logger.info(" Unknown type of author list %s", str(type(auth)))
         depDB["AUTHOR_LIST"] = depDB["AUTHOR_LIST"].replace("'", " ")
         logger.info(depDB["AUTHOR_LIST"])
     else:
@@ -938,7 +951,6 @@ def initilliseDB(metaData, depositionID, WorkflowClassID, WorkflowInstanceID, DB
         constDict = {}
         constDict["DEP_SET_ID"] = depositionID
         DBstatusAPI.saveObject(depDB, 'update', constDict)
-        pass
     else:
         DBstatusAPI.saveObject(depDB, 'insert')
         if debug > 0:
@@ -958,7 +970,6 @@ def initilliseDB(metaData, depositionID, WorkflowClassID, WorkflowInstanceID, DB
         # do nothing as we have run this workflow
         # We need to review the version to see if it is the same - how do we
         #   handle a new version of the workflow-class ?
-        pass
         constDict = {}
         constDict['WF_CLASS_ID'] = WorkflowClassID
         DBstatusAPI.saveObject(classDB, 'update', constDict)
@@ -984,109 +995,86 @@ def initilliseDB(metaData, depositionID, WorkflowClassID, WorkflowInstanceID, DB
     if log != sys.stderr:
         log.close()
 
+# XXXXX Believe internal to this file only - privatize scope?
+def updateDeposit(DBstatusAPI, depositionID, site='pdbe', title='?', auth='?', method='?'):
+    '''
+      update deposition communications table
+    '''
 
-def WFEsetAnnotator(DBstatusAPI, depID, annotator):
-
-    sql = "update deposition set annotator_initials = '" + annotator + "' where dep_set_id = '" + depID + "'"
-    ok = DBstatusAPI.runUpdateSQL(sql)
-
-
-def WFEexception(DBstatusAPI, depID):
-
-    WFEsetCommunication(DBstatusAPI, "EXCEPTION", "EXCEPTION", depID)
-
-
-def WFEfinished(DBstatusAPI, depID):
-
-    WFEsetCommunication(DBstatusAPI, "FINISHED", "FINISHED", depID)
-
-
-def WFEsetCommunication(DBstatusAPI, status, activity, depID):
-
+    depDB = {}
+    depDB["DEP_SET_ID"] = depositionID
     timeNow = getTimeNow()
-    sql = "update communication set status = '" + str(status) + "', activity = '" + str(activity) + "', actual_timestamp = " + \
-        str(timeNow) + " where dep_set_id  = '" + str(depID) + "'"
 
-    ok = DBstatusAPI.runUpdateSQL(sql)
+    if DBstatusAPI.exist(depDB):
 
-    if ok == 1:
-        logger.info("Set the communication to " + str(status) + " for dep_set_id = " + str(depID))
-    else:
-        logger.info("Failed to set the communication table to " + str(status) + " for dep_set_id = " + str(depID))
-
-
-def getInitialDate(depid):
-
-    ret = 'error'
-    if depid is not None:
-        wfApi = WfDbApi(verbose=True)
-        sql = "select initial_deposition_date from deposition where dep_set_id = '" + depid + "'"
-        dat = wfApi.runSelectSQL(sql)
-        if dat is not None and len(dat) > 0:
-            for r in dat:
-                ret = r[0]
-
-    return ret
-
-
-def getAnnotatorInitials(depid):
-
-    ret = 'error'
-    if depid is not None:
-        wfApi = WfDbApi(verbose=True)
-        sql = "select annotator_initials from deposition where dep_set_id = '" + depid + "'"
-        dat = wfApi.runSelectSQL(sql)
-        if dat is not None and len(dat) > 0:
-            for r in dat:
-                ret = r[0]
-
-    return ret
-
-
-def getStatusCode(depid):
-
-    ret = 'error'
-    if depid is not None:
-        wfApi = WfDbApi(verbose=True)
-        sql = "select status_code from deposition where dep_set_id = '" + depid + "'"
-        dat = wfApi.runSelectSQL(sql)
-        if dat is not None and len(dat) > 0:
-            for r in dat:
-                ret = r[0]
-
-    return ret
-
-
-def getStatusCodeEMDB(depid):
-
-    ret = 'error'
-    if depid is not None:
-        wfApi = WfDbApi(verbose=True)
-        sql = "select status_code_emdb from deposition where dep_set_id = '" + depid + "'"
-        dat = wfApi.runSelectSQL(sql)
-        if dat is not None and len(dat) > 0:
-            for r in dat:
-                ret = r[0]
-
-    return ret
-
-
-def setStatusCode(depID, code):
-
-    valid = ['PROC', 'AUTH', 'DEP', 'VAL', 'HPUB', 'REL', 'REPL', 'HOLD', 'OBS', 'WAIT', 'WDRN', 'REFI']
-
-    if code not in valid:
-        return False, "Invalid status code"
-
-    try:
-        wfApi = WfDbApi(verbose=True)
-        sql = "update deposition set status_code = '" + str(code) + "' where dep_set_id = '" + depID + "'"
-        n = wfApi.runUpdateSQL(sql)
-        if n == 0:
-            return False, "Update did not occur - possible invalid dep_set_id or no change to code "
+        logger.info(" -> Running SQL 1 : update deposition")
+        if title is None:
+            sql = "update deposition set annotator_initials = 'unknown',status_code = 'PROC'   where dep_set_id = '%s' and status_code = 'DEP'" % (depositionID)
         else:
-            return True, "Status updated"
-    except Exception as e:
-        return False, "Exception : " + str(e)
+            sql = "update deposition set annotator_initials = 'unknown',status_code = 'PROC', deposit_site = '%s', title = '%s', author_list = '%s', exp_method = '%s' where dep_set_id = '%s' and status_code = 'DEP'" % (
+                site, title, auth, method, depositionID)
+        logger.info(sql)
+        nrow = DBstatusAPI.runUpdateSQL(sql)
+        logger.info("Rows affected: %i", nrow)
+
+        logger.info(" -> Running SQL 2 : insert wf_instance")
+# make sure we only get the last in case processing was done with new instance data
+        sql = "select ordinal from wf_instance where dep_set_id = '" + str(depositionID) + "'  order by status_timestamp desc limit 1"
+        allList = DBstatusAPI.runSelectSQL(sql)
+
+        if allList is not None:
+            for allRow in allList:
+                ordinal = allRow[0]
+                sql = "update wf_instance set wf_inst_id = 'W_001', wf_class_id = 'Annotate', owner = 'Annotation.bf.xml', inst_status = 'init', status_timestamp = '%s' where ordinal = '%s'" % (
+                    timeNow, str(ordinal))
+                logger.info(sql)
+                nrow = DBstatusAPI.runInsertSQL(sql)
+                logger.info("Rows affected: %i", nrow)
+                break
+
+        logger.info(" -> Running SQL 3 : insert wf_instance_last")
+        sql = "update wf_instance_last set wf_inst_id = 'W_001', wf_class_id = 'Annotate', owner = 'Annotation.bf.xml', inst_status = 'init', status_timestamp = '%s' where dep_set_id = '%s'" % (
+            timeNow, str(depositionID))
+        logger.info(sql)
+        nrow = DBstatusAPI.runInsertSQL(sql)
+        logger.info("Rows affected: %i", nrow)
+
+        return nrow
+
+    return 0
+            
+
+# Deprecated - but need to cleanup WF examples
+def initilliseDeposit(DBstatusAPI, depositionID, pdb='?', date=None, initials='unknown', deposit_site='?', process_site='?', status_code='DEP',  # pylint: disable=unused-argument
+                      author_code='?', title='?', author_list='?', expt='?', status_code_exp='?', SG_center='?', ann='dep', email=''):
+    '''
+      raw deposition table inialisation
+    '''
+
+    depDB = {}
+    depDB["DEP_SET_ID"] = depositionID
+
+    if DBstatusAPI.exist(depDB):
+        logger.info("ID exists ")
+        sql = "update deposition set process_site = '" + str(process_site) + "', exp_method = '" + str(expt) + "' where dep_set_id = '" + str(depositionID) + "'"
+        logger.info(sql)
+        DBstatusAPI.runUpdateSQL(sql)
+    else:
+        sql = "insert deposition (dep_set_id, pdb_id, deposit_site, process_site, status_code, author_release_status_code, title, author_list, exp_method, status_code_exp, SG_center, annotator_initials,email) values ('" + str(depositionID) + "','" + str(pdb) + "','" + str(
+            deposit_site) + "','" + str(process_site) + "','" + str(status_code) + "','" + str(author_code) + "','" + str(title) + "','" + str(author_list) + "','" + str(expt) + "','" + str(status_code_exp) + "','" + str(SG_center) + "','" + str(ann) + "','" + str(email) + "')"
+        logger.info(sql)
+        DBstatusAPI.runInsertSQL(sql)
 
 
+# Only used by examples XXX
+def wfLogDirectory(depID):
+    siteId = getSiteId(defaultSiteId="WWPDB_DEPLOY_TEST")
+    cI = ConfigInfo(siteId)
+
+    topSessionPath = cI.get('SITE_WEB_APPS_TOP_SESSIONS_PATH')
+    logDir = os.path.join(topSessionPath, "wf-logs", depID)
+
+    if not os.path.exists(logDir):
+        os.makedirs(logDir)
+
+    return logDir
