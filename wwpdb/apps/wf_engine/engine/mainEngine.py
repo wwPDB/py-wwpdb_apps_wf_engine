@@ -40,6 +40,7 @@ import time
 import os
 import logging
 from xml.dom import minidom
+
 # from threading import *
 
 from wwpdb.apps.wf_engine.engine.SwitchTask import SwitchTask
@@ -56,8 +57,10 @@ from wwpdb.apps.wf_engine.engine.InterpretDataObject import getTaskParameterDict
 
 
 from wwpdb.apps.wf_engine.engine.EngineUtils import EngineUtils
+
 #
 from wwpdb.apps.wf_engine.reader.parseXML import parseXML
+
 #
 from wwpdb.apps.wf_engine.wf_engine_utils.time.TimeStamp import TimeStamp
 
@@ -65,11 +68,10 @@ from wwpdb.apps.wf_engine.wf_engine_utils.run.MyLogger import MyLogger
 from wwpdb.apps.wf_engine.wf_engine_utils.process.ProcessUtils import ProcessUtils
 from wwpdb.io.locator.DataReference import DataFileReference
 
-logger = logging.getLogger(name='root')
+logger = logging.getLogger(name="root")
 
 
 class mainEngine(object):
-
     def __init__(self, debug=4, prt=None):  # pylint: disable=unused-argument
         logger.info("+mainEngine.__init__ Starts log level at %d", logger.getEffectiveLevel())
         # Global variables
@@ -99,11 +101,11 @@ class mainEngine(object):
         self.instanceExitState = "finished"
 
     def __createDBclass(self, wfMetaDataObj):
-        '''
-         Internal method create a workflow-class reference if not present.
-         The statusDB class-dict contains one reference to each workflow class - so we only update when we find
-         a new one.
-        '''
+        """
+        Internal method create a workflow-class reference if not present.
+        The statusDB class-dict contains one reference to each workflow class - so we only update when we find
+        a new one.
+        """
 
         classDB = {}
         classDB["WF_CLASS_ID"] = wfMetaDataObj.getID()
@@ -120,28 +122,28 @@ class mainEngine(object):
         else:
             if self.debug > 0:
                 logger.info("+mainEngine.__createDBclass : inserting new workflow class object for %s file %s", wfMetaDataObj.getID(), wfMetaDataObj.getName())
-            db.saveObject(classDB, 'insert')
+            db.saveObject(classDB, "insert")
 
         if self.debug > 1:
             logger.info("+mainEngine.__createDBclass :  done with classDB")
 
     def __setDBInstStatus(self, typein, mode, task):  # pylint: disable=unused-argument
         """
-          Method to update the instance data in the status DB
-          The WFM uses this instance data to reduce contention.
+        Method to update the instance data in the status DB
+        The WFM uses this instance data to reduce contention.
 
-          The method always does an update since the instance
-          data must exist on entry to the workflow - and a new
-          workflow instance is always created with each run
+        The method always does an update since the instance
+        data must exist on entry to the workflow - and a new
+        workflow instance is always created with each run
         """
 
         now = self.__timeStamp.getSecondsFromReference()
         instDB = {}
-        instDB['WF_INST_ID'] = self.__wfInstId
-        instDB['WF_CLASS_ID'] = self.__wfClassId
-        instDB['DEP_SET_ID'] = self.__depositionId
+        instDB["WF_INST_ID"] = self.__wfInstId
+        instDB["WF_CLASS_ID"] = self.__wfClassId
+        instDB["DEP_SET_ID"] = self.__depositionId
         #    instDB['STATUS_TIMESTAMP'] = datetime.datetime.utcnow()
-        instDB['STATUS_TIMESTAMP'] = now
+        instDB["STATUS_TIMESTAMP"] = now
 
         self.__eUtil.updateConnection()
         db = self.__eUtil
@@ -149,40 +151,50 @@ class mainEngine(object):
 
         # Tom :  update the wf_instance_last table - note it is unique over dep_set_id
 
-        sql = "update wf_instance_last set status_timestamp=" + \
-            str(now) + ", inst_status='" + mode + "', wf_class_id = '" + self.__wfClassId + \
-            "', wf_inst_id = '" + self.__wfInstId + "' where dep_set_id = '" + self.__depositionId + "'"
+        sql = (
+            "update wf_instance_last set status_timestamp="
+            + str(now)
+            + ", inst_status='"
+            + mode
+            + "', wf_class_id = '"
+            + self.__wfClassId
+            + "', wf_inst_id = '"
+            + self.__wfInstId
+            + "' where dep_set_id = '"
+            + self.__depositionId
+            + "'"
+        )
         ok = self.__eUtil.runUpdateSQL(sql)
         if ok < 1:
             logger.error("+mainEngine.__setDBInstStatus - failed to update wf_instance_last table for %s", self.__depositionId)
 
     def __setDBTaskStatus(self, typein, mode, task):
         """
-          Method to update the task data in the status DB
-          Current :
-            The exist status of the task must be done since
-            a loop in the workflow might mean we revisit a task
-          To be done and supported by sytem :
-            A status should always insert with a new task
-            since we need to record all loop structure in WF
+        Method to update the task data in the status DB
+        Current :
+          The exist status of the task must be done since
+          a loop in the workflow might mean we revisit a task
+        To be done and supported by sytem :
+          A status should always insert with a new task
+          since we need to record all loop structure in WF
         """
 
         taskID = {}
-        taskID['WF_TASK_ID'] = task.name
-        taskID['WF_INST_ID'] = self.__wfInstId
-        taskID['WF_CLASS_ID'] = self.__wfClassId
-        taskID['DEP_SET_ID'] = self.__depositionId
-        taskID['TASK_NAME'] = task.name
-        taskID['TASK_TYPE'] = typein
-        taskID['TASK_STATUS'] = mode
+        taskID["WF_TASK_ID"] = task.name
+        taskID["WF_INST_ID"] = self.__wfInstId
+        taskID["WF_CLASS_ID"] = self.__wfClassId
+        taskID["DEP_SET_ID"] = self.__depositionId
+        taskID["TASK_NAME"] = task.name
+        taskID["TASK_TYPE"] = typein
+        taskID["TASK_STATUS"] = mode
         #    taskID['STATUS_TIMESTAMP'] = datetime.datetime.utcnow()
-        taskID['STATUS_TIMESTAMP'] = self.__timeStamp.getSecondsFromReference()
+        taskID["STATUS_TIMESTAMP"] = self.__timeStamp.getSecondsFromReference()
 
         # This version only creates unique taskID
         if self.__eUtil.exist(taskID):
             self.__eUtil.updateStatus(taskID, mode)
         else:
-            self.__eUtil.saveObject(taskID, 'insert')
+            self.__eUtil.saveObject(taskID, "insert")
 
     # def __getNewInstanceIDDB(self, depositionId):
     #     """
@@ -220,9 +232,9 @@ class mainEngine(object):
 
     def __createNewDBwfInstance(self):
         """
-          Creates a new instance record within the status DB.
-          A duplicate should NEVER be created and is a problem
-          of the API-instance ID generator
+        Creates a new instance record within the status DB.
+        A duplicate should NEVER be created and is a problem
+        of the API-instance ID generator
         """
 
         instDB = {}
@@ -231,19 +243,19 @@ class mainEngine(object):
         self.__wfInstId = self.__eUtil.getNextInstanceId(self.__depositionId)
 
         now = self.__timeStamp.getSecondsFromReference()
-        instDB['WF_INST_ID'] = self.__wfInstId
-        instDB['WF_CLASS_ID'] = self.__wfClassId
-        instDB['DEP_SET_ID'] = self.__depositionId
-        instDB['OWNER'] = self.__wfClassFileName
-        instDB['INST_STATUS'] = 'running'
-        instDB['STATUS_TIMESTAMP'] = now
+        instDB["WF_INST_ID"] = self.__wfInstId
+        instDB["WF_CLASS_ID"] = self.__wfClassId
+        instDB["DEP_SET_ID"] = self.__depositionId
+        instDB["OWNER"] = self.__wfClassFileName
+        instDB["INST_STATUS"] = "running"
+        instDB["STATUS_TIMESTAMP"] = now
         if not self.__eUtil.exist(instDB):
-            self.__eUtil.saveObject(instDB, 'insert')
+            self.__eUtil.saveObject(instDB, "insert")
         else:
             logger.info("+mainEngine.__createNewDBWfInstance  *** Error : duplicate instance %s", str(self.__wfInstId))
             constDict = {}
-            constDict['WF_INST_ID'] = self.__wfInstId
-            self.__eUtil.saveObject(instDB, 'update', constDict)
+            constDict["WF_INST_ID"] = self.__wfInstId
+            self.__eUtil.saveObject(instDB, "update", constDict)
 
         # Tom New code for the wf_instance_last table
 
@@ -261,16 +273,39 @@ class mainEngine(object):
 
         if ind < 0:
             # Create new row
-            sql = "insert wf_instance_last(wf_inst_id,wf_class_id,dep_set_id,owner,inst_status,status_timestamp) values ('" + self.__wfInstId + \
-                "','" + self.__wfClassId + "','" + self.__depositionId + "','" + self.__wfClassFileName + "','running'," + str(now) + ")"
+            sql = (
+                "insert wf_instance_last(wf_inst_id,wf_class_id,dep_set_id,owner,inst_status,status_timestamp) values ('"
+                + self.__wfInstId
+                + "','"
+                + self.__wfClassId
+                + "','"
+                + self.__depositionId
+                + "','"
+                + self.__wfClassFileName
+                + "','running',"
+                + str(now)
+                + ")"
+            )
             ok = self.__eUtil.runInsertSQL(sql)
         else:
             # sql = "update wf_instance_last set wf_inst_id='" +
             # self.__wfInstId + "', wf_class_id='" + self.__wfClassId +
             # "', dep_set_id='" +  self.__depositionId + "',  inst_status='running',
             # status_timestamp=" + str(now) + " where ordinal = " + str(ind)
-            sql = "update wf_instance_last set wf_inst_id='" + self.__wfInstId + "', wf_class_id='" + self.__wfClassId + "', dep_set_id='" + \
-                self.__depositionId + "', owner='" + self.__wfClassFileName + "', inst_status='running', status_timestamp=" + str(now) + " where ordinal = " + str(ind)
+            sql = (
+                "update wf_instance_last set wf_inst_id='"
+                + self.__wfInstId
+                + "', wf_class_id='"
+                + self.__wfClassId
+                + "', dep_set_id='"
+                + self.__depositionId
+                + "', owner='"
+                + self.__wfClassFileName
+                + "', inst_status='running', status_timestamp="
+                + str(now)
+                + " where ordinal = "
+                + str(ind)
+            )
             ok = self.__eUtil.runUpdateSQL(sql)
 
         if ok < 1:
@@ -291,20 +326,20 @@ class mainEngine(object):
 
     def __findEntryPoint(self, taskObjList):
         """
-          find the starting point in the workflow
-         - this is the default starting point
+         find the starting point in the workflow
+        - this is the default starting point
         """
 
-        startingPoint = self.__findTaskByType('Entry-point', taskObjList)
+        startingPoint = self.__findTaskByType("Entry-point", taskObjList)
 
         return startingPoint
 
     def __findTaskByType(self, typein, taskObjList):
         """
-         Returns a task found by the task type, only of use
-         for start/stop/exception - since the return will be
-         ambigious for other types
-         returns the task object
+        Returns a task found by the task type, only of use
+        for start/stop/exception - since the return will be
+        ambigious for other types
+        returns the task object
         """
 
         for task in taskObjList:
@@ -321,7 +356,7 @@ class mainEngine(object):
 
     def __findTaskNameFromHumanName(self, humanName, taskObjList):
         """
-          Returns a task found by the task name(ie unique ID) returns the task object
+        Returns a task found by the task name(ie unique ID) returns the task object
         """
 
         for task in taskObjList:
@@ -335,8 +370,8 @@ class mainEngine(object):
 
     def __findTaskByName(self, name, taskObjList):
         """
-          Returns a task found by the task name(ie unique ID)
-          returns the task object
+        Returns a task found by the task name(ie unique ID)
+        returns the task object
         """
 
         for task in taskObjList:
@@ -349,18 +384,18 @@ class mainEngine(object):
         return None
 
     def __loopTest(self, task, iterator, value):
-        '''
-          method to manage a loop task
-          It is really a test against an iterator.  Notice that the loop
-          test only returns 2 states, the normal next task, or the exit
-          loop next-task.  The usable return state is that the loop
-          variable data object is made equal to the i'th iterator value.
-          1) if the loop variable is not set - set it to the first iterator
-          2) if the loop variable is set, then test it against the iterator
-             list and set the loop variable = next item : return 0 :
-             the first "nextTask"
-          3) If we are at the end of the loop then return 1 : the second "nextTask"
-        '''
+        """
+        method to manage a loop task
+        It is really a test against an iterator.  Notice that the loop
+        test only returns 2 states, the normal next task, or the exit
+        loop next-task.  The usable return state is that the loop
+        variable data object is made equal to the i'th iterator value.
+        1) if the loop variable is not set - set it to the first iterator
+        2) if the loop variable is set, then test it against the iterator
+           list and set the loop variable = next item : return 0 :
+           the first "nextTask"
+        3) If we are at the end of the loop then return 1 : the second "nextTask"
+        """
 
         for _key, data in value.items():
             # valueKey = key
@@ -430,7 +465,7 @@ class mainEngine(object):
 
     def __runProcess(self, task, dataValues, dataObjList):  # pylint: disable=unused-argument
         """
-              JDW  Revised method to run single process task in a thread -
+        JDW  Revised method to run single process task in a thread -
 
         """
         logger.info("+mainEngine.__runProcess :  Starting process %s", task.name)
@@ -502,9 +537,9 @@ class mainEngine(object):
         return "exception"
 
     def __runWorkflow(self, task, recoveryFlag):
-        '''
-           Internal method to manage a workflow in a separate thread -
-        '''
+        """
+        Internal method to manage a workflow in a separate thread -
+        """
         logger.info("+mainEngine.__runWorkflow() : %s  worflow %s instance %s recoveryFlag %r", self.__depositionId, task.name, self.__wfInstId, recoveryFlag)
 
         if recoveryFlag == 0:
@@ -570,18 +605,22 @@ class mainEngine(object):
 
     def __handleTask(self, task, dataObjList, recoveryFlag):
         """
-           Input: - task is list of tasks objects (LENGTH=1 always)
+        Input: - task is list of tasks objects (LENGTH=1 always)
 
-           Takes control of a task and runs the task
-           1) checks whether there a valid parallel tasks
-           2) parallel processes and workflows are run elsewhere
-           3) get the data for the single workflow path
-           4) run the relevant task exception manager + task
+        Takes control of a task and runs the task
+        1) checks whether there a valid parallel tasks
+        2) parallel processes and workflows are run elsewhere
+        3) get the data for the single workflow path
+        4) run the relevant task exception manager + task
         """
-        logger.info("+mainEngine.__handleTask : -------------------------------------------   STARTS for class %s TASK %s   -------------------------------------- ",
-                    self.__wfClassId, task.name)
-        logger.info("+mainEngine.__handleTask : starting for %s class %s task %s  type %s recoveryFlag %r",
-                    self.__depositionId, self.__wfClassId, task.name, task.type, recoveryFlag)
+        logger.info(
+            "+mainEngine.__handleTask : -------------------------------------------   STARTS for class %s TASK %s   -------------------------------------- ",
+            self.__wfClassId,
+            task.name,
+        )
+        logger.info(
+            "+mainEngine.__handleTask : starting for %s class %s task %s  type %s recoveryFlag %r", self.__depositionId, self.__wfClassId, task.name, task.type, recoveryFlag
+        )
 
         if task.type != "Manual":
             self.__setDBTaskStatus(task.type, "init", task)
@@ -619,17 +658,12 @@ class mainEngine(object):
                         dat.printMe(self.__lfh)
 
             if task.type == "Manual":
-                logger.info("+mainEngine.__handleTask :  %s EXTERNAL MANUAL task for class %s task %s with recoveryFlag %r",
-                            self.__depositionId, self.__wfClassId, task.name, recoveryFlag)
+                logger.info(
+                    "+mainEngine.__handleTask :  %s EXTERNAL MANUAL task for class %s task %s with recoveryFlag %r", self.__depositionId, self.__wfClassId, task.name, recoveryFlag
+                )
                 if recoveryFlag == 0:
                     self.__setDBTaskStatus(task.type, "start", task)
-                manual = ExternalTask(self.__eUtil,
-                                      self.__depositionId,
-                                      self.__wfClassId,
-                                      self.__wfInstId,
-                                      task,
-                                      self.debug,
-                                      recoveryFlag)
+                manual = ExternalTask(self.__eUtil, self.__depositionId, self.__wfClassId, self.__wfInstId, task, self.debug, recoveryFlag)
                 # need to get the correct name of the data object
                 ret = manual.handleTask()
                 if ret < 0:
@@ -698,26 +732,32 @@ class mainEngine(object):
 
     def __handleIOData(self, mode, task, dataForTask, dataObjList):
         """
-          Method to return data object dictionaries
-          The data objects for the task as searched and cross referenced
-            with the data in the data list
+        Method to return data object dictionaries
+        The data objects for the task as searched and cross referenced
+          with the data in the data list
 
-          if a processName has been defined then we have an API process
-            which requires that we call objects by pre-defined names
-          if a processName is undefined then we are using a switch task
-            task or other non-API process.  Just pass data back as required
-          The names of the API-process data objects are looked up and
-            cross-referenced with the WF data objects.
-          Where there is multiple input/output, then the object number
-            is matched
+        if a processName has been defined then we have an API process
+          which requires that we call objects by pre-defined names
+        if a processName is undefined then we are using a switch task
+          task or other non-API process.  Just pass data back as required
+        The names of the API-process data objects are looked up and
+          cross-referenced with the WF data objects.
+        Where there is multiple input/output, then the object number
+          is matched
         """
 
         # Need to handle the name of the data object properly
         # Warning - there is no sorted order to the data input names
         # how to we handle which item is which ????
 
-        logger.info("+mainEngine.__handleIOData : Starts for task %s mode %s action %s where %s data object length %d",
-                    task.name, mode, task.uniqueAction, task.uniqueWhere, len(dataForTask))
+        logger.info(
+            "+mainEngine.__handleIOData : Starts for task %s mode %s action %s where %s data object length %d",
+            task.name,
+            mode,
+            task.uniqueAction,
+            task.uniqueWhere,
+            len(dataForTask),
+        )
         dfr = DataFileReference()
         storageTypeList = dfr.getStorageTypeList()
         #
@@ -728,7 +768,7 @@ class mainEngine(object):
                 if self.debug > 0:
                     logger.info("+mainEngine.__handleIOData :  Found %s reference %s", str(mode), str(data.name))
                     logger.info("+mainEngine.__handleIOData :  Storage type = %s", str(data.where))
-                if ((data.where in storageTypeList) or (data.where in ["constant", "inline"]) or (data.where[0:4] == "path")):
+                if (data.where in storageTypeList) or (data.where in ["constant", "inline"]) or (data.where[0:4] == "path"):
                     nWFData = nWFData + 1
                 else:
                     pass
@@ -764,12 +804,10 @@ class mainEngine(object):
                 logger.info("+mainEngine.__handleIOData :   Error : undefined IO mode in handleIOData %s", str(mode))
 
             if nProcessData == 0 and nWFData > 0:
-                logger.info("+mainEngine.__handleIOData :  WARNING : input defined in WF - none required for process : %s IO = %s ",
-                            str(task.uniqueAction), str(mode))
+                logger.info("+mainEngine.__handleIOData :  WARNING : input defined in WF - none required for process : %s IO = %s ", str(task.uniqueAction), str(mode))
                 return None
             if nProcessData > 0 and nWFData == 0:
-                logger.info("+mainEngine.__handleIOData :  WARNING : no input defined in WF - input required for process : %s IO = %s",
-                            str(task.uniqueAction), str(mode))
+                logger.info("+mainEngine.__handleIOData :  WARNING : no input defined in WF - input required for process : %s IO = %s", str(task.uniqueAction), str(mode))
                 return None
             if nProcessData < nWFData:
                 logger.info("+mainEngine.__handleIOData :  WARNING : not enough data define in WF for process %s IO = %s", str(task.uniqueAction), str(mode))
@@ -782,12 +820,18 @@ class mainEngine(object):
 
         nWFData = 0
         for data in dataForTask:
-            logger.info("+mainEngine.__handleIOData : name %r data.localMode %r data.where %r task.uniqueName %r task.uniqueWhere %r",
-                        data.name, data.localMode, data.where, task.uniqueName, task.uniqueWhere)
+            logger.info(
+                "+mainEngine.__handleIOData : name %r data.localMode %r data.where %r task.uniqueName %r task.uniqueWhere %r",
+                data.name,
+                data.localMode,
+                data.where,
+                task.uniqueName,
+                task.uniqueWhere,
+            )
             if data.localMode.startswith(mode) or data.localMode.startswith("both"):
                 #
                 #   change for to include 'constants' returned from api -
-                if ((data.where in storageTypeList) or (data.where[0:4] == "path") or ((data.where in ['constant']) and (task.uniqueWhere == 'api'))):
+                if (data.where in storageTypeList) or (data.where[0:4] == "path") or ((data.where in ["constant"]) and (task.uniqueWhere == "api")):
                     #
                     if data.localMode.startswith("input") or data.localMode.startswith("both"):
                         fillAPIinputObject(dataObjList, data, self.__depositionId, self.debug, self.__lfh)
@@ -800,12 +844,11 @@ class mainEngine(object):
                         ret[data.name] = data.ApiData
                     elif task.uniqueWhere == "api":
                         logger.info("+mainEngine.__handleIOData : match ioNames using %r ", data.localMode)
-                        if data.localMode[-1] in ['1', '2', '3', '4', '5', '6', '7', '8', '9']:
+                        if data.localMode[-1] in ["1", "2", "3", "4", "5", "6", "7", "8", "9"]:
                             for ioName in ioNames:
                                 if ioName[-1] == data.localMode[-1]:
                                     ret[ioName] = data.ApiData
-                                    logger.info("+mainEngine.__handleIOData :   found new indexed data name %s, %s %s",
-                                                str(ioName), str(data.localMode), str(data.name))
+                                    logger.info("+mainEngine.__handleIOData :   found new indexed data name %s, %s %s", str(ioName), str(data.localMode), str(data.name))
                         else:
                             ret[ioNames[nWFData]] = data.ApiData
                     else:
@@ -827,7 +870,7 @@ class mainEngine(object):
 
     def __getNextTask(self, lastTask, opt, taskObjList):
         """
-          Return the next task from the lasttask, for a decision task it will return the option number task
+        Return the next task from the lasttask, for a decision task it will return the option number task
         """
 
         nextTask = None
@@ -847,7 +890,7 @@ class mainEngine(object):
 
     def __readWorkFlow(self, wfFilePath, debugLevel=0):
         """
-           Get dom object for workflow class file -
+        Get dom object for workflow class file -
         """
         xmldoc = minidom.parse(wfFilePath)
         parse = parseXML(debugLevel, self.__lfh)
@@ -855,14 +898,14 @@ class mainEngine(object):
 
     def __readWorkFlowHeader(self, parse, xmldoc):
         """
-            Get workflow metadata object --
+        Get workflow metadata object --
         """
         wfMetaDataObj = parse.getMetaData(xmldoc)
         return wfMetaDataObj
 
     def __readWorkFlowBody(self, parse, xmldoc, depositionID, instanceID):
         """
-          Return the task object and data object lists from the workflow definition
+        Return the task object and data object lists from the workflow definition
         """
         taskObjList = parse.getTaskObjects(xmldoc)
         dataObjList = parse.getDataObjects(depositionID, instanceID, xmldoc)
@@ -878,9 +921,9 @@ class mainEngine(object):
         logger.info("\n")
 
     def __prettyPrintTask(self, t):
-        '''
-          Simple output method to print out the task name for humans
-        '''
+        """
+        Simple output method to print out the task name for humans
+        """
 
         if t.name.lower() == t.nameHumanReadable.lower():
             return t.name
@@ -888,33 +931,33 @@ class mainEngine(object):
             return "(" + t.name + ":" + t.nameHumanReadable + ")"
 
     def __manageException(self, workingTask, opt, taskObjList):
-        '''
-          General exception manager:
-          if opt < 0 : Ouch - bad return state from task - basically
-            no return task could be found = really a workflow class error
-            instance is marked as exception
+        """
+        General exception manager:
+        if opt < 0 : Ouch - bad return state from task - basically
+          no return task could be found = really a workflow class error
+          instance is marked as exception
 
-          if self.exception == exception : generic exception
-             do not reset the exception state - instance will be marked as "exception"
-          if self.exception == some other valid exception type (see below)
+        if self.exception == exception : generic exception
+           do not reset the exception state - instance will be marked as "exception"
+        if self.exception == some other valid exception type (see below)
 
-          if the exception task has a nextTask - this is used
-          if the exception task has handles - then the self.exception is matched and used
-          if the exception task has nothing - then it just exits(1)
+        if the exception task has a nextTask - this is used
+        if the exception task has handles - then the self.exception is matched and used
+        if the exception task has nothing - then it just exits(1)
 
 
-          Exceptions
-             exception   : generic
-             crashedX    : process crashed
-             manualX     : manual UI error
-             decisionX   : automated decision errro
-             workflowX   : workflow error
-             badNameX   : unknown WFE process reference
-             timeoutX   : process ran out of time
-             startX : process never started
-             all    : anything else
-             rest   : anything else
-        '''
+        Exceptions
+           exception   : generic
+           crashedX    : process crashed
+           manualX     : manual UI error
+           decisionX   : automated decision errro
+           workflowX   : workflow error
+           badNameX   : unknown WFE process reference
+           timeoutX   : process ran out of time
+           startX : process never started
+           all    : anything else
+           rest   : anything else
+        """
 
         logger.info("+mainEngine.__manageException:  starting")
 
@@ -950,7 +993,7 @@ class mainEngine(object):
             # no handlers defined
             logger.info("+mainEngine.__manageException  :  No handlers defined %s", str(self.exception))
             logger.info(str(taskException.outputName))
-            if taskException.outputName is None or taskException.outputName == [] or taskException.outputName[0] == '':
+            if taskException.outputName is None or taskException.outputName == [] or taskException.outputName[0] == "":
                 logger.info("+mainEngine.__manageException  :  No exception nexttask - will die\n")
                 self.exception = "exception"
                 return -1, None
@@ -970,7 +1013,7 @@ class mainEngine(object):
                 if datum[1].lower() == self.exception.lower():
                     if self.debug > 0:
                         logger.info("+mainEngine.__manageException  : Exception manager - found handler name = %s\n", str(datum[1]))
-                    if datum[2].lower() == 'die':
+                    if datum[2].lower() == "die":
                         logger.info("+mainEngine.__manageException  :  handle to DIE called\n")
                         self.exception = "exception"
                         return -1, None
@@ -983,7 +1026,7 @@ class mainEngine(object):
                 if datum[1].lower() == "all" or datum[1].lower() == "rest":
                     if self.debug > 0:
                         logger.info("+mainEngine.__manageException  : Exception manager - handler name = %s", str(datum[1]))
-                    if datum[2].lower() == 'die':
+                    if datum[2].lower() == "die":
                         logger.info("+mainEngine.__manageException  :  handle to DIE called\n")
                         self.exception = "exception"
                         return -1, None
@@ -1000,15 +1043,15 @@ class mainEngine(object):
         self.run(argv, runTime, throwExit=False)
 
     def run(self, argv, runTime=None, throwExit=True):
-        '''
-          The main workflow engine method
-          1) get runtime parameters, set the main engine parameteres
-          2) read the workflow class  WF
-          3) Set the state for class and instance in DB
-          4) Determine the task recovery point if required : fetch state
-          5) run workflow until exception/end point
-             Exception : run handler - and continue in WF at handle
-        '''
+        """
+        The main workflow engine method
+        1) get runtime parameters, set the main engine parameteres
+        2) read the workflow class  WF
+        3) Set the state for class and instance in DB
+        4) Determine the task recovery point if required : fetch state
+        5) run workflow until exception/end point
+           Exception : run handler - and continue in WF at handle
+        """
 
         if runTime is None:
             self.runTimeParameters = CommandLineArgs(argv)
@@ -1027,8 +1070,12 @@ class mainEngine(object):
         self.__wfInstId = self.runTimeParameters.instanceID
         recoveryFlag = 0
 
-        logger.info("+mainEngine.run  ------------------------- Starting for depositionID = %s  WFInstID %s workflow file %s ",
-                    str(self.__depositionId), str(self.__wfInstId), str(self.__wfClassFileName))
+        logger.info(
+            "+mainEngine.run  ------------------------- Starting for depositionID = %s  WFInstID %s workflow file %s ",
+            str(self.__depositionId),
+            str(self.__wfInstId),
+            str(self.__wfClassFileName),
+        )
 
         if not self.__depositionId:
             logger.info("+mainEngine.run :  Workflow cannot proceed without a depositionID\n")
@@ -1070,9 +1117,7 @@ class mainEngine(object):
                     #  WE NEED A TASK THAT WE CAN RECOVER FROM - get state of workflow variable
                     ws = WorkflowSession(self.__eUtil, self.__depositionId, self.__wfClassId, debug=self.debug)
                     self.__wfInstId, taskName = ws.autoRecover()
-                    logger.info(
-                        "+mainEngine.run %s autorecover() returns instance %s  task name %s recoveryFlag %s ",
-                        self.__depositionId, self.__wfInstId, taskName, recoveryFlag)
+                    logger.info("+mainEngine.run %s autorecover() returns instance %s  task name %s recoveryFlag %s ", self.__depositionId, self.__wfInstId, taskName, recoveryFlag)
                 elif self.__wfInstId.startswith("recoverannotate"):
                     ws = WorkflowSession(self.__eUtil, self.__depositionId, self.__wfClassId, debug=self.debug)
                     taskName = ws.recoverFromAnnotate()
@@ -1080,16 +1125,16 @@ class mainEngine(object):
                     recoveryFlag = 2
                     # task name is correct
                     logger.info(
-                        "+mainEngine.run %s recoverFromAnnotate() returns instance %s  task name %s recoveryFlag %s ",
-                        self.__depositionId, self.__wfInstId, taskName, recoveryFlag)
+                        "+mainEngine.run %s recoverFromAnnotate() returns instance %s  task name %s recoveryFlag %s ", self.__depositionId, self.__wfInstId, taskName, recoveryFlag
+                    )
                 else:
                     # find the last finished task
                     ws = WorkflowSession(self.__eUtil, self.__depositionId, self.__wfClassId, debug=self.debug)
                     taskName = ws.autoRecoverInstance(self.__wfInstId)
                     recoveryFlag = 1
                     logger.info(
-                        "+mainEngine.run %s autoRecoverInstance() returns instance %s  task name %s recoveryFlag %s ",
-                        self.__depositionId, self.__wfInstId, taskName, recoveryFlag)
+                        "+mainEngine.run %s autoRecoverInstance() returns instance %s  task name %s recoveryFlag %s ", self.__depositionId, self.__wfInstId, taskName, recoveryFlag
+                    )
             else:
                 # Just get the last instance as we have a taskName
                 # we passed the classID - so we have to find the actual ID
@@ -1118,12 +1163,17 @@ class mainEngine(object):
 
         # no start task bail
         if not startTask:
-            logger.info("+mainEngine.run  - returning for depositionId %s with NO startpoint in workflow %s task name %r ",
-                        self.__depositionId, self.__wfClassFileName, taskName)
+            logger.info("+mainEngine.run  - returning for depositionId %s with NO startpoint in workflow %s task name %r ", self.__depositionId, self.__wfClassFileName, taskName)
             return
 
-        logger.info("+mainEngine.run - assigning start task for class %s  instance %r taskName %r startTask %r recoveryFlag %s",
-                    self.__wfClassId, self.__wfInstId, taskName, startTask, recoveryFlag)
+        logger.info(
+            "+mainEngine.run - assigning start task for class %s  instance %r taskName %r startTask %r recoveryFlag %s",
+            self.__wfClassId,
+            self.__wfInstId,
+            taskName,
+            startTask,
+            recoveryFlag,
+        )
         self.path.append(startTask)
 
         workingTask = startTask
@@ -1138,8 +1188,7 @@ class mainEngine(object):
             self.__setDBInstStatus("workflow", "running", workingTask)
 
         while True:
-            logger.info("+mainEngine.run - begin task loop class %s instance %s workingtask %s type %s\n\n",
-                        self.__wfClassId, self.__wfInstId, workingTask.name, workingTask.type)
+            logger.info("+mainEngine.run - begin task loop class %s instance %s workingtask %s type %s\n\n", self.__wfClassId, self.__wfInstId, workingTask.name, workingTask.type)
 
             opt = self.__handleTask(workingTask, curDataObjList, recoveryFlag)
 
@@ -1170,11 +1219,16 @@ class mainEngine(object):
             self.__setDBInstStatus("all", self.instanceExitState, None)
         else:
             self.__eUtil.setException(self.__depositionId)
-            logger.info("+mainEngine.run - exception for workflow %s for %s with exception %r status %r",
-                        str(self.__wfClassFileName), self.__depositionId, self.exception, self.instanceExitState)
+            logger.info(
+                "+mainEngine.run - exception for workflow %s for %s with exception %r status %r",
+                str(self.__wfClassFileName),
+                self.__depositionId,
+                self.exception,
+                self.instanceExitState,
+            )
             logger.info("+mainEngine.run  ------------------------------------------  returning for %s ", self.__depositionId)
 
-            if (throwExit):
+            if throwExit:
                 # set the communication table to exception
                 return 1
             else:
@@ -1185,13 +1239,13 @@ class mainEngine(object):
 
         logger.info("+mainEngine.run  : Completed workflow from %s for %s", str(self.__wfClassFileName), self.__depositionId)
         logger.info("+mainEngine.run  ------------------------------------------  returning for %s\n", self.__depositionId)
-        if (throwExit):
+        if throwExit:
             return 0
         else:
             return
 
     def __isException(self, name):
-        values = ['exception', 'crashedX', 'manualX', 'decisionX', 'workflowX', 'badNameX', 'timeoutX', 'startX', 'stopX', 'loopX']
+        values = ["exception", "crashedX", "manualX", "decisionX", "workflowX", "badNameX", "timeoutX", "startX", "stopX", "loopX"]
         if name in values:
             return True
         else:
@@ -1218,11 +1272,11 @@ def main(argv):
     handler.setFormatter(formatter)
     logger.addHandler(handler)
 
-##
-#   Log is overwritten by the logging facility  so don't open here -- jdw
-#    if (log is not None):
-#        output = open(log, "w")
-#
+    ##
+    #   Log is overwritten by the logging facility  so don't open here -- jdw
+    #    if (log is not None):
+    #        output = open(log, "w")
+    #
     engine = mainEngine(debug=debugN, prt=None)
 
     stat = engine.run(argv, runTimeParameters)

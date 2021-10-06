@@ -21,15 +21,11 @@ def parseTimeDelta(s):
     """
     if s is None:
         return None
-    d = re.match(
-        r'((?P<days>\d+) days, )?(?P<hours>\d+):'
-        r'(?P<minutes>\d+):(?P<seconds>\d+)',
-        str(s)).groupdict(0)
-    return timedelta(**dict(((key, int(value))
-                             for key, value in d.items())))
+    d = re.match(r"((?P<days>\d+) days, )?(?P<hours>\d+):" r"(?P<minutes>\d+):(?P<seconds>\d+)", str(s)).groupdict(0)
+    return timedelta(**dict(((key, int(value)) for key, value in d.items())))
 
 
 if __name__ == "__main__":
-    print(parseTimeDelta('24:00:00'))
-    print(parseTimeDelta('24:00:00').total_seconds())
-    print(parseTimeDelta('28:32:12'))
+    print(parseTimeDelta("24:00:00"))
+    print(parseTimeDelta("24:00:00").total_seconds())
+    print(parseTimeDelta("28:32:12"))

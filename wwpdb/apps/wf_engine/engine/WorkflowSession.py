@@ -16,11 +16,10 @@ import sys
 import logging
 from wwpdb.apps.wf_engine.wf_engine_utils.time.TimeStamp import TimeStamp
 
-logger = logging.getLogger(name='root')
+logger = logging.getLogger(name="root")
 
 
 class WorkflowSession(object):
-
     def __init__(self, eUtil, depID, classID, debug=True, prt=sys.stderr):  # pylint: disable=unused-argument
         self.depID = depID
         self.classID = classID
@@ -43,13 +42,20 @@ class WorkflowSession(object):
 
     def autoRecoverInstance(self, instID):
         """
-          Reads the status DB to to find the last task for an instance
-          to see where it died
-          Finds the last task that did NOT finish
+        Reads the status DB to to find the last task for an instance
+        to see where it died
+        Finds the last task that did NOT finish
         """
 
-        sql = "select wf_task_id,task_name,task_type,task_status,status_timestamp from wf_task where dep_set_id = '" + self.depID + \
-            "' and wf_class_id = '" + self.classID + "' and wf_inst_id = '" + instID + "' and not task_status = 'finished' order by status_timestamp limit 1 "
+        sql = (
+            "select wf_task_id,task_name,task_type,task_status,status_timestamp from wf_task where dep_set_id = '"
+            + self.depID
+            + "' and wf_class_id = '"
+            + self.classID
+            + "' and wf_inst_id = '"
+            + instID
+            + "' and not task_status = 'finished' order by status_timestamp limit 1 "
+        )
 
         ret = self.__eUtil.runSelectSQL(sql)
 
@@ -77,15 +83,22 @@ class WorkflowSession(object):
 
     def autoRecoverInstanceGetLastFinished(self, instID):
         """
-          Reads the status DB to to find the last task for an instance
-          to see where it died
-          Finds the last task that finished, and recovers the
-            reference data for that task, and restarts at the
-            next task
+        Reads the status DB to to find the last task for an instance
+        to see where it died
+        Finds the last task that finished, and recovers the
+          reference data for that task, and restarts at the
+          next task
         """
 
-        sql = "select wf_task_id,task_name,task_type,task_status,status_timestamp from wf_task where dep_set_id = '" + self.depID + \
-            "' and wf_class_id = '" + self.classID + "' and wf_inst_id = '" + instID + "' and task_status = 'finished' order by status_timestamp desc limit 1"
+        sql = (
+            "select wf_task_id,task_name,task_type,task_status,status_timestamp from wf_task where dep_set_id = '"
+            + self.depID
+            + "' and wf_class_id = '"
+            + self.classID
+            + "' and wf_inst_id = '"
+            + instID
+            + "' and task_status = 'finished' order by status_timestamp desc limit 1"
+        )
 
         ret = self.__eUtil.runSelectSQL(sql)
 
@@ -103,12 +116,13 @@ class WorkflowSession(object):
             return None
 
     def __getLastInstanceID(self):
-        '''
-         Find that last occurance of the instanceID
-        '''
+        """
+        Find that last occurance of the instanceID
+        """
 
-        sql = "select wf_inst_id,status_timestamp from wf_instance where dep_set_id = '" + \
-            self.depID + "' and wf_class_id = '" + self.classID + "' order by wf_inst_id desc limit 1"
+        sql = (
+            "select wf_inst_id,status_timestamp from wf_instance where dep_set_id = '" + self.depID + "' and wf_class_id = '" + self.classID + "' order by wf_inst_id desc limit 1"
+        )
 
         if self.debug:
             logger.info("+WorkflowSession.__getLastInstanceID :  looking for last instance for depID= %s, classID= %s", str(self.depID), str(self.classID))

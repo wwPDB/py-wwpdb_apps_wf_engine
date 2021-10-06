@@ -15,7 +15,6 @@ import sys
 
 
 class TaskComparitor(object):
-
     def __init__(self, debug=0, prt=sys.stderr):  # pylint: disable=unused-argument
 
         self.__dataId = None
@@ -38,24 +37,24 @@ class TaskComparitor(object):
         return self.__dataId
 
     def __applyType(self, compareAs, sValue):
-        if compareAs not in ['int', 'integer']:
+        if compareAs not in ["int", "integer"]:
             lData = int(sValue)
-        elif compareAs in ['float', 'double']:
+        elif compareAs in ["float", "double"]:
             lData = float(sValue)
-        elif compareAs in ['string', 'substring']:
+        elif compareAs in ["string", "substring"]:
             lData = str(sValue)
         else:
             lData = int(sValue)
         return lData
 
-    def addData(self, compareCode, data, mode='<', compareAs='integer'):
+    def addData(self, compareCode, data, mode="<", compareAs="integer"):
         self.__compareCode = compareCode
         self.__compareAs = compareAs
-        if compareAs in ['int', 'integer']:
+        if compareAs in ["int", "integer"]:
             lData = int(data)
-        elif compareAs in ['float', 'double']:
+        elif compareAs in ["float", "double"]:
             lData = float(data)
-        elif compareAs in ['string', 'substring']:
+        elif compareAs in ["string", "substring"]:
             lData = str(data)
         else:
             lData = int(data)
@@ -98,8 +97,10 @@ class TaskComparitor(object):
 
     def printMe(self, lfh):
         lfh.write("+taskFunction.printMe()  min %s max %s lower %s upper %s\n" % (self.min, self.max, self.lower, self.upper))
-        lfh.write("+taskFunction.printMe()  dataId %s compare code %r compareAs %s logical %r string %s\n" %
-                  (self.__dataId, self.__compareCode, self.__compareAs, self.logical, self.string))
+        lfh.write(
+            "+taskFunction.printMe()  dataId %s compare code %r compareAs %s logical %r string %s\n"
+            % (self.__dataId, self.__compareCode, self.__compareAs, self.logical, self.string)
+        )
 
     def __checkBoolean(self, value):
         if value:

@@ -18,8 +18,7 @@ __license__ = "Creative Commons Attribution 3.0 Unported"
 __version__ = "V0.24"
 
 
-class metaDataObject():
-
+class metaDataObject:
     def __init__(self):
 
         self.ID = None

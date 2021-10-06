@@ -21,7 +21,6 @@ from decimal import Decimal
 
 
 class TimeStamp(object):
-
     def __init__(self, refDate="2000-01-01 00:00:00"):
         self.__useTz = True
         self.__refDate = refDate
@@ -34,21 +33,18 @@ class TimeStamp(object):
         else:
             self.__referenceDate = datetime_obj
 
-        self.__dstOffset = - self.__isDST() * 3600.0
+        self.__dstOffset = -self.__isDST() * 3600.0
 
     def __isDST(self):
-        """  Return 1 if the local TZ is on daylight time or 0 otherwise.
-        """
+        """Return 1 if the local TZ is on daylight time or 0 otherwise."""
         return time.localtime().tm_isdst
 
     def getTimeReference(self):
-        """ Return the datetime object for the time reference
-        """
+        """Return the datetime object for the time reference"""
         return self.__referenceDate
 
     def getSecondsFromReference(self):
-        """ Return the number of seconds since the time reference with micosecond precision.
-        """
+        """Return the number of seconds since the time reference with micosecond precision."""
         if self.__useTz:
             utctz = tz.tzutc()
             tNow = datetime.datetime.utcnow().replace(tzinfo=utctz)
@@ -59,9 +55,9 @@ class TimeStamp(object):
         return Decimal(repr(seconds))
 
     def getSecondsFromEpoc(self, secondsFromReference):
-        """  Return the number of seconds since the Epoc.
+        """Return the number of seconds since the Epoc.
 
-             Input: microseconds since the reference date (self.__referenceDate)
+        Input: microseconds since the reference date (self.__referenceDate)
         """
 
         ref = time.mktime(self.__referenceDate.timetuple())
@@ -69,31 +65,31 @@ class TimeStamp(object):
         return d
 
     def getTimeStringUTC(self, secondsFromReference):
-        """  Return the formatted time string in the UTC
+        """Return the formatted time string in the UTC
 
-             Input: seconds since the reference date (self.__referenceDate)
+        Input: seconds since the reference date (self.__referenceDate)
         """
         if secondsFromReference is None:
-            return ''
+            return ""
         ref = time.mktime(self.__referenceDate.timetuple())
 
-        fmt = '%Y-%m-%d %H:%M:%S %Z%z'
+        fmt = "%Y-%m-%d %H:%M:%S %Z%z"
 
         d = float(ref) + float(secondsFromReference) + self.__dstOffset
         return datetime.datetime.fromtimestamp(int(d)).strftime(fmt)
 
     def getTimeStringLocal(self, secondsFromReference):
-        """  Return the formatted time string in the local time zone.
+        """Return the formatted time string in the local time zone.
 
-             Input: seconds since the reference date (self.__referenceDate)
+        Input: seconds since the reference date (self.__referenceDate)
         """
         if secondsFromReference is None:
-            return ''
+            return ""
         ltz = tz.tzlocal()
         utctz = tz.tzutc()
         ref = time.mktime(self.__referenceDate.timetuple())
 
-        fmt = '%Y-%m-%d %H:%M:%S %Z%z'
+        fmt = "%Y-%m-%d %H:%M:%S %Z%z"
 
         d = float(ref) + float(secondsFromReference) + self.__dstOffset
         dt = datetime.datetime.fromtimestamp(int(d))
@@ -101,13 +97,13 @@ class TimeStamp(object):
         return dt.astimezone(ltz).strftime(fmt)
 
     def getTimeFromEpoc(self, secondsFromEpoc):
-        """  Return the formatted time string (UTC).
+        """Return the formatted time string (UTC).
 
-             Input: seconds since the epoc.
+        Input: seconds since the epoc.
         """
         if secondsFromEpoc is None:
-            return ''
-        fmt = '%Y-%m-%d %H:%M:%S %Z%z'
+            return ""
+        fmt = "%Y-%m-%d %H:%M:%S %Z%z"
 
         d = float(secondsFromEpoc)
         return datetime.datetime.fromtimestamp(int(d)).strftime(fmt)

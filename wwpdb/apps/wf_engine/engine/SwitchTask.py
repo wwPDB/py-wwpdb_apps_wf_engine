@@ -18,14 +18,14 @@ import logging
 from wwpdb.apps.wf_engine.engine.InterpretDataObject import getObjectValue
 from wwpdb.apps.wf_engine.wf_engine_utils.run.MyLogger import MyLogger
 
-logger = logging.getLogger(name='root')
+logger = logging.getLogger(name="root")
 
 
 class SwitchTask(object):
 
-    '''
-       Handle switch/case comparison and branching workflow task
-    '''
+    """
+    Handle switch/case comparison and branching workflow task
+    """
 
     def __init__(self, task, debug=0):
 

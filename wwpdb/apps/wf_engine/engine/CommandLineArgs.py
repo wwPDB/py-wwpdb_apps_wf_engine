@@ -25,9 +25,9 @@ import getopt
 
 class CommandLineArgs(object):
 
-    '''
-      run time parameter class
-    '''
+    """
+    run time parameter class
+    """
 
     def __init__(self, argv):
         self.workflow = "Workflow-initial-V2.xml"
@@ -43,10 +43,10 @@ class CommandLineArgs(object):
 
         try:
             opts, _args = getopt.getopt(
-                argv[
-                    1:], "hd:l:s:t:i:w:p:a:k:z:xr", [
-                    "help", "debug=", "log=", "session=", "task=", "instance=", "workflow=",
-                        "path=", "processState=", "accession=", "depth=", "xample", "recover"])
+                argv[1:],
+                "hd:l:s:t:i:w:p:a:k:z:xr",
+                ["help", "debug=", "log=", "session=", "task=", "instance=", "workflow=", "path=", "processState=", "accession=", "depth=", "xample", "recover"],
+            )
         except getopt.GetoptError:
             # print help information and exit:
             self.usage()
@@ -96,12 +96,12 @@ class CommandLineArgs(object):
         return self.wfDepth
 
     def getWorkFlowFileName(self):
-        '''
-          -w annotation(sequenceModule)
-          -w one(two(three(four)))
-        '''
+        """
+        -w annotation(sequenceModule)
+        -w one(two(three(four)))
+        """
 
-        anyB = self.workflow.find('(')
+        anyB = self.workflow.find("(")
 
         if anyB < 0 and self.wfDepth > 0:
             # systax error in wf request
@@ -113,7 +113,7 @@ class CommandLineArgs(object):
         else:
             start = 0
             for i in range(0, self.wfDepth + 1):
-                b1 = self.workflow.find('(', start)
+                b1 = self.workflow.find("(", start)
                 if b1 < 0:
                     print("Request for workflow of depth " + str(self.wfDepth) + " that is invalid in " + self.workflow + " : " + str(i) + " level error")
                     exit(0)

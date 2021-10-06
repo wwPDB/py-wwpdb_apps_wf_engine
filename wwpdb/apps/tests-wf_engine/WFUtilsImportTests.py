@@ -33,5 +33,5 @@ class ImportTests(unittest.TestCase):
         _vc = TimeStamp()  # noqa: F841
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

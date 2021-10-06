@@ -33,8 +33,7 @@ logger = logging.getLogger(__name__)
 
 
 class ProcessUtilsTests(unittest.TestCase):
-
-    def __init__(self, methodName='runTest'):
+    def __init__(self, methodName="runTest"):
         super(ProcessUtilsTests, self).__init__(methodName)
         self.__lfh = sys.stderr
         self.__verbose = True
@@ -47,20 +46,13 @@ class ProcessUtilsTests(unittest.TestCase):
         pass
 
     def testProcessList(self):
-        """Test case -  for listing process details and finding processes by feature
-        """
+        """Test case -  for listing process details and finding processes by feature"""
         startTime = time.time()
-        logger.info("Starting at %s",
-                    time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
+        logger.info("Starting at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
         try:
             pU = ProcessUtils(verbose=self.__verbose, log=self.__lfh)
             pU.setDebug(flag=False)
-            tL = [("username", "jwest", 'str_in'),
-                  ("cmdline", "python", 'str_in'),
-                  ("cmdline", "Frameworks", 'str_in'),
-                  ("cpu_percent", 1, 'numb_gt'),
-                  ("num_fds", 1, 'numb_gt')
-                  ]
+            tL = [("username", "jwest", "str_in"), ("cmdline", "python", "str_in"), ("cmdline", "Frameworks", "str_in"), ("cpu_percent", 1, "numb_gt"), ("num_fds", 1, "numb_gt")]
             for t in tL:
                 pidL = pU.findProcesses(key=t[0], value=t[1], op=t[2])
                 self.__lfh.write("ProcessUtilsTests.testProcessList() for  %r  process list length is %d\n" % (t, len(pidL)))
@@ -69,16 +61,12 @@ class ProcessUtilsTests(unittest.TestCase):
             self.fail()
 
         endTime = time.time()
-        logger.info("Completed at %s (%.3f seconds)",
-                    time.strftime("%Y %m %d %H:%M:%S", time.localtime()),
-                    endTime - startTime)
+        logger.info("Completed at %s (%.3f seconds)", time.strftime("%Y %m %d %H:%M:%S", time.localtime()), endTime - startTime)
 
     def testProcessChildren(self):
-        """Test case -  for listing process details and finding processes by feature
-        """
+        """Test case -  for listing process details and finding processes by feature"""
         startTime = time.time()
-        logger.info("Starting at %s",
-                    time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
+        logger.info("Starting at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
         try:
             pU = ProcessUtils(verbose=self.__verbose, log=self.__lfh)
             pidL = pU.findProcesses(key="username", value="jwest")
@@ -92,20 +80,16 @@ class ProcessUtilsTests(unittest.TestCase):
             self.fail()
 
         endTime = time.time()
-        logger.info("Completed at %s (%.3f seconds)",
-                    time.strftime("%Y %m %d %H:%M:%S", time.localtime()),
-                    endTime - startTime)
+        logger.info("Completed at %s (%.3f seconds)", time.strftime("%Y %m %d %H:%M:%S", time.localtime()), endTime - startTime)
 
     def testProcessWfeChildren(self):
-        """Test case -  for listing wfe
-        """
+        """Test case -  for listing wfe"""
         startTime = time.time()
-        logger.info("Starting at %s",
-                    time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
+        logger.info("Starting at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
         myName = "WFEngineRunnerExec"
         try:
             pU = ProcessUtils(verbose=self.__verbose, log=self.__lfh)
-            pidL = pU.findProcesses(key='cmdline', value=myName, op='str_in')
+            pidL = pU.findProcesses(key="cmdline", value=myName, op="str_in")
             self.__lfh.write("ProcessUtilsTests.testProcessChildren()  process list length is %d\n" % len(pidL))
             for pidTup in pidL:
                 cL = pU.getChildren(pidTup[0])
@@ -116,16 +100,12 @@ class ProcessUtilsTests(unittest.TestCase):
             self.fail()
 
         endTime = time.time()
-        logger.info("Completed at %s (%.3f seconds)",
-                    time.strftime("%Y %m %d %H:%M:%S", time.localtime()),
-                    endTime - startTime)
+        logger.info("Completed at %s (%.3f seconds)", time.strftime("%Y %m %d %H:%M:%S", time.localtime()), endTime - startTime)
 
     def testSystemInfo(self):
-        """Test case -  system details --
-        """
+        """Test case -  system details --"""
         startTime = time.time()
-        logger.info("Starting at %s",
-                    time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
+        logger.info("Starting at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
         try:
             pU = ProcessUtils(verbose=self.__verbose, log=self.__lfh)
             dM = pU.getMemoryInfo()
@@ -137,9 +117,7 @@ class ProcessUtilsTests(unittest.TestCase):
             self.fail()
 
         endTime = time.time()
-        logger.info("Completed at %s (%.3f seconds)\n",
-                    time.strftime("%Y %m %d %H:%M:%S", time.localtime()),
-                    endTime - startTime)
+        logger.info("Completed at %s (%.3f seconds)\n", time.strftime("%Y %m %d %H:%M:%S", time.localtime()), endTime - startTime)
 
 
 def processInfoSuite():
@@ -156,7 +134,7 @@ def processWfeSuite():
     return suiteSelect
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     #
     if False:  # pylint: disable=using-constant-test
         mySuite = processInfoSuite()

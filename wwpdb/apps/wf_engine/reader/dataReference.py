@@ -25,7 +25,7 @@ from wwpdb.utils.wf.WfDataObject import WfDataObject
 class dataModule(object):
 
     """Hold a data reference, passed variable is the XML dom
-       object to be parsed"""
+    object to be parsed"""
 
     def __init__(self, instanceID, depositionID, debug=0, prt=sys.stderr):
 
@@ -98,12 +98,12 @@ class dataModule(object):
         self.mutable = data.getAttribute("mutable")
 
         for detail in data.childNodes:
-            if (detail.nodeName == "wf:description"):
+            if detail.nodeName == "wf:description":
                 self.description = detail.firstChild.data
-            elif (detail.nodeName == "wf:location"):
+            elif detail.nodeName == "wf:location":
                 self.where = str(detail.getAttribute("where"))
                 # if self.where == "archive" or self.where == "wf-instance" or self.where[:4] == "path" or self.where == 'deposit':
-                if ((len(self.where) > 0) and (self.where not in ['constant', 'inline'])):
+                if (len(self.where) > 0) and (self.where not in ["constant", "inline"]):
                     self.version = detail.getAttribute("version")
                     self.content = detail.getAttribute("content")
                     self.format = detail.getAttribute("format")
@@ -123,7 +123,7 @@ class dataModule(object):
                     if self.valueContainer == "list":
                         s = detail.getAttribute("value")
                         self.data = []
-                        self.data = s.split(',')
+                        self.data = s.split(",")
                     elif self.valueContainer == "string":
                         self.data = detail.getAttribute("value")
                     if self.debug > 1:

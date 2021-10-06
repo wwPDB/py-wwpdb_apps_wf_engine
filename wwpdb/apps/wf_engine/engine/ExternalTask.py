@@ -24,23 +24,23 @@ import logging
 
 from wwpdb.apps.wf_engine.wf_engine_utils.time.TimeStamp import TimeStamp
 
-logger = logging.getLogger(name='root')
+logger = logging.getLogger(name="root")
 
 
 class ExternalTask(object):
 
-    '''
-      This task manager is for the control and access to the manual interfaces
+    """
+    This task manager is for the control and access to the manual interfaces
 
-      All communication is via the statusDB
-        handleExternalTask : puts in "waiting"
-        This method is aware of an interface "open" ; but takes no action (for now)
-        The exit condition is "closed(<N>)" within the statusDB; N = return condition from interface
-      Note :
-        The WFM uses the instance data for testing, the WFE is based on task data.  Therefore this
-          method uses both the instance and task data for communication.
+    All communication is via the statusDB
+      handleExternalTask : puts in "waiting"
+      This method is aware of an interface "open" ; but takes no action (for now)
+      The exit condition is "closed(<N>)" within the statusDB; N = return condition from interface
+    Note :
+      The WFM uses the instance data for testing, the WFE is based on task data.  Therefore this
+        method uses both the instance and task data for communication.
 
-    '''
+    """
 
     def __init__(self, eUtil, depositionID, WorkflowClassID, WorkflowInstanceID, task, debug=0, recovery=0):
 
@@ -53,53 +53,69 @@ class ExternalTask(object):
         self.__timeStamp = TimeStamp()
         self.__eUtil = eUtil
         logger.info("\n+ExternalTask.__init__ : ------------------------------------------------------------------------------------")
-        logger.info("+ExternalTask.__init__ : depositionId %r workflowclassid %r workflowinstanceid %r task.name %r recovery %r\n",
-                    depositionID, WorkflowClassID, WorkflowInstanceID, task.name, recovery)
+        logger.info(
+            "+ExternalTask.__init__ : depositionId %r workflowclassid %r workflowinstanceid %r task.name %r recovery %r\n",
+            depositionID,
+            WorkflowClassID,
+            WorkflowInstanceID,
+            task.name,
+            recovery,
+        )
 
     def __setDBTaskStatus(self, typein, mode):  # pylint: disable=unused-argument
-        '''
-          Method to update the wf_task table - audit trail data for WFE
+        """
+        Method to update the wf_task table - audit trail data for WFE
 
-          type: argument not used --
-        '''
+        type: argument not used --
+        """
 
         taskID = {}
-        taskID['WF_TASK_ID'] = self.task.name
-        taskID['WF_INST_ID'] = self.WorkflowInstanceID
-        taskID['WF_CLASS_ID'] = self.WorkflowClassID
-        taskID['DEP_SET_ID'] = self.depositionID
-        taskID['STATUS_TIMESTAMP'] = self.__timeStamp.getSecondsFromReference()
+        taskID["WF_TASK_ID"] = self.task.name
+        taskID["WF_INST_ID"] = self.WorkflowInstanceID
+        taskID["WF_CLASS_ID"] = self.WorkflowClassID
+        taskID["DEP_SET_ID"] = self.depositionID
+        taskID["STATUS_TIMESTAMP"] = self.__timeStamp.getSecondsFromReference()
 
         self.__eUtil.updateStatus(taskID, mode)
 
     def __setDBInstStatus(self, typein, mode):  # pylint: disable=unused-argument
-        '''
-          Method to update the wf_instance table - WFM communication
+        """
+        Method to update the wf_instance table - WFM communication
 
-          type: argument not used -
+        type: argument not used -
 
-        '''
+        """
 
         now = self.__timeStamp.getSecondsFromReference()
         instDB = {}
-        instDB['WF_INST_ID'] = self.WorkflowInstanceID
-        instDB['WF_CLASS_ID'] = self.WorkflowClassID
-        instDB['DEP_SET_ID'] = self.depositionID
-        instDB['STATUS_TIMESTAMP'] = now
+        instDB["WF_INST_ID"] = self.WorkflowInstanceID
+        instDB["WF_CLASS_ID"] = self.WorkflowClassID
+        instDB["DEP_SET_ID"] = self.depositionID
+        instDB["STATUS_TIMESTAMP"] = now
         self.__eUtil.updateStatus(instDB, mode)
         # Tom :  update the wf_instance_last table - note it is unique over dep_set_id
 
-        sql = "update wf_instance_last set status_timestamp=" + \
-            str(now) + ", inst_status='" + mode + "', wf_class_id = '" + self.WorkflowClassID + \
-            "', wf_inst_id = '" + self.WorkflowInstanceID + "' where dep_set_id = '" + self.depositionID + "'"
+        sql = (
+            "update wf_instance_last set status_timestamp="
+            + str(now)
+            + ", inst_status='"
+            + mode
+            + "', wf_class_id = '"
+            + self.WorkflowClassID
+            + "', wf_inst_id = '"
+            + self.WorkflowInstanceID
+            + "' where dep_set_id = '"
+            + self.depositionID
+            + "'"
+        )
         ok = self.__eUtil.runUpdateSQL(sql)
         if ok < 1:
             logger.info("+ExternalTask.__setDBInstStatus - CRITICAL : failed to update wf_instance_last table\n")
 
     def __getDBInstStatus(self):
-        '''
-          Method to get the status of the instance - for WFM communication
-        '''
+        """
+        Method to get the status of the instance - for WFM communication
+        """
 
         self.__eUtil.updateConnection()
 
@@ -118,15 +134,21 @@ class ExternalTask(object):
         return ret
 
     def handleTask(self):
-        '''
-          The main wait function for the manual interface.  loop for wait
-          for the statusDB to change.
+        """
+        The main wait function for the manual interface.  loop for wait
+        for the statusDB to change.
 
-          Note that the wait is on the instance state (to reduce contention for  WFM and interfaces)
+        Note that the wait is on the instance state (to reduce contention for  WFM and interfaces)
 
-        '''
-        logger.info("\n+ExternalTask.handleExternalTask : starts with id %s  class %s instance %s task.name %r recovery %r",
-                    self.depositionID, self.WorkflowClassID, self.WorkflowInstanceID, self.task.name, self.recovery)
+        """
+        logger.info(
+            "\n+ExternalTask.handleExternalTask : starts with id %s  class %s instance %s task.name %r recovery %r",
+            self.depositionID,
+            self.WorkflowClassID,
+            self.WorkflowInstanceID,
+            self.task.name,
+            self.recovery,
+        )
         # set the instance and task  status to waiting
         if self.recovery == 0:
             logger.info("+ExternalTask.handleExternalTask : depositionID %r task.name %r set task status WAITING", self.depositionID, self.task.name)
@@ -153,14 +175,20 @@ class ExternalTask(object):
 
             if self.__debug > 3:
                 elapsedT = datetime.datetime.now() - startTime
-                logger.debug("+ExternalTask.handleExternalTask :  id %s  class %s instance %s elapsed (secs) %d state %r ",
-                             self.depositionID, self.WorkflowClassID, self.WorkflowInstanceID, elapsedT.total_seconds(), str(state))
+                logger.debug(
+                    "+ExternalTask.handleExternalTask :  id %s  class %s instance %s elapsed (secs) %d state %r ",
+                    self.depositionID,
+                    self.WorkflowClassID,
+                    self.WorkflowInstanceID,
+                    elapsedT.total_seconds(),
+                    str(state),
+                )
 
             if state[:6] == "closed":
                 n1 = state.find("(")
                 n2 = state.find(")")
                 if n1 >= 0 and n2 > (n1 + 1):
-                    ret = state[n1 + 1:n2]
+                    ret = state[n1 + 1 : n2]
                 else:
                     # we get the default return state from the interface
                     ret = "0"
@@ -181,9 +209,17 @@ class ExternalTask(object):
                     logger.info("+ExternalTask.handleExternalTask : depositionID %r detected OPEN instance status - update LAST instance", self.depositionID)
                     opened = True
                     # manage the UI not knowing about this new table
-                    sql = "update wf_instance_last set status_timestamp=" + \
-                        str(self.__timeStamp.getSecondsFromReference()) + ", inst_status='open', wf_class_id = '" + self.WorkflowClassID + \
-                        "', wf_inst_id = '" + self.WorkflowInstanceID + "' where dep_set_id = '" + self.depositionID + "'"
+                    sql = (
+                        "update wf_instance_last set status_timestamp="
+                        + str(self.__timeStamp.getSecondsFromReference())
+                        + ", inst_status='open', wf_class_id = '"
+                        + self.WorkflowClassID
+                        + "', wf_inst_id = '"
+                        + self.WorkflowInstanceID
+                        + "' where dep_set_id = '"
+                        + self.depositionID
+                        + "'"
+                    )
 
                     _ok = self.__eUtil.runUpdateSQL(sql)  # noqa: F841
             elif state == "waiting":
@@ -211,7 +247,14 @@ class ExternalTask(object):
                 ret = str(-1)
                 break
 
-        logger.info("\n+ExternalTask.handleExternalTask : ENDS for id %s  class %s instance %s task.name %r recovery %r return value %r",
-                    self.depositionID, self.WorkflowClassID, self.WorkflowInstanceID, self.task.name, self.recovery, ret)
+        logger.info(
+            "\n+ExternalTask.handleExternalTask : ENDS for id %s  class %s instance %s task.name %r recovery %r return value %r",
+            self.depositionID,
+            self.WorkflowClassID,
+            self.WorkflowInstanceID,
+            self.task.name,
+            self.recovery,
+            ret,
+        )
         #
         return int(ret)

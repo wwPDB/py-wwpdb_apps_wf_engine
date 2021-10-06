@@ -28,7 +28,7 @@ from wwpdb.apps.wf_engine.wf_engine_utils.time.TimeStamp import TimeStamp
 import logging
 from wwpdb.apps.wf_engine.wf_engine_utils.run.MyLogger import MyLogger
 
-logger = logging.getLogger(name='root')
+logger = logging.getLogger(name="root")
 
 ##
 # JDW  -- This class will replace the DBStatusApi structure -
@@ -36,7 +36,6 @@ logger = logging.getLogger(name='root')
 
 
 class EngineUtils(WfDbApi):
-
     def __init__(self, verbose=True):
         #  This will create a database connection in the base class --
         #
@@ -58,10 +57,9 @@ class EngineUtils(WfDbApi):
         logger.info("+EngineUtils.__init__ Starting ----------------------- (%s) ---------------------------------", self.__siteId)
 
     def updateConnection(self, timeOutSeconds=3600):
-        '''  Update database connection if down or expired (older than timeOutSeconds).
-        '''
+        """Update database connection if down or expired (older than timeOutSeconds)."""
 
-        if ((not self.isConnected()) or ((self.__timeStamp.getSecondsFromReference() - self.__when) > timeOutSeconds)):
+        if (not self.isConnected()) or ((self.__timeStamp.getSecondsFromReference() - self.__when) > timeOutSeconds):
             ok = self.reConnect()
             if not ok:
                 logger.info("+EngineUtils.checkConnection : database connection failed at connenction number = %d\n", self.__number)
@@ -72,9 +70,9 @@ class EngineUtils(WfDbApi):
         return True
 
     def resetInitialStateDB(self, depID):
-        '''
-          Method to reset a deposition back to init state by setting the owner, status and class
-        '''
+        """
+        Method to reset a deposition back to init state by setting the owner, status and class
+        """
 
         # select ordinal from wf_instance where dep_set_id = 'D_057171'  order by status_timestamp desc limit 1;
         # get the last row in the instance table for this ID
@@ -101,7 +99,7 @@ class EngineUtils(WfDbApi):
 
     def getLogDirectoryPath(self, depID):
 
-        topSessionPath = self.__cI.get('SITE_WEB_APPS_TOP_SESSIONS_PATH')
+        topSessionPath = self.__cI.get("SITE_WEB_APPS_TOP_SESSIONS_PATH")
         logDir = os.path.join(topSessionPath, "wf-logs", depID)
 
         if not os.path.exists(logDir):
@@ -120,8 +118,17 @@ class EngineUtils(WfDbApi):
     def setCommunication(self, status, activity, depID):
 
         timeNow = self.__timeStamp.getSecondsFromReference()
-        sql = "update communication set status = '" + str(status) + "', activity = '" + str(activity) + "', actual_timestamp = " + \
-            str(timeNow) + " where dep_set_id  = '" + str(depID) + "'"
+        sql = (
+            "update communication set status = '"
+            + str(status)
+            + "', activity = '"
+            + str(activity)
+            + "', actual_timestamp = "
+            + str(timeNow)
+            + " where dep_set_id  = '"
+            + str(depID)
+            + "'"
+        )
 
         ok = self.runUpdateSQL(sql)
 
@@ -189,17 +196,17 @@ class EngineUtils(WfDbApi):
             return
 
         msg = MIMEText(message)
-        msg['Subject'] = subject
-        msg['From'] = frm
-        msg['To'] = email
-        noreplyaddr = self.__cI.get("SITE_NOREPLY_EMAIL", 'noreply@mail.wwpdb.org')
+        msg["Subject"] = subject
+        msg["From"] = frm
+        msg["To"] = email
+        noreplyaddr = self.__cI.get("SITE_NOREPLY_EMAIL", "noreply@mail.wwpdb.org")
 
         # Send the message via our own SMTP server, but don't include the
         # envelope header.
         logger.info("+EngineUtils.__sendEmail send email from %s", str(frm))
         logger.info("+EngineUtils.__sendEmail send email to %s", str(email))
         try:
-            s = smtplib.SMTP('localhost')
+            s = smtplib.SMTP("localhost")
             s.sendmail(noreplyaddr, [email], msg.as_string())
             s.quit()
         except Exception as e:
@@ -207,51 +214,51 @@ class EngineUtils(WfDbApi):
 
     def sendDepositorEmail(self, depID, data):
         #  JDW - for compatibility WFE running under a host based site id needs to determine the e-mail path for each case -
-        if os.access(os.path.join(self.__cI.get('SITE_ARCHIVE_STORAGE_PATH'), 'deposit', 'temp_files', 'deposition-v-200', str(depID), "citation.pkl"), os.R_OK):
-            url = self.__cI.get('SITE_CURRENT_DEP_EMAIL_URL')
+        if os.access(os.path.join(self.__cI.get("SITE_ARCHIVE_STORAGE_PATH"), "deposit", "temp_files", "deposition-v-200", str(depID), "citation.pkl"), os.R_OK):
+            url = self.__cI.get("SITE_CURRENT_DEP_EMAIL_URL")
             logger.info("+EngineUtils.sendDepositorEmail - %s  site %s return v200 url %s", depID, self.__siteId, url)
         # elif os.access(os.path.join(self.__cI.get('SITE_ARCHIVE_STORAGE_PATH'), 'deposit', 'temp_files', 'deposition-v-152', str(depID), "formdata.pkl"), os.R_OK):
         #     url = self.__cI.get('SITE_LEGACY_DEP_EMAIL_URL')
         #     logger.info("+EngineUtils.sendDepositorEmail - %s  site %s return v152 url %s", depID, self.__siteId, url)
-        elif os.access(os.path.join(self.__cI.get('SITE_ARCHIVE_STORAGE_PATH'), 'deposit', 'temp_files', 'deposition', str(depID), "formdata.pkl"), os.R_OK):
-            url = self.__cI.get('SITE_DEP_EMAIL_URL')
+        elif os.access(os.path.join(self.__cI.get("SITE_ARCHIVE_STORAGE_PATH"), "deposit", "temp_files", "deposition", str(depID), "formdata.pkl"), os.R_OK):
+            url = self.__cI.get("SITE_DEP_EMAIL_URL")
             logger.info("+EngineUtils.sendDepositorEmail - %s  site %s return legacy url %s", depID, self.__siteId, url)
         else:
-            url = self.__cI.get('SITE_DEP_EMAIL_URL')
+            url = self.__cI.get("SITE_DEP_EMAIL_URL")
             logger.info("+EngineUtils.sendDepositorEmail path tests failing - %s  site %s using default url %s", depID, self.__siteId, url)
         #
 
         data = data.replace("$DEPID", depID)
         data = data.replace("$DEPURL", url)
-        data = data.replace("$LINEFEED", '\n')
+        data = data.replace("$LINEFEED", "\n")
 
-        words = data.split('|')
+        words = data.split("|")
         email = self.__getDepositorEmail(depID)
         logger.info("+EngineUtils.sendDepositorEmail - %s sending to email %s ", depID, email)
-        if (self.__SKIP_EMAIL):
+        if self.__SKIP_EMAIL:
             logger.info("+EngineUtils.sendDepositorEmail - Skipped sending email to %s ", email)
         else:
             self.__sendEmail(email, words[0], words[1], words[2])
 
     def __getDepositorEmail(self, depID):
-        '''
-          go get the depositor email
+        """
+        go get the depositor email
 
-          ## JDW modified to work in V152/V200 compatibility mode -
-        '''
-        fName = os.path.join(self.__cI.get('SITE_ARCHIVE_STORAGE_PATH'), 'deposit', 'temp_files', 'deposition', str(depID), "formdata.pkl")
+        ## JDW modified to work in V152/V200 compatibility mode -
+        """
+        fName = os.path.join(self.__cI.get("SITE_ARCHIVE_STORAGE_PATH"), "deposit", "temp_files", "deposition", str(depID), "formdata.pkl")
         if not os.access(fName, os.R_OK):
-            fName = os.path.join(self.__cI.get('SITE_ARCHIVE_STORAGE_PATH'), 'deposit', 'temp_files', 'deposition-v-152', str(depID), "formdata.pkl")
+            fName = os.path.join(self.__cI.get("SITE_ARCHIVE_STORAGE_PATH"), "deposit", "temp_files", "deposition-v-152", str(depID), "formdata.pkl")
         #
         logger.info("+EngineUtils.__getDepositorEmail - %s at %s searching for email in file %s ", depID, self.__siteId, fName)
         if os.path.isfile(fName):
             try:
                 logger.info("+EngineUtils.__getDepositorEmail - %s s opening serialized file %s ", depID, fName)
-                f = open(fName, 'rb')
+                f = open(fName, "rb")
                 dat = pickle.load(f)
                 f.close()
-                if 'email' in dat:
-                    return dat['email']
+                if "email" in dat:
+                    return dat["email"]
                 else:
                     return None
             except Exception as e:
@@ -260,15 +267,15 @@ class EngineUtils(WfDbApi):
         else:
             logger.info("+EngineUtils.__getDepositorEmail - %s searching for email in database", depID)
             ss = dbAPI(depID)
-            ret = ss.runSelectNQ(table='user_data', select=['email', 'role'], where={"dep_set_id": depID, "role": "valid"})
+            ret = ss.runSelectNQ(table="user_data", select=["email", "role"], where={"dep_set_id": depID, "role": "valid"})
             for r in ret:
                 return r[0]
             return None
 
     def initDepositContext(self, depositionID, WorkflowClassID, WorkflowInstanceID, dinput):
-        '''
-          method to extract information from the current model file and load this into the status database.
-        '''
+        """
+        method to extract information from the current model file and load this into the status database.
+        """
 
         logger.info("+EngineUtils.initDepositContext : ============================================")
         logger.info("+EngineUtils.initDepositContext : depID = %s", str(depositionID))
@@ -292,8 +299,8 @@ class EngineUtils(WfDbApi):
             process.setInput("src", value)
 
         wfoOut = WfDataObject()
-        wfoOut.setContainerTypeName('dict')
-        wfoOut.setValueTypeName('string')
+        wfoOut.setContainerTypeName("dict")
+        wfoOut.setValueTypeName("string")
         process.setOutput("dst", wfoOut)
 
         if not process.preCheck():
@@ -309,52 +316,52 @@ class EngineUtils(WfDbApi):
 
         depDB = {}
         depDB["DEP_SET_ID"] = depositionID
-        depDB["PDB_ID"] = '????'
-        if 'accessions' in dataDict:
-            acc = dataDict['accessions']
-            depDB["PDB_ID"] = '????'
+        depDB["PDB_ID"] = "????"
+        if "accessions" in dataDict:
+            acc = dataDict["accessions"]
+            depDB["PDB_ID"] = "????"
             if acc is not None:
-                accPDB = acc['PDB']
+                accPDB = acc["PDB"]
                 if accPDB is not None:
                     if len(accPDB) > 0:
                         depDB["PDB_ID"] = accPDB[0]
 
-        if 'recvd_initial_deposition_date' in dataDict:
-            depDB['INITIAL_DEPOSITION_DATE'] = dataDict['recvd_initial_deposition_date']
+        if "recvd_initial_deposition_date" in dataDict:
+            depDB["INITIAL_DEPOSITION_DATE"] = dataDict["recvd_initial_deposition_date"]
         else:
             # JDW JDW
             today = datetime.datetime.utcnow().strftime("%Y-%m-%d")
             # depDB['INITIAL_DEPOSITION_DATE'] = 'unknown'
-            depDB['INITIAL_DEPOSITION_DATE'] = today
-        if 'deposit_site' in dataDict:
-            depDB['DEPOSIT_SITE'] = dataDict['deposit_site']
+            depDB["INITIAL_DEPOSITION_DATE"] = today
+        if "deposit_site" in dataDict:
+            depDB["DEPOSIT_SITE"] = dataDict["deposit_site"]
         else:
-            depDB['DEPOSIT_SITE'] = 'unknown'
-        if 'process_site' in dataDict:
-            depDB['PROCESS_SITE'] = dataDict['process_site']
+            depDB["DEPOSIT_SITE"] = "unknown"
+        if "process_site" in dataDict:
+            depDB["PROCESS_SITE"] = dataDict["process_site"]
         else:
-            depDB['PROCESS_SITE'] = 'unknown'
-        if 'status_code' in dataDict:
-            depDB['STATUS_CODE'] = dataDict['status_code']
+            depDB["PROCESS_SITE"] = "unknown"
+        if "status_code" in dataDict:
+            depDB["STATUS_CODE"] = dataDict["status_code"]
         else:
-            depDB['STATUS_CODE'] = "PROC"
+            depDB["STATUS_CODE"] = "PROC"
 
         logger.info("******* OVERWRITE OF STATUS CODE to PROC ***************")
-        depDB['STATUS_CODE'] = "PROC"
-        if 'annotator_initials' not in dataDict or dataDict['annotator_initials'] == 'UNASSIGNED':
-            depDB["ANNOTATOR_INITIALS"] = 'unknown'
+        depDB["STATUS_CODE"] = "PROC"
+        if "annotator_initials" not in dataDict or dataDict["annotator_initials"] == "UNASSIGNED":
+            depDB["ANNOTATOR_INITIALS"] = "unknown"
         else:
-            depDB["ANNOTATOR_INITIALS"] = dataDict['annotator_initials']
+            depDB["ANNOTATOR_INITIALS"] = dataDict["annotator_initials"]
             logger.info("******* OVERWRITE OF ANNOTATOR INITIALS TO AN *******")
-            depDB["ANNOTATOR_INITIALS"] = 'unknown'
-        if 'author_release_status_code' not in dataDict:
-            depDB["AUTHOR_RELEASE_STATUS_CODE"] = 'HPUB'
+            depDB["ANNOTATOR_INITIALS"] = "unknown"
+        if "author_release_status_code" not in dataDict:
+            depDB["AUTHOR_RELEASE_STATUS_CODE"] = "HPUB"
         else:
-            depDB["AUTHOR_RELEASE_STATUS_CODE"] = dataDict['author_release_status_code']
-        depDB["TITLE"] = dataDict['title'].replace("'", " ")
+            depDB["AUTHOR_RELEASE_STATUS_CODE"] = dataDict["author_release_status_code"]
+        depDB["TITLE"] = dataDict["title"].replace("'", " ")
 
-        if 'audit_author' in dataDict:
-            auth = dataDict['audit_author']
+        if "audit_author" in dataDict:
+            auth = dataDict["audit_author"]
         else:
             auth = "unknown"
 
@@ -370,42 +377,42 @@ class EngineUtils(WfDbApi):
         else:
             depDB["AUTHOR_LIST"] = "unknown"
         #
-        depDB["EXP_METHOD"] = dataDict['exp_method']
-        if (depDB["EXP_METHOD"].find('NMR') >= 0):
-            if 'status_code_nmr' in dataDict:
-                depDB["STATUS_CODE_EXP"] = dataDict['status_code_nmr']
+        depDB["EXP_METHOD"] = dataDict["exp_method"]
+        if depDB["EXP_METHOD"].find("NMR") >= 0:
+            if "status_code_nmr" in dataDict:
+                depDB["STATUS_CODE_EXP"] = dataDict["status_code_nmr"]
             else:
-                depDB["STATUS_CODE_EXP"] = 'Unknown'
-        elif (depDB["EXP_METHOD"].find('EM') >= 0):
-            if 'status_code_em' in dataDict:
-                depDB["STATUS_CODE_EXP"] = dataDict['status_code_em']
+                depDB["STATUS_CODE_EXP"] = "Unknown"
+        elif depDB["EXP_METHOD"].find("EM") >= 0:
+            if "status_code_em" in dataDict:
+                depDB["STATUS_CODE_EXP"] = dataDict["status_code_em"]
             else:
-                depDB["STATUS_CODE_EXP"] = 'Unknown'
+                depDB["STATUS_CODE_EXP"] = "Unknown"
         else:
-            if 'status_code_sf' in dataDict:
-                depDB["STATUS_CODE_EXP"] = dataDict['status_code_sf']
+            if "status_code_sf" in dataDict:
+                depDB["STATUS_CODE_EXP"] = dataDict["status_code_sf"]
             else:
-                depDB["STATUS_CODE_EXP"] = 'Unknown'
-        if 'full_name_of_center' in dataDict:
-            depDB["SG_CENTER"] = dataDict['full_name_of_center']
+                depDB["STATUS_CODE_EXP"] = "Unknown"
+        if "full_name_of_center" in dataDict:
+            depDB["SG_CENTER"] = dataDict["full_name_of_center"]
         else:
-            depDB["SG_CENTER"] = 'Unknown'
+            depDB["SG_CENTER"] = "Unknown"
 
         if self.exist(depDB):
             # then we do nothing - since this workflow does not modify the depostion
             constDict = {}
             constDict["DEP_SET_ID"] = depositionID
-            self.saveObject(depDB, 'update', constDict)
+            self.saveObject(depDB, "update", constDict)
         else:
-            self.saveObject(depDB, 'insert')
+            self.saveObject(depDB, "insert")
             if self.__verbose:
                 logger.info("+EngineUtils.initDepositContext : done insert data object in DB\n")
 
         instDB = {}
-        instDB['WF_INST_ID'] = WorkflowInstanceID
-        instDB['WF_CLASS_ID'] = WorkflowClassID
-        instDB['DEP_SET_ID'] = depositionID
-        instDB['STATUS_TIMESTAMP'] = datetime.datetime.utcnow()
+        instDB["WF_INST_ID"] = WorkflowInstanceID
+        instDB["WF_CLASS_ID"] = WorkflowClassID
+        instDB["DEP_SET_ID"] = depositionID
+        instDB["STATUS_TIMESTAMP"] = datetime.datetime.utcnow()
         self.updateStatus(instDB, "init")
 
         # and also initialise the wf_instance_last table
@@ -416,7 +423,7 @@ class EngineUtils(WfDbApi):
 
     def getNextInstanceId(self, dataSetId):
         """
-          Create new/next workflow instance for the input data set Id using wf_instance table data.
+        Create new/next workflow instance for the input data set Id using wf_instance table data.
 
         """
 
@@ -442,5 +449,7 @@ class EngineUtils(WfDbApi):
             logger.info("+mainEngine.__getNewInstanceIDDB : for data set ID = %s next workflow instance ID = %s", dataSetId, ret)
 
         return ret
+
+
 ##
 #  END JDW

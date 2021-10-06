@@ -87,7 +87,7 @@ def __getObject(obj, debug, prt=sys.stderr):
         prt.write("+InterpretDataObject.__getObject : unitialized or unset value\n")
         return None
 
-    if obj.getContainerTypeName() in ['list', 'dict', 'boolean']:
+    if obj.getContainerTypeName() in ["list", "dict", "boolean"]:
         return obj.getValue()
     else:
         return str(obj.getValue())
@@ -158,7 +158,7 @@ def __fillInputOutput(allData, wfData, depID, mode, debug, prt=sys.stderr):
         else:
             prt.write("+InterpretDataObject.__fillInputOutput :  WARNING - no format defined for data " + str(wfData.nameHumanReadable) + "\n")
     else:
-        if wfData.where not in ['inline', 'constant']:
+        if wfData.where not in ["inline", "constant"]:
             prt.write("+InterpretDataObject.__fillInputOutput : WARNING - no content defined for data " + str(wfData.nameHumanReadable))
 
     if wfData.version is not None:
@@ -182,7 +182,7 @@ def __fillInputOutput(allData, wfData, depID, mode, debug, prt=sys.stderr):
                 if debug > 1:
                     prt.write("+InterpretDataObject.__fillInputOutput : versionID : " + str(version) + "\n")
     else:
-        if wfData.where not in ['inline', 'constant']:
+        if wfData.where not in ["inline", "constant"]:
             prt.write("+InterpretDataObject.__fillInputOutput :  WARNING - no version defined for data " + str(wfData.nameHumanReadable) + "\n")
             if debug > 1:
                 prt.write("+InterpretDataObject.__fillInputOutput :  versionID : latest\n")
@@ -193,19 +193,19 @@ def __fillInputOutput(allData, wfData, depID, mode, debug, prt=sys.stderr):
         if debug > 1:
             prt.write("+InterpretDataObject.__fillInputOutput : valueTypeName  %s\n" % wfData.valueType)
         vType = wfData.valueType
-        if vType in ['int', 'integer']:
+        if vType in ["int", "integer"]:
             defVal = 0
-        elif vType in ['float', 'double']:
+        elif vType in ["float", "double"]:
             defVal = 0.0
-        elif vType in ['boolean']:
+        elif vType in ["boolean"]:
             defVal = False
-        elif vType in ['string', 'date', 'datetime']:
-            defVal = ''
+        elif vType in ["string", "date", "datetime"]:
+            defVal = ""
         else:
             defVal = None
             prt.write("+InterpretDataObject.__fillInputOutput : unsupported value type %s\n" % vType)
 
-        if ((mode == 'output') and (defVal is not None)):
+        if (mode == "output") and (defVal is not None):
             wfData.ApiData.setValue(defVal)
 
     if wfData.valueContainer is not None:
@@ -213,16 +213,16 @@ def __fillInputOutput(allData, wfData, depID, mode, debug, prt=sys.stderr):
         if debug > 1:
             prt.write("+InterpretDataObject.__fillInputOutput : containerTypeName  " + str(wfData.valueContainer) + "\n")
         vContainer = wfData.valueContainer
-        if vContainer == 'dict':
+        if vContainer == "dict":
             defVal = {}
-        elif vContainer == 'list':
+        elif vContainer == "list":
             defVal = []
-        elif vContainer == 'value':
+        elif vContainer == "value":
             defVal = None
         else:
             defVal = None
             prt.write("+InterpretDataObject.__fillInputOutput : unsupported value container %s\n" % vContainer)
-        if ((mode == 'output') and (defVal is not None)):
+        if (mode == "output") and (defVal is not None):
             wfData.ApiData.setValue(defVal)
 
 
@@ -232,9 +232,9 @@ def getTaskParameterDict(allData, data, debug, prt=sys.stderr):
         prt.write("+InterpretDataObject.getTaskParameterDict :  input parameter " + str(data) + "\n")
     if data is not None and len(data) > 0:
         d = {}
-        keyValues = data.split(',')
+        keyValues = data.split(",")
         for keyValue in keyValues:
-            pair = keyValue.split(':')
+            pair = keyValue.split(":")
             ky = pair[0]
             v = __replaceVariable(allData, "string", pair[1], debug, prt)
             d[ky] = v
@@ -250,7 +250,7 @@ def getTaskParameterDict(allData, data, debug, prt=sys.stderr):
 
 def fillAPIinputObject(allData, wfData, depID, debug=0, prt=sys.stderr):
 
-    __fillInputOutput(allData, wfData, depID, 'input', debug, prt)
+    __fillInputOutput(allData, wfData, depID, "input", debug, prt)
 
     if wfData.selectConditionAttribute is not None:
         if debug > 1:
@@ -275,7 +275,7 @@ def fillAPIinputObject(allData, wfData, depID, debug=0, prt=sys.stderr):
             prt.write("+InterpretDataObject.fillApiInputObject : addSelectionAttributeName " + str(wfData.selectAttribute) + "\n")
         if len(wfData.selectAttribute) > 0:
             selectAttribute = __replaceVariable(allData, wfData.type, wfData.selectAttribute, debug, prt)
-            listData = selectAttribute.split(',')
+            listData = selectAttribute.split(",")
             for el in listData:
                 wfData.ApiData.addSelectAttributeName(el)
                 if debug > 1:
@@ -283,16 +283,16 @@ def fillAPIinputObject(allData, wfData, depID, debug=0, prt=sys.stderr):
 
 
 def fillAPIoutputObject(allData, wfData, depID, debug=0, prt=sys.stderr):
-    __fillInputOutput(allData, wfData, depID, 'output', debug, prt)
+    __fillInputOutput(allData, wfData, depID, "output", debug, prt)
 
 
 def setRuntimeVariable(allData, value, debug=0, prt=sys.stderr):
-    '''
-      THIS IS NOT CALLED - MUST DO VARIABLE REPLACEMENT NOT TO REFERENCE - or permament
-    '''
-# method to reset WfDataObjects based on runtime variables
+    """
+    THIS IS NOT CALLED - MUST DO VARIABLE REPLACEMENT NOT TO REFERENCE - or permament
+    """
+    # method to reset WfDataObjects based on runtime variables
 
-# version ID
+    # version ID
     if debug > 1:
         prt.write("+InterpretDataObject.setRuntimeVariable :   setRuntimeVariable " + str(value.version) + "\n")
     value.version = __replaceVariable(allData, value.type, value.version, debug, prt)

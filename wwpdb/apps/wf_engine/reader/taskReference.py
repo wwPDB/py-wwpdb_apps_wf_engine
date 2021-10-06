@@ -25,11 +25,11 @@ from wwpdb.apps.wf_engine.reader.parseTimeDelta import parseTimeDelta
 from wwpdb.utils.wf.process.ActionRegistry import ActionRegistry
 
 
-class taskModule():
+class taskModule:
 
     """
-     Holds the task object, the task information is passed
-       out of the XML dom object
+    Holds the task object, the task information is passed
+      out of the XML dom object
     """
 
     def __init__(self, debug=0, prt=sys.stderr):
@@ -87,7 +87,7 @@ class taskModule():
         self.breakPoint = taskNode.getAttribute("breakpoint")
         self.exception = taskNode.getAttribute("exceptionID")
         self.uniqueActionName = taskNode.getAttribute("reference")
-        if taskNode.nodeName == 'wf:exception':
+        if taskNode.nodeName == "wf:exception":
             self.outputName.append(taskNode.getAttribute("nextTask"))
             self.type = "exception"
 
@@ -176,12 +176,12 @@ class taskModule():
                             if method.nodeName == "wf:function":
                                 #
                                 compareAs = str(method.getAttribute("compareAs")).lower()
-                                if compareAs not in ['int', 'integer', 'float', 'double', 'bool', 'boolean', 'string', 'substring']:
+                                if compareAs not in ["int", "integer", "float", "double", "bool", "boolean", "string", "substring"]:
                                     # if omitted then apply a reasonable default  -
-                                    if ((method.getAttribute("string") != "") or (method.getAttribute("inList") != "")):
-                                        compareAs = 'string'
+                                    if (method.getAttribute("string") != "") or (method.getAttribute("inList") != ""):
+                                        compareAs = "string"
                                     else:
-                                        compareAs = 'integer'
+                                        compareAs = "integer"
                                 f = TaskComparitor(self.debug, self.__lfh)
                                 f.addDataName(method.getAttribute("dataID"))
                                 if method.getAttribute("gte") != "":
@@ -200,16 +200,16 @@ class taskModule():
                                     f.addData(1, method.getAttribute("neq"), "!=", compareAs)
 
                                 if method.getAttribute("boolean") != "":
-                                    f.addData(88, method.getAttribute("boolean"), compareAs='boolean')
+                                    f.addData(88, method.getAttribute("boolean"), compareAs="boolean")
 
-                                if method.getAttribute("string") != "" and compareAs in ['string']:
+                                if method.getAttribute("string") != "" and compareAs in ["string"]:
                                     f.addData(77, method.getAttribute("string"), compareAs=compareAs)
-                                elif method.getAttribute("string") != "" and compareAs in ['substring']:
+                                elif method.getAttribute("string") != "" and compareAs in ["substring"]:
                                     f.addData(78, method.getAttribute("string"), compareAs=compareAs)
 
-                                elif method.getAttribute("inList") != "" and compareAs in ['string']:
+                                elif method.getAttribute("inList") != "" and compareAs in ["string"]:
                                     f.addData(55, method.getAttribute("inList"), compareAs=compareAs)
-                                elif method.getAttribute("inList") != "" and compareAs in ['substring']:
+                                elif method.getAttribute("inList") != "" and compareAs in ["substring"]:
                                     f.addData(56, method.getAttribute("inList"), compareAs=compareAs)
                         self.func.append(f)
 
@@ -233,11 +233,13 @@ class taskModule():
                     if self.uniqueWhere == "api":
                         if not self.ActionRegistry.isDefinedAction(self.uniqueAction):
                             self.__lfh.write("+taskReference.parseException : **** Catastrophic WF error\n")
-                            self.__lfh.write("+taskReference.parseProcessTask : Task refers to a APIprocess that does not exist : "
-                                             + str(self.uniqueAction)
-                                             + ", "
-                                             + str(self.uniqueWhere)
-                                             + "\n")
+                            self.__lfh.write(
+                                "+taskReference.parseProcessTask : Task refers to a APIprocess that does not exist : "
+                                + str(self.uniqueAction)
+                                + ", "
+                                + str(self.uniqueWhere)
+                                + "\n"
+                            )
                             exit(0)
             #        self.uniqueContainer = info.getAttribute("returnContainer")
             #        self.uniqueType = info.getAttribute("returnType")
@@ -316,9 +318,7 @@ class taskModule():
         lfh.write("+taskReference.dump : Task output task names  %r\n" % self.outputName)
 
     def getDataReference(self, dataObjects):
-        """Return the list of data objects from the input list related to the current task.
-
-        """
+        """Return the list of data objects from the input list related to the current task."""
 
         dat = []
 

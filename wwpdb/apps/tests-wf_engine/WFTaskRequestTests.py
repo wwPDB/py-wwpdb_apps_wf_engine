@@ -39,8 +39,7 @@ logger = logging.getLogger(__name__)
 
 @unittest.skip("Until test code adapted to code base")
 class WFTaskRequestTests(unittest.TestCase):
-
-    def __init__(self, methodName='runTest'):
+    def __init__(self, methodName="runTest"):
         super(WFTaskRequestTests, self).__init__(methodName)
         self.__lfh = sys.stderr
         self.__verbose = True
@@ -48,15 +47,14 @@ class WFTaskRequestTests(unittest.TestCase):
     def setUp(self):
         self.__lfh = sys.stderr
         self.__verbose = True
-        self.__databaseName = 'status_test'
+        self.__databaseName = "status_test"
         self.__siteId = getSiteId()
 
     def tearDown(self):
         pass
 
     def testSchemaCreate(self):
-        """Test case -  create table schema ---
-        """
+        """Test case -  create table schema ---"""
         startTime = time.time()
         logger.debug("Starting at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
         try:
@@ -68,21 +66,17 @@ class WFTaskRequestTests(unittest.TestCase):
             self.fail()
 
         endTime = time.time()
-        logger.debug("Completed at %s (%.3f seconds)",
-                     time.strftime("%Y %m %d %H:%M:%S", time.localtime()),
-                     endTime - startTime)
+        logger.debug("Completed at %s (%.3f seconds)", time.strftime("%Y %m %d %H:%M:%S", time.localtime()), endTime - startTime)
 
     def testDeleteTransactions(self):
-        """Test case -  request transactions
-        """
+        """Test case -  request transactions"""
         startTime = time.time()
-        logger.debug("Starting at %s",
-                     time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
+        logger.debug("Starting at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
         try:
             wftr = WFTaskRequest(siteId=self.__siteId, verbose=self.__verbose, log=self.__lfh)
             wftr.setDataStore(dataStoreName=self.__databaseName)
             #
-            for depId in ['D_0000000000', 'D_0000000001', 'D_0000000002', 'D_0000000003', 'D_0000000004', 'D_0000000005']:
+            for depId in ["D_0000000000", "D_0000000001", "D_0000000002", "D_0000000003", "D_0000000004", "D_0000000005"]:
                 _ok = wftr.deleteDataSet(depSetId=depId)  # noqa: F841
             #
             # rdList = wftr.getStatus()
@@ -94,22 +88,18 @@ class WFTaskRequestTests(unittest.TestCase):
             self.fail()
 
         endTime = time.time()
-        logger.debug("Completed at %s (%.3f seconds)\n",
-                     time.strftime("%Y %m %d %H:%M:%S", time.localtime()),
-                     endTime - startTime)
+        logger.debug("Completed at %s (%.3f seconds)\n", time.strftime("%Y %m %d %H:%M:%S", time.localtime()), endTime - startTime)
 
     def testTransactions(self):
-        """Test case -  request transactions
-        """
+        """Test case -  request transactions"""
         startTime = time.time()
-        logger.debug("Starting %s",
-                     time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
+        logger.debug("Starting %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
         try:
             wftr = WFTaskRequest(siteId=self.__siteId, verbose=self.__verbose, log=self.__lfh)
             wftr.setDataStore(dataStoreName=self.__databaseName)
             #
-            for depId in ['D_0000000001', 'D_0000000002', 'D_0000000003', 'D_0000000004', 'D_0000000005']:
-                wftr.addDataSet(depSetId=depId, hostName='localhost', wfInstId='W_001', wfClassId='Annotate', wfClassFileName='annotate.xml')
+            for depId in ["D_0000000001", "D_0000000002", "D_0000000003", "D_0000000004", "D_0000000005"]:
+                wftr.addDataSet(depSetId=depId, hostName="localhost", wfInstId="W_001", wfClassId="Annotate", wfClassFileName="annotate.xml")
                 if False:  # pylint: disable=using-constant-test
                     continue
                 for _ii in range(1, 5):
@@ -117,12 +107,12 @@ class WFTaskRequestTests(unittest.TestCase):
                     # for rd in rdL:
                     #     logger.debug(" +++ row (%s):  %r", depId, rd.items())
                     #
-                    _ok = wftr.assignTask(depSetId=depId, hostName='localhost', wfInstId='W_002', wfClassId='Sequence', wfClassFileName='sequence.xml')  # noqa: F841
+                    _ok = wftr.assignTask(depSetId=depId, hostName="localhost", wfInstId="W_002", wfClassId="Sequence", wfClassFileName="sequence.xml")  # noqa: F841
                     # rdL = wftr.getTaskStatus(depId=depId)
                     # for rd in rdL:
                     #     logger.debug(" +++ row (%s):  %r", depId, rd.items())
 
-                    _ok = wftr.assignTask(depSetId=depId, hostName='localhost', wfInstId='W_003', wfClassId='Entity', wfClassFileName='entity.xml')  # noqa: F841
+                    _ok = wftr.assignTask(depSetId=depId, hostName="localhost", wfInstId="W_003", wfClassId="Entity", wfClassFileName="entity.xml")  # noqa: F841
                     # rdL = wftr.getTaskStatus(depId=depId)
                     # for rd in rdL:
                     #     logger.debug(" +++ row (%s):  %r", depId, rd.items())
@@ -136,9 +126,7 @@ class WFTaskRequestTests(unittest.TestCase):
             self.fail()
 
         endTime = time.time()
-        logger.debug("Completed at %s (%.3f seconds)",
-                     time.strftime("%Y %m %d %H:%M:%S", time.localtime()),
-                     endTime - startTime)
+        logger.debug("Completed at %s (%.3f seconds)", time.strftime("%Y %m %d %H:%M:%S", time.localtime()), endTime - startTime)
 
 
 def createSuite():
@@ -159,7 +147,7 @@ def deleteTransactionsSuite():
     return suiteSelect
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     #
     if True:  # pylint: disable=using-constant-test
         mySuite = createSuite()

@@ -38,25 +38,25 @@ def main():
     cI = ConfigInfo(siteId)
 
     #    topPath = cI.get('SITE_WEB_APPS_TOP_PATH')
-    topSessionPath = cI.get('SITE_WEB_APPS_TOP_SESSIONS_PATH')
-    wfXmlPath = cI.get('SITE_WF_XML_PATH')
+    topSessionPath = cI.get("SITE_WEB_APPS_TOP_SESSIONS_PATH")
+    wfXmlPath = cI.get("SITE_WF_XML_PATH")
     #
     myFullHostName = platform.uname()[1]
-    myHostName = str(myFullHostName.split('.')[0]).lower()
+    myHostName = str(myFullHostName.split(".")[0]).lower()
     #
 
     wfLogDirPath = os.path.join(topSessionPath, "wf-logs")
     if not os.path.exists(wfLogDirPath):
         os.makedirs(wfLogDirPath)
-    pidFilePath = os.path.join(wfLogDirPath, myHostName + '.pid')
+    pidFilePath = os.path.join(wfLogDirPath, myHostName + ".pid")
     #
-    stdoutFilepath = os.path.join(wfLogDirPath, myHostName + '-stdout.log')
-    stderrFilepath = os.path.join(wfLogDirPath, myHostName + '-stderr.log')
+    stdoutFilepath = os.path.join(wfLogDirPath, myHostName + "-stdout.log")
+    stderrFilepath = os.path.join(wfLogDirPath, myHostName + "-stderr.log")
     #
     #  Setup logging  --
     now = time.strftime("-%Y-%m-%d", time.localtime())
-    wfLogFilePath = os.path.join(wfLogDirPath, myHostName + now + '.log')
-    logger = logging.getLogger(name='root')
+    wfLogFilePath = os.path.join(wfLogDirPath, myHostName + now + ".log")
+    logger = logging.getLogger(name="root")
     logging.captureWarnings(True)
     #
     formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(module)s - %(message)s")
@@ -68,7 +68,7 @@ def main():
 
     usage = "usage: %prog [options]"
     parser = OptionParser(usage)
-    parser.add_option("--start", default=False, action='store_true', dest="startOp", help="Start workflow engine process")
+    parser.add_option("--start", default=False, action="store_true", dest="startOp", help="Start workflow engine process")
     parser.add_option("--stop", default=False, action="store_true", dest="stopOp", help="Stop workflow process")
     parser.add_option("--restart", default=False, action="store_true", dest="restartOp", help="Restart workflow engine process")
     parser.add_option("--status", default=False, action="store_true", dest="statusOp", help="Report workflow enging process status")
