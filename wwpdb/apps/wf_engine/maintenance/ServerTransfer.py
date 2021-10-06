@@ -14,7 +14,6 @@ from wwpdb.api.status.dbapi.WfDbApi import WfDbApi
 
 
 class ServerTransfer(object):
-
     def __init__(self, connection=None, shortResponse=100, longResponse=600, sleepTime=5, verbose=False):
 
         if not connection:
@@ -82,14 +81,14 @@ class ServerTransfer(object):
             if self.verbose:
                 print("Contention = " + str(ret))
             return ret
-        except:
+        except:  # noqa: E722
             return 0.0
 
     def StealControl(self, ordinal):
-        '''
-           method to update the communication table with a host name of this server
-           this then redefines the working host to this machine
-        '''
+        """
+        method to update the communication table with a host name of this server
+        this then redefines the working host to this machine
+        """
 
         try:
             timeNow = getTimeNow()
@@ -104,11 +103,11 @@ class ServerTransfer(object):
             print("Exception : StealControl " + str(e))
 
     def pingDBforStale(self):
-        '''
-          Get any dep_set_id that have a stale pending status
-          Test for memory contention to see if the computer might be paging
-          return the row ordinal or zero
-        '''
+        """
+        Get any dep_set_id that have a stale pending status
+        Test for memory contention to see if the computer might be paging
+        return the row ordinal or zero
+        """
 
         try:
             timeNow = getTimeNow()
@@ -116,8 +115,17 @@ class ServerTransfer(object):
             # Has any server engine that is not the one on this host failed to respond ?
             stat = "PENDING"
             # test       stat = "EXCEPTION"
-            sql = "select ordinal,host,actual_timestamp from communication where UPPER(status) = '" + str(stat) + "' and host <> '" + str(
-                self.hostname) + "' and (" + str(timeNow) + " - actual_timestamp)  > " + str(self.shortResponse) + " order by actual_timestamp desc limit 1"
+            sql = (
+                "select ordinal,host,actual_timestamp from communication where UPPER(status) = '"
+                + str(stat)
+                + "' and host <> '"
+                + str(self.hostname)
+                + "' and ("
+                + str(timeNow)
+                + " - actual_timestamp)  > "
+                + str(self.shortResponse)
+                + " order by actual_timestamp desc limit 1"
+            )
 
             if self.verbose:
                 print("pingDBSQL " + str(sql))

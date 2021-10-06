@@ -35,22 +35,22 @@ from wwpdb.apps.wf_engine.engine.ServerMonitor import ServerMonitor
 
 from wwpdb.utils.wf.process.ProcessRunner import ProcessRunner
 from wwpdb.apps.wf_engine.engine.EngineUtils import EngineUtils
-from wwpdb.apps.wf_engine.wf_engine_utils.run.MyLogger import MyLogger
+
+# from wwpdb.apps.wf_engine.wf_engine_utils.run.MyLogger import MyLogger
 from wwpdb.apps.wf_engine.wf_engine_utils.time.TimeStamp import TimeStamp
 
-logger = logging.getLogger(name='root')
+logger = logging.getLogger(name="root")
 
 
 class ProcessManager(Thread):
 
-    '''
-      The process manager runs a process and sits and waits
+    """
+    The process manager runs a process and sits and waits
 
-    '''
+    """
 
     def __init__(self, task, debug=0):
-        '''   Input task is the current task object
-        '''
+        """Input task is the current task object"""
         Thread.__init__(self)
         self.debug = debug
         self.__verbose = debug
@@ -58,7 +58,12 @@ class ProcessManager(Thread):
         self.elapsedTime = None
         self.task = task
         self.result = -1
-        self.__myLog = MyLogger()
+        self._thetime = 0
+        # self.__myLog = MyLogger()
+        self.depositionID = None
+        self.WorkflowClassID = None
+        self.WorkflowInstanceID = None
+        #
         self.__timeStamp = TimeStamp()
         #
         # input data for process : these are key / value pairs - of the input data
@@ -77,22 +82,18 @@ class ProcessManager(Thread):
     def setInput(self, valueD, taskParamD):
         if self.debug > 0:
             if valueD is not None:
-                logger.info("+ProcessManager.setInput() value dictionary %r\n" % valueD.items())
+                logger.info("+ProcessManager.setInput() value dictionary %r\n", valueD.items())
             if taskParamD is not None:
-                logger.info("+ProcessManager.setInput() task parameter dictionary %r\n" % taskParamD.items())
+                logger.info("+ProcessManager.setInput() task parameter dictionary %r\n", taskParamD.items())
         self.__taskParameterD = taskParamD
         self.input = valueD
 
     def setOutput(self, valueD):
         if self.debug > 0:
             if valueD is not None:
-                logger.info("+ProcessManager.setOutput() value dictionary %r\n" % valueD.items())
+                logger.info("+ProcessManager.setOutput() value dictionary %r\n", valueD.items())
 
         self.output = valueD
-
-    def getValues(self):
-
-        return self.values
 
     def setStatsInfo(self, depositionID, WorkflowClassID, WorkflowInstanceID):
 
@@ -108,15 +109,25 @@ class ProcessManager(Thread):
 
         now = self.__timeStamp.getSecondsFromReference()
         instDB = {}
-        instDB['WF_INST_ID'] = self.WorkflowInstanceID
-        instDB['WF_CLASS_ID'] = self.WorkflowClassID
-        instDB['DEP_SET_ID'] = self.depositionID
-        instDB['STATUS_TIMESTAMP'] = now
+        instDB["WF_INST_ID"] = self.WorkflowInstanceID
+        instDB["WF_CLASS_ID"] = self.WorkflowClassID
+        instDB["DEP_SET_ID"] = self.depositionID
+        instDB["STATUS_TIMESTAMP"] = now
         eUtilObj.updateStatus(instDB, mode)
 
-        sql = "update wf_instance_last set status_timestamp=" + \
-            str(now) + ", inst_status='" + mode + "', wf_class_id = '" + self.WorkflowClassID + \
-            "', wf_inst_id = '" + self.WorkflowInstanceID + "' where dep_set_id = '" + self.depositionID + "'"
+        sql = (
+            "update wf_instance_last set status_timestamp="
+            + str(now)
+            + ", inst_status='"
+            + mode
+            + "', wf_class_id = '"
+            + self.WorkflowClassID
+            + "', wf_inst_id = '"
+            + self.WorkflowInstanceID
+            + "' where dep_set_id = '"
+            + self.depositionID
+            + "'"
+        )
         ok = eUtilObj.runUpdateSQL(sql)
         if ok < 1:
             logger.error("+ProcessManager.__setDBInstStatus() CRITICAL : failed to update wf_instance_last table")
@@ -124,31 +135,31 @@ class ProcessManager(Thread):
     def __setDBTaskStatus(self, mode, eUtilObj):
 
         taskID = {}
-        taskID['WF_TASK_ID'] = self.task.name
-        taskID['WF_INST_ID'] = self.WorkflowInstanceID
-        taskID['WF_CLASS_ID'] = self.WorkflowClassID
-        taskID['DEP_SET_ID'] = self.depositionID
-        taskID['STATUS_TIMESTAMP'] = self.__timeStamp.getSecondsFromReference()
+        taskID["WF_TASK_ID"] = self.task.name
+        taskID["WF_INST_ID"] = self.WorkflowInstanceID
+        taskID["WF_CLASS_ID"] = self.WorkflowClassID
+        taskID["DEP_SET_ID"] = self.depositionID
+        taskID["STATUS_TIMESTAMP"] = self.__timeStamp.getSecondsFromReference()
         eUtilObj.updateStatus(taskID, mode)
 
     def run(self):
-        '''
-          This is the entry point of the process manager which is
-          legacy run as a Thread
+        """
+        This is the entry point of the process manager which is
+        legacy run as a Thread
 
-          It then justs calls runProcess
-        '''
+        It then justs calls runProcess
+        """
         eUtilObj = EngineUtils(verbose=self.__verbose)
         self.status = "starting"
         self.__setDBTaskStatus("running", eUtilObj)
 
         if self.debug > 1:
-            logger.info("+ProcessManager.run : " + str(self.status) + " : " + str(self.__getElapsedTime()) + "\n")
+            logger.info("+ProcessManager.run : %s : %s", str(self.status), str(self.__getElapsedTime()))
 
         self.__runProcess(eUtilObj)
 
         if self.debug > 1:
-            logger.info("+ProcessManager.run :  " + str(self.status) + "  " + str(self.__getElapsedTime()) + "\n")
+            logger.info("+ProcessManager.run :  %s %s", str(self.status), str(self.__getElapsedTime()))
 
         self.elapsedTime = None
         return self.status
@@ -176,20 +187,32 @@ class ProcessManager(Thread):
         return "%5.2fs" % self.elapsedTime
 
     def __runProcess(self, eUtilObj):
-        '''
-          This is the action method called by "run" It does all the work.
+        """
+        This is the action method called by "run" It does all the work.
 
-          if the uniqueWhere name = wfe : then do the task here . mostly very simple
-            about the only useful wfe function is "wait"
+        if the uniqueWhere name = wfe : then do the task here . mostly very simple
+          about the only useful wfe function is "wait"
 
-          if the uniqueWhere name = "api" : then do the task in the API using  ProcessRunner()
-        '''
+        if the uniqueWhere name = "api" : then do the task in the API using  ProcessRunner()
+        """
 
         self.status = "running"
         #  All output is directed to this task logfile -
 
-        processLogName = str(self.depositionID) + "_" + str(self.WorkflowClassID) + "_" + str(self.task.name) + "_" + str(self.WorkflowInstanceID) + \
-            "_" + str(self.task.name) + "_" + str(self.task.uniqueName) + ".log"
+        processLogName = (
+            str(self.depositionID)
+            + "_"
+            + str(self.WorkflowClassID)
+            + "_"
+            + str(self.task.name)
+            + "_"
+            + str(self.WorkflowInstanceID)
+            + "_"
+            + str(self.task.name)
+            + "_"
+            + str(self.task.uniqueName)
+            + ".log"
+        )
         processLog = os.path.join(eUtilObj.getLogDirectoryPath(self.depositionID), processLogName)
         logfh = open(processLog, "w")
 
@@ -206,7 +229,7 @@ class ProcessManager(Thread):
                 self.instanceExitState = "init"
                 eUtilObj.initDepositContext(self.depositionID, self.WorkflowClassID, self.WorkflowInstanceID, self.input)
             elif self.task.uniqueAction == "releaseHPUB":
-                eUtilObj.setReleaseStatus(self.depositionID, 'HPUB')
+                eUtilObj.setReleaseStatus(self.depositionID, "HPUB")
             elif self.task.uniqueAction == "sendDepEmail":
                 eUtilObj.sendDepositorEmail(self.depositionID, self.task.description)
             elif self.task.uniqueAction == "randomAnnotator":
@@ -250,7 +273,7 @@ class ProcessManager(Thread):
                             cN = value.__class__.__name__
                             logfh.write("+ProcessManager.__runProcess :  setting input %s using object type %s\n" % (key, cN))
                             value.printMe()
-                        except:
+                        except Exception as _e:  # noqa: F841
                             logfh.write("+ProcessManager.__runProcess :  setting input %s with value %r\n" % (key, value))
                     process.setInput(key, value)
             if self.output is not None:
@@ -260,7 +283,7 @@ class ProcessManager(Thread):
                             cN = value.__class__.__name__
                             logfh.write("+ProcessManager.__runProcess :  setting output %s using object type %s\n" % (key, cN))
                             value.printMe()
-                        except:
+                        except Exception as _e:  # noqa: F841
                             logfh.write("+ProcessManager.__runProcess :  setting output %s with value %r\n" % (key, value))
 
                     process.setOutput(key, value)
@@ -282,7 +305,7 @@ class ProcessManager(Thread):
                     cN = value.__class__.__name__
                     logfh.write("+ProcessManager.__runProcess :  returned output %s has object type %s\n" % (key, cN))
                     value.printMe(logfh)
-                except:
+                except Exception as _e:  # noqa: F841
                     traceback.print_exc(file=logfh)
                     logfh.write("+ProcessManager.__runProcess :  returned output %s has value %r\n" % (key, value))
 

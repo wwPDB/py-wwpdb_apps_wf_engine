@@ -4,8 +4,8 @@
 #
 # #
 class TaskParameter(object):
-    '''  Container of task parameter details
-    '''
+    """Container of task parameter details"""
+
     def __init__(self):
 
         self.title = ""

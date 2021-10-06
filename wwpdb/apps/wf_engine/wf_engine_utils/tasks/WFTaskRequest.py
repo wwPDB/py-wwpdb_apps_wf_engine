@@ -40,22 +40,16 @@ from wwpdb.apps.wf_engine.reader.parseXML import parseXML
 
 class WFTaskRequest(MyDbAdapter):
 
-    """ Manage workflow task requests and status queries --
-
-    """
+    """Manage workflow task requests and status queries --"""
 
     def __init__(self, siteId, verbose=False, log=sys.stderr):
         super(WFTaskRequest, self).__init__(schemaDefObj=WorkflowSchemaDef(verbose=verbose, log=log), verbose=verbose, log=log)
-        self.__verbose = verbose
+        # self.__verbose = verbose
         self.__lfh = log
         self.__siteId = siteId
         self.__cI = ConfigInfo(self.__siteId)
         #
-        self.__topPath = self.__cI.get('SITE_WEB_APPS_TOP_PATH')
-        self.__topSessionPath = self.__cI.get('SITE_WEB_APPS_TOP_SESSIONS_PATH')
-        self.__wfXmlPath = self.__cI.get('SITE_WF_XML_PATH')
         self.__myFullHostName = platform.uname()[1]
-        self.__myHostName = self.__myFullHostName.split('.')[0]
         #
         self.__timeStamp = TimeStamp()
         self.__setup()
@@ -64,27 +58,26 @@ class WFTaskRequest(MyDbAdapter):
         self._setDebug(flag=flag)
 
     def __setup(self):
-        self.__commTableId = 'COMMUNICATION'
-        self.__commContextId = 'COMMUNICATION'
+        self.__commTableId = "COMMUNICATION"
+        self.__commContextId = "COMMUNICATION"
 
         defValD = {
-            'depSetId': 'D_0000000000',
-            'sender': 'WFUTILS',
-            'receiver': 'WFE',
-            'command': 'runWF',
-            'status': 'PENDING',
-            'wfInstId': None,
-            'wfClassId': None,
-            'wfClassFile': None,
-            'actualTimestamp': None,
-            'host': None,
-            'activity': None,
-            'dataVersion': 'latest'
+            "depSetId": "D_0000000000",
+            "sender": "WFUTILS",
+            "receiver": "WFE",
+            "command": "runWF",
+            "status": "PENDING",
+            "wfInstId": None,
+            "wfClassId": None,
+            "wfClassFile": None,
+            "actualTimestamp": None,
+            "host": None,
+            "activity": None,
+            "dataVersion": "latest",
         }
-        defValD['hostName'] = self.__myFullHostName
+        defValD["hostName"] = self.__myFullHostName
         self._setParameterDefaultValues(contextId=self.__commContextId, valueD=defValD)
-        self.__wfTableIdList = ['COMMUNICATION', 'WF_TASK', 'WF_INSTANCE', 'WF_INSTANCE_LAST', 'DEPOSITION',
-                                'USER_DATA', 'ENGINE_MONITORING', 'WF_CLASS_DICT']
+        self.__wfTableIdList = ["COMMUNICATION", "WF_TASK", "WF_INSTANCE", "WF_INSTANCE_LAST", "DEPOSITION", "USER_DATA", "ENGINE_MONITORING", "WF_CLASS_DICT"]
         for tableId in self.__wfTableIdList:
             mapL = self._getDefaultAttributeParameterMap(tableId)
             self._setAttributeParameterMap(tableId=tableId, mapL=mapL)
@@ -107,23 +100,25 @@ class WFTaskRequest(MyDbAdapter):
         #        ('ACTIVITY', 'activity')
         #        ]
 
-        cMapL = [('DEP_SET_ID', 'depSetId')]
+        cMapL = [("DEP_SET_ID", "depSetId")]
         for tableId in self.__wfTableIdList[:-1]:
             self._setConstraintParameterMap(tableId=tableId, mapL=cMapL)
         #
         #
-        self.__reportFiltersD = {'ACTUAL_TIMESTAMP': (self.__timeStamp, 'getTimeStringLocal'),
-                                 'STATUS_TIMESTAMP': (self.__timeStamp, 'getTimeStringLocal'),
-                                 'ORDINAL_ID': (self, '_formatIntVal')}
+        self.__reportFiltersD = {
+            "ACTUAL_TIMESTAMP": (self.__timeStamp, "getTimeStringLocal"),
+            "STATUS_TIMESTAMP": (self.__timeStamp, "getTimeStringLocal"),
+            "ORDINAL_ID": (self, "_formatIntVal"),
+        }
         #
 
     def loadWfDefinition(self, wfFileName):
         """
-            Load the workflow description in the input workflow definition in wf_class_dict table
-            overwriting any existing definition.
+        Load the workflow description in the input workflow definition in wf_class_dict table
+        overwriting any existing definition.
 
         """
-        wfFilePath = os.path.join(self.__cI.get('SITE_WF_XML_PATH'), wfFileName)
+        wfFilePath = os.path.join(self.__cI.get("SITE_WF_XML_PATH"), wfFileName)
         if os.access(wfFilePath, os.R_OK):
             debugLevel = 0
             xmldoc = minidom.parse(wfFilePath)
@@ -137,8 +132,8 @@ class WFTaskRequest(MyDbAdapter):
             wfOpts["author"] = wfMetaData.getAuthor()
             wfOpts["version"] = wfMetaData.getVersionMajor() + wfMetaData.getVersionMinor()
             #
-            ok = self._deleteRequest(tableId='WF_CLASS_DICT', wfClassId=wfMetaData.getID())
-            return self._insertRequest(tableId='WF_CLASS_DICT', contextId=None, ** wfOpts)
+            _ok = self._deleteRequest(tableId="WF_CLASS_DICT", wfClassId=wfMetaData.getID())  # noqa: F841
+            return self._insertRequest(tableId="WF_CLASS_DICT", contextId=None, **wfOpts)
         else:
             return False
 
@@ -146,13 +141,11 @@ class WFTaskRequest(MyDbAdapter):
         self._setDataStore(dataStoreName=dataStoreName)
 
     def createDataStore(self):
-        """  Create/recreate tables defined in the class workflow definition.
-        """
+        """Create/recreate tables defined in the class workflow definition."""
         self._createSchema()
 
     def __filterReportData(self, dList, fD):
-        """  apply filters on the input list of dictionaries -
-        """
+        """apply filters on the input list of dictionaries -"""
         for d in dList:
             for k, v in fD.items():
                 if k in d:
@@ -165,18 +158,18 @@ class WFTaskRequest(MyDbAdapter):
         return self._select(tableId, depSetId=depSetId)
 
     def updateDeposition(self, depSetId, **kw):
-        if 'depSetId' not in kw:
-            kw['depSetId'] = depSetId
-        return self._updateRequest(tableId='DEPOSITION', contextId=None, **kw)
+        if "depSetId" not in kw:
+            kw["depSetId"] = depSetId
+        return self._updateRequest(tableId="DEPOSITION", contextId=None, **kw)
 
     def insertDeposition(self, depSetId, **kw):
-        if 'depSetId' not in kw:
-            kw['depSetId'] = depSetId
-        return self._insertRequest(tableId='DEPOSITION', contextId=None, ** kw)
+        if "depSetId" not in kw:
+            kw["depSetId"] = depSetId
+        return self._insertRequest(tableId="DEPOSITION", contextId=None, **kw)
 
     def getReport(self, reportType=None, depSetId=None):
-        """ Internal method to fetch report data of the report input type  and
-            optional data set identifier.
+        """Internal method to fetch report data of the report input type  and
+        optional data set identifier.
         """
         tableId = reportType
         if tableId in self.__wfTableIdList:
@@ -192,13 +185,11 @@ class WFTaskRequest(MyDbAdapter):
             return []
 
     def deleteDataSet(self, depSetId, tableId):
-        """  Delete the input deposition data set from the input table.
-        """
+        """Delete the input deposition data set from the input table."""
         return self._deleteRequest(tableId=tableId, depSetId=depSetId)
 
     def clearTable(self, tableId):
-        """  Clear the input table.
-        """
+        """Clear the input table."""
         return self._deleteRequest(tableId=tableId)
 
     def addDataSet(self, depSetId, **kwargs):
@@ -222,8 +213,8 @@ class WFTaskRequest(MyDbAdapter):
         """
         options = self._getParameterDefaultValues(contextId=self.__commContextId)
         options.update(kwargs)
-        options['depSetId'] = depSetId
-        options['actualTimestamp'] = self.__timeStamp.getSecondsFromReference()
+        options["depSetId"] = depSetId
+        options["actualTimestamp"] = self.__timeStamp.getSecondsFromReference()
         return self._insertRequest(tableId=self.__commTableId, contextId=self.__commContextId, **options)
 
     def assignTask(self, depSetId, **kwargs):
@@ -249,8 +240,8 @@ class WFTaskRequest(MyDbAdapter):
         """
         options = self._getParameterDefaultValues(contextId=self.__commContextId)
         options.update(kwargs)
-        options['depSetId'] = depSetId
-        options['actualTimestamp'] = self.__timeStamp.getSecondsFromReference()
+        options["depSetId"] = depSetId
+        options["actualTimestamp"] = self.__timeStamp.getSecondsFromReference()
         return self._updateRequest(tableId=self.__commTableId, contextId=self.__commContextId, **options)
 
     def loadAccessions(self, tableId, accessionType=None, filePath=None):
@@ -258,23 +249,23 @@ class WFTaskRequest(MyDbAdapter):
             mapL = self._getDefaultAttributeParameterMap(tableId)
             self._setAttributeParameterMap(tableId=tableId, mapL=mapL)
             #
-            if accessionType == 'PDB':
-                cMapL = [('PDB_ID', 'pdbId')]
-                idName = 'pdbId'
-            elif accessionType == 'BMRB':
-                cMapL = [('BMRB_ID', 'bmrbId')]
-                idName = 'bmrbId'
-            elif accessionType == 'EMDB':
-                cMapL = [('EMDB_ID', 'emdbId')]
-                idName = 'emdbId'
+            if accessionType == "PDB":
+                cMapL = [("PDB_ID", "pdbId")]
+                idName = "pdbId"
+            elif accessionType == "BMRB":
+                cMapL = [("BMRB_ID", "bmrbId")]
+                idName = "bmrbId"
+            elif accessionType == "EMDB":
+                cMapL = [("EMDB_ID", "emdbId")]
+                idName = "emdbId"
             self._setConstraintParameterMap(tableId=tableId, mapL=cMapL)
             #
             iCount = 0
-            ifh = open(filePath, 'r')
+            ifh = open(filePath, "r")
             accList = ifh.readlines()
             ifh.close()
             for acc in accList:
-                if acc.startswith('#') or len(acc) < 3:
+                if acc.startswith("#") or len(acc) < 3:
                     continue
                 options = {}
                 options[idName] = acc[:-1]
@@ -284,15 +275,15 @@ class WFTaskRequest(MyDbAdapter):
                 else:
                     options = {}
                     options[idName] = acc[:-1]
-                    options['used'] = 'n'
+                    options["used"] = "n"
                     self._insertRequest(tableId=tableId, contextId=None, **options)
                     iCount += 1
             self.__lfh.write("WFTaskRequest.loadAccessions() loaded %d codes\n" % iCount)
-        except:
+        except:  # noqa: E722 pylint: disable=bare-except
             self.__lfh.write("WFTaskRequest.loadAccessions() failed \n")
             traceback.print_exc(file=self.__lfh)
             return False
 
 
 if __name__ == "__main__":
-    wfr = WFTaskRequest(verbose=True, log=sys.stderr)
+    wfr = WFTaskRequest(None, verbose=True, log=sys.stderr)
