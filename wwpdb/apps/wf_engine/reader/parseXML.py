@@ -25,7 +25,7 @@ from wwpdb.apps.wf_engine.reader.metaDataObject import metaDataObject
 
 class parseXML(object):
     """Hold a data reference, passed variable is the XML dom
-       object to be parsed"""
+    object to be parsed"""
 
     def __init__(self, debug=0, prt=sys.stderr):
 
@@ -43,11 +43,13 @@ class parseXML(object):
                         mData = metaDataObject()
                         for metaData in thing.childNodes:
                             if metaData.nodeName == "wf:version":
-                                self.__lfh.write("WFE.parseXML.getMetaData : XML style = PRODUCTION : major release = " +
-                                                 str(metaData.getAttribute("major")) +
-                                                 " : Date = " +
-                                                 str(metaData.getAttribute("date")) +
-                                                 "\n")
+                                self.__lfh.write(
+                                    "WFE.parseXML.getMetaData : XML style = PRODUCTION : major release = "
+                                    + str(metaData.getAttribute("major"))
+                                    + " : Date = "
+                                    + str(metaData.getAttribute("date"))
+                                    + "\n"
+                                )
                                 mData.setVersionMajor(metaData.getAttribute("major"))
                                 mData.setVersionMinor(metaData.getAttribute("minor"))
                                 mData.setAuthor(metaData.getAttribute("author"))
@@ -69,11 +71,11 @@ class parseXML(object):
 
         for outer in xmldoc.childNodes:
             for typeNode in outer.childNodes:
-                if typeNode.nodeName == 'wf:workflow':
+                if typeNode.nodeName == "wf:workflow":
                     for flowNodes in typeNode.childNodes:
-                        if flowNodes.nodeName == 'wf:flow':
+                        if flowNodes.nodeName == "wf:flow":
                             for tasksNode in flowNodes.childNodes:
-                                if tasksNode.nodeName == 'wf:entryPoint':
+                                if tasksNode.nodeName == "wf:entryPoint":
                                     taskRef = taskModule(self.debug, self.__lfh)
                                     taskRef.type = "Entry-point"
                                     taskRef.name = tasksNode.getAttribute("taskID")
@@ -81,24 +83,24 @@ class parseXML(object):
                                     taskRef.outputName.append(tasksNode.getAttribute("nextTask"))
                                     taskRef.exception = tasksNode.getAttribute("exceptionID")
                                     taskObjects.append(taskRef)
-                                elif tasksNode.nodeName == 'wf:exitPoint':
+                                elif tasksNode.nodeName == "wf:exitPoint":
                                     taskRef = taskModule(self.debug, self.__lfh)
                                     taskRef.type = "Exit-point"
                                     taskRef.name = tasksNode.getAttribute("taskID")
                                     taskRef.nameHumanReadable = tasksNode.getAttribute("name")
                                     taskObjects.append(taskRef)
-                                elif tasksNode.nodeName == 'wf:exception':
+                                elif tasksNode.nodeName == "wf:exception":
                                     taskRef = taskModule(self.debug, self.__lfh)
                                     taskRef.type = "Exception"
                                     taskRef.parseXML(tasksNode)
                                     taskObjects.append(taskRef)
-                                elif tasksNode.nodeName == 'wf:tasks':
+                                elif tasksNode.nodeName == "wf:tasks":
                                     for taskNode in tasksNode.childNodes:
-                                        if taskNode.nodeName == 'wf:task':
+                                        if taskNode.nodeName == "wf:task":
                                             taskRef = taskModule(self.debug, self.__lfh)
                                             taskRef.parseXML(taskNode)
                                             taskObjects.append(taskRef)
-                                elif tasksNode.nodeName == '#text' or tasksNode.nodeName == '#comment':
+                                elif tasksNode.nodeName == "#text" or tasksNode.nodeName == "#comment":
                                     pass
                                 else:
                                     self.__lfh.write("WFE.parseXML.getMetaData :  Critical workflow XMl error : Unknown FLOW tag " + str(tasksNode.nodeName) + "\n")
@@ -112,11 +114,11 @@ class parseXML(object):
 
         for outer in xmldoc.childNodes:
             for typeNode in outer.childNodes:
-                if typeNode.nodeName == 'wf:workflow':
+                if typeNode.nodeName == "wf:workflow":
                     for dataNodes in typeNode.childNodes:
-                        if dataNodes.nodeName == 'wf:dataObjects':
+                        if dataNodes.nodeName == "wf:dataObjects":
                             for dataNode in dataNodes.childNodes:
-                                if dataNode.nodeName == 'wf:dataObject':
+                                if dataNode.nodeName == "wf:dataObject":
                                     dat = dataModule(instanceID, depositionID, self.debug, self.__lfh)
                                     dat.parseXML(dataNode)
                                     dataObjects.append(dat)

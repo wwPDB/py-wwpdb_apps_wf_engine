@@ -14,19 +14,18 @@
 
 """
 
-import sys
 import logging
 from wwpdb.apps.wf_engine.engine.InterpretDataObject import getObjectValue
 from wwpdb.apps.wf_engine.wf_engine_utils.run.MyLogger import MyLogger
 
-logger = logging.getLogger(name='root')
+logger = logging.getLogger(name="root")
 
 
 class SwitchTask(object):
 
-    '''
-       Handle switch/case comparison and branching workflow task
-    '''
+    """
+    Handle switch/case comparison and branching workflow task
+    """
 
     def __init__(self, task, debug=0):
 
@@ -37,7 +36,7 @@ class SwitchTask(object):
     def handleTask(self, valueD):
         if self.task is None:
             return -1
-        logger.info("+SwitchTask.getFunctionReturn : starting for task %s valueD %r\n" % (self.task.name, valueD))
+        logger.info("+SwitchTask.getFunctionReturn : starting for task %s valueD %r\n", self.task.name, valueD)
         funcList = self.task.getFunc()
         count = 0
         sValue = None
@@ -51,12 +50,12 @@ class SwitchTask(object):
                 return -1
 
             if self.debug > 0:
-                logger.info("+SwitchTask.getFunctionReturn :  test value  %r\n" % sValue)
+                logger.info("+SwitchTask.getFunctionReturn :  test value  %r", sValue)
                 f.printMe(self.__lfh)
 
             if f.check(sValue) == 1:
                 return count
             count = count + 1
         #
-        logger.info("+SwitchTask.getFunctionReturn :  comparison failed with sValue %r\n " % sValue)
+        logger.info("+SwitchTask.getFunctionReturn :  comparison failed with sValue %r\n ", sValue)
         return -1

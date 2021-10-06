@@ -14,7 +14,7 @@ def main(argv):
 
   for i in range(300016,300045):
     try :
-      populateDeposit(DBstatusAPI = wfApi,id  = 'D_' + str(i))
+      populateDeposit(DBstatusAPI = wfApi, depositionID  = 'D_' + str(i))
     except:
       pass
 

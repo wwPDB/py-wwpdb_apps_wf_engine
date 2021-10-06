@@ -6,5 +6,6 @@ def main(argv):
     sm = ServerCheck()
     sm.check()
 
+
 if __name__ == "__main__":
     main(sys.argv[1:])

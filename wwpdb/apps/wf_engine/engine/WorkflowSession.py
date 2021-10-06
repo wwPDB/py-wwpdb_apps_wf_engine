@@ -16,18 +16,18 @@ import sys
 import logging
 from wwpdb.apps.wf_engine.wf_engine_utils.time.TimeStamp import TimeStamp
 
-logger = logging.getLogger(name='root')
+logger = logging.getLogger(name="root")
 
 
 class WorkflowSession(object):
-
-    def __init__(self, eUtil, depID, classID, debug=True, prt=sys.stderr):
+    def __init__(self, eUtil, depID, classID, debug=True, prt=sys.stderr):  # pylint: disable=unused-argument
         self.depID = depID
         self.classID = classID
         self.__eUtil = eUtil
         self.__timeStamp = TimeStamp()
         self.debug = debug
-        self.__lfh = prt
+        self.taskID = None
+        # self.__lfh = prt
 
     def autoRecover(self):
 
@@ -42,13 +42,20 @@ class WorkflowSession(object):
 
     def autoRecoverInstance(self, instID):
         """
-          Reads the status DB to to find the last task for an instance
-          to see where it died
-          Finds the last task that did NOT finish
+        Reads the status DB to to find the last task for an instance
+        to see where it died
+        Finds the last task that did NOT finish
         """
 
-        sql = "select wf_task_id,task_name,task_type,task_status,status_timestamp from wf_task where dep_set_id = '" + self.depID + \
-            "' and wf_class_id = '" + self.classID + "' and wf_inst_id = '" + instID + "' and not task_status = 'finished' order by status_timestamp limit 1 "
+        sql = (
+            "select wf_task_id,task_name,task_type,task_status,status_timestamp from wf_task where dep_set_id = '"
+            + self.depID
+            + "' and wf_class_id = '"
+            + self.classID
+            + "' and wf_inst_id = '"
+            + instID
+            + "' and not task_status = 'finished' order by status_timestamp limit 1 "
+        )
 
         ret = self.__eUtil.runSelectSQL(sql)
 
@@ -57,7 +64,7 @@ class WorkflowSession(object):
 
         if ret is not None:
             for row in ret:
-                logger.info("+WorkflowSession.autoRecover :  Last not finished = " + str(row[1]) + ",  of task type = " + str(row[2]) + " completed at " + str(row[4]))
+                logger.info("+WorkflowSession.autoRecover :  Last not finished = %s, of task type = %s completed at %s", str(row[1]), str(row[2]), str(row[4]))
                 self.taskID = str(row[0])
                 return row[0]
         else:
@@ -76,15 +83,22 @@ class WorkflowSession(object):
 
     def autoRecoverInstanceGetLastFinished(self, instID):
         """
-          Reads the status DB to to find the last task for an instance
-          to see where it died
-          Finds the last task that finished, and recovers the
-            reference data for that task, and restarts at the
-            next task
+        Reads the status DB to to find the last task for an instance
+        to see where it died
+        Finds the last task that finished, and recovers the
+          reference data for that task, and restarts at the
+          next task
         """
 
-        sql = "select wf_task_id,task_name,task_type,task_status,status_timestamp from wf_task where dep_set_id = '" + self.depID + \
-            "' and wf_class_id = '" + self.classID + "' and wf_inst_id = '" + instID + "' and task_status = 'finished' order by status_timestamp desc limit 1"
+        sql = (
+            "select wf_task_id,task_name,task_type,task_status,status_timestamp from wf_task where dep_set_id = '"
+            + self.depID
+            + "' and wf_class_id = '"
+            + self.classID
+            + "' and wf_inst_id = '"
+            + instID
+            + "' and task_status = 'finished' order by status_timestamp desc limit 1"
+        )
 
         ret = self.__eUtil.runSelectSQL(sql)
 
@@ -93,7 +107,7 @@ class WorkflowSession(object):
 
         if ret is not None:
             for row in ret:
-                logger.info("+WorkflowSession.autoRecover :  Last finished = " + str(row[1]) + ",  of task type = " + str(row[2]) + " completed at " + str(row[4]))
+                logger.info("+WorkflowSession.autoRecover :  Last finished = %s, of task type = %s completed at %s", str(row[1]), str(row[2]), str(row[4]))
                 self.taskID = str(row[0])
                 return row[0]
         else:
@@ -102,15 +116,16 @@ class WorkflowSession(object):
             return None
 
     def __getLastInstanceID(self):
-        '''
-         Find that last occurance of the instanceID
-        '''
+        """
+        Find that last occurance of the instanceID
+        """
 
-        sql = "select wf_inst_id,status_timestamp from wf_instance where dep_set_id = '" + \
-            self.depID + "' and wf_class_id = '" + self.classID + "' order by wf_inst_id desc limit 1"
+        sql = (
+            "select wf_inst_id,status_timestamp from wf_instance where dep_set_id = '" + self.depID + "' and wf_class_id = '" + self.classID + "' order by wf_inst_id desc limit 1"
+        )
 
         if self.debug:
-            logger.info("+WorkflowSession.__getLastInstanceID :  looking for last instance for depID= " + str(self.depID) + ",  classID= " + str(self.classID))
+            logger.info("+WorkflowSession.__getLastInstanceID :  looking for last instance for depID= %s, classID= %s", str(self.depID), str(self.classID))
 
         ret = self.__eUtil.runSelectSQL(sql)
 
@@ -118,31 +133,31 @@ class WorkflowSession(object):
             for row in ret:
                 instID = row[0]
                 delta = float(row[1] - self.__timeStamp.getSecondsFromReference()) / 60.0
-                logger.info("+WorkflowSession.__getLastInstanceID : Found instID = %s  age = %.3f minutes" % (instID, delta))
+                logger.info("+WorkflowSession.__getLastInstanceID : Found instID = %s  age = %.3f minutes", instID, delta)
             return instID
         else:
             logger.info("+WorkflowSession.__getLastInstanceID : Catastrophic WF error - cannot recover instance ID ")
             return None
 
-    def __recoverAt(self, instID, taskID):
-        """  NOT USED
-          Reads the status DB to to find the last inst_ID
-          to see where it died
-          Recover from the prescribed taskID
-        """
+    # def __recoverAt(self, instID, taskID):
+    #     """  NOT USED
+    #       Reads the status DB to to find the last inst_ID
+    #       to see where it died
+    #       Recover from the prescribed taskID
+    #     """
 
-        sql = "select wf_task_id,task_name,task_type,task_status,status_timestamp from wf_task where dep_set_id = '" + self.depID + "' and wf_class_id = '" + \
-            self.classID + "' and wf_inst_id = '" + instID + "' and wf_inst_id = '" + taskID + "'  order by status_timestamp desc limit 1"
+    #     sql = "select wf_task_id,task_name,task_type,task_status,status_timestamp from wf_task where dep_set_id = '" + self.depID + "' and wf_class_id = '" + \
+    #         self.classID + "' and wf_inst_id = '" + instID + "' and wf_inst_id = '" + taskID + "'  order by status_timestamp desc limit 1"
 
-        ret = self.__eUtil.runSelectSQL(sql)
+    #     ret = self.__eUtil.runSelectSQL(sql)
 
-        # we now should have 1 row of task =
-        # the last one that finished
+    #     # we now should have 1 row of task =
+    #     # the last one that finished
 
-        if ret is not None:
-            for row in ret:
-                logger.info("+WorkflowSession.autoRecover :  Last finished = " + str(row[1]) + ",  of task type = " + str(row[2]) + " completed at " + str(row[4]))
-                return row[0]
-        else:
-            logger.info("+WorkflowSession.getLastInstanceID : WF error - cannot recover this WF - no task ever finished ")
-            return "entry-point"
+    #     if ret is not None:
+    #         for row in ret:
+    #             logger.info("+WorkflowSession.autoRecover :  Last finished = %s, of task type %s completed at %s", str(row[1]), str(row[2]), str(row[4]))
+    #             return row[0]
+    #     else:
+    #         logger.info("+WorkflowSession.getLastInstanceID : WF error - cannot recover this WF - no task ever finished ")
+    #         return "entry-point"
