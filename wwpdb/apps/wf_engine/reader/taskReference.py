@@ -233,11 +233,11 @@ class taskModule():
                     if self.uniqueWhere == "api":
                         if not self.ActionRegistry.isDefinedAction(self.uniqueAction):
                             self.__lfh.write("+taskReference.parseException : **** Catastrophic WF error\n")
-                            self.__lfh.write("+taskReference.parseProcessTask : Task refers to a APIprocess that does not exist : " +
-                                             str(self.uniqueAction) +
-                                             ", " +
-                                             str(self.uniqueWhere) +
-                                             "\n")
+                            self.__lfh.write("+taskReference.parseProcessTask : Task refers to a APIprocess that does not exist : "
+                                             + str(self.uniqueAction)
+                                             + ", "
+                                             + str(self.uniqueWhere)
+                                             + "\n")
                             exit(0)
             #        self.uniqueContainer = info.getAttribute("returnContainer")
             #        self.uniqueType = info.getAttribute("returnType")

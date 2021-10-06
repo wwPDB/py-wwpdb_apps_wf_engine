@@ -26,8 +26,9 @@ from wwpdb.utils.config.ConfigInfo import ConfigInfo, getSiteId
 from wwpdb.apps.wf_engine.wf_engine_utils.time.TimeStamp import TimeStamp
 
 import logging
-logger = logging.getLogger(name='root')
 from wwpdb.apps.wf_engine.wf_engine_utils.run.MyLogger import MyLogger
+
+logger = logging.getLogger(name='root')
 
 ##
 # JDW  -- This class will replace the DBStatusApi structure -
@@ -151,10 +152,8 @@ class EngineUtils(WfDbApi):
 
         fp = dinput.getFilePathReference()
         if dinput.getFilePathExists(fp):
-            #output.data = "true"
             output.setValue("true")
         else:
-            #output.data = "false"
             output.setValue("false")
 
         logger.info("+EngineUtils.testFilesExist : returns " + output.getValue() + " for " + fp)
@@ -164,12 +163,12 @@ class EngineUtils(WfDbApi):
     def setReleaseStatus(self, depID, status):
 
         sql = "update deposition set author_release_status_code = '" + status + "' where dep_set_id = '" + depID + "'"
-        _ok = self.runUpdateSQL(sql)
+        _ok = self.runUpdateSQL(sql)  # noqa: F841
 
     def WFEsetAnnotator(self, depID, annotator):
 
         sql = "update deposition set annotator_initials = '" + annotator + "' where dep_set_id = '" + depID + "'"
-        _ok = self.runUpdateSQL(sql)
+        _ok = self.runUpdateSQL(sql)  # noqa: F841
 
     def setRandomAnnotator(self, depID):
 
@@ -181,7 +180,7 @@ class EngineUtils(WfDbApi):
         annotator = allList[n][0]
 
         sql = "update deposition set annotator_initials = '" + annotator + "' where dep_set_id = '" + depID + "'"
-        _ok = self.runUpdateSQL(sql)
+        _ok = self.runUpdateSQL(sql)  # noqa: F841
 
     def __sendEmail(self, email, frm, subject, message):
 
@@ -428,7 +427,7 @@ class EngineUtils(WfDbApi):
         if ll is None:
             instID = 1
         else:
-            for l in ll:
+            for l in ll:  # noqa: E741
                 if l is None:
                     instID = 1
                 else:

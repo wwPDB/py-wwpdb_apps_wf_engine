@@ -141,7 +141,7 @@ class ExternalTask(object):
         # A short sleep to make sure everyone is up and waiting.
         try:
             time.sleep(1.0)
-        except Exception as _e:
+        except Exception as _e:  # noqa: F841
             logger.info("+ExternalTask.handleExternalTask :  Exception during timer %s ", self.depositionID)
             return str(-1)
 
@@ -185,7 +185,7 @@ class ExternalTask(object):
                         str(self.__timeStamp.getSecondsFromReference()) + ", inst_status='open', wf_class_id = '" + self.WorkflowClassID + \
                         "', wf_inst_id = '" + self.WorkflowInstanceID + "' where dep_set_id = '" + self.depositionID + "'"
 
-                    _ok = self.__eUtil.runUpdateSQL(sql)
+                    _ok = self.__eUtil.runUpdateSQL(sql)  # noqa: F841
             elif state == "waiting":
                 # still waiting - no one has opened the interface
                 pass  # pylint: disable=unnecessary-pass
@@ -204,7 +204,7 @@ class ExternalTask(object):
 
             try:
                 time.sleep(0.7)
-            except Exception as _e:
+            except Exception as _e:  # noqa: F841
                 # someone killed the WFE wait : register an exception
                 logger.info("+ExternalTask.handleExternalTask :  Exception during timer %s ", self.depositionID)
                 self.__setDBInstStatus("manual", "exception")

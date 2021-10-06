@@ -4,7 +4,6 @@
 # Update:
 #
 import re
-import glob
 
 from setuptools import find_packages
 from setuptools import setup
@@ -18,11 +17,6 @@ with open('wwpdb/apps/wf_engine/__init__.py', 'r') as fd:
 
 if not version:
     raise RuntimeError('Cannot find version information')
-
-# We need data for bootstrap
-#datadir = os.path.join('share','data','wf_engine_utils')
-#datafiles =
-dfiles = glob.glob('wwpdb/apps/wf_engine/wf-defs/*.xml')
 
 setup(
     name=thisPackage,
@@ -59,12 +53,11 @@ setup(
         # If any package contains *.md or *.rst ...  files, include them:
         '': ['*.md', '*.rst', "*.txt", "*.cfg"]
     },
-    data_files = [
+    data_files=[
         # Data for bootstrap
         ('data/wf_engine/bootstrap', ['wwpdb/apps/wf_engine/wf_engine_utils/test/test-pdb-codes.ids',
                                       'wwpdb/apps/wf_engine/wf_engine_utils/test/test-emdb-codes.ids',
                                       'wwpdb/apps/wf_engine/wf_engine_utils/test/test-bmrb-codes.ids']),
-        #('data/wf_engine/wf-defs', dfiles)
     ],
 
     #

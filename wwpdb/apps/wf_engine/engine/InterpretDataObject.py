@@ -35,7 +35,7 @@ def getObjectType(obj, debug=0, prt=sys.stderr):  # pylint: disable=unused-argum
             value = obj.type
         else:
             value = obj.getValueTypeName()
-    except Exception as _e:
+    except Exception as _e:  # noqa: F841
         prt.write("+InterpretDataObject.getObjectCType : failed for object = %s \n" % str(type(obj)))
         traceback.print_exc(file=prt)
 
@@ -50,7 +50,7 @@ def getObjectContainerType(obj, debug=0, prt=sys.stderr):  # pylint: disable=unu
             value = obj.valueContainer
         else:
             value = obj.getContainerTypeName()
-    except Exception as _e:
+    except Exception as _e:  # noqa: F841
         prt.write("+InterpretDataObject.getObjectContainerType : failed for object = %s \n" % str(type(obj)))
         traceback.print_exc(file=prt)
 
@@ -67,7 +67,7 @@ def getObjectValue(obj, debug, prt=sys.stderr):
             value = obj.data
         else:
             value = __getObject(obj, debug, prt)
-    except Exception as _e:
+    except Exception as _e:  # noqa: F841
         prt.write("+InterpretDataObject.getObjectValue : Failed for object = %s\n" % str(type(obj)))
         traceback.print_exc(file=prt)
     return value
@@ -276,10 +276,10 @@ def fillAPIinputObject(allData, wfData, depID, debug=0, prt=sys.stderr):
         if len(wfData.selectAttribute) > 0:
             selectAttribute = __replaceVariable(allData, wfData.type, wfData.selectAttribute, debug, prt)
             listData = selectAttribute.split(',')
-            for l in listData:
-                wfData.ApiData.addSelectAttributeName(l)
+            for el in listData:
+                wfData.ApiData.addSelectAttributeName(el)
                 if debug > 1:
-                    prt.write("+InterpretDataObject.fillApiInputObject :  addSelectionAttributeName " + str(l) + "\n")
+                    prt.write("+InterpretDataObject.fillApiInputObject :  addSelectionAttributeName " + str(el) + "\n")
 
 
 def fillAPIoutputObject(allData, wfData, depID, debug=0, prt=sys.stderr):

@@ -24,6 +24,7 @@ from wwpdb.apps.wf_engine.engine.EngineUtils import EngineUtils
 from wwpdb.apps.wf_engine.wf_engine_utils.time.TimeStamp import TimeStamp
 
 logger = logging.getLogger(name='root')
+# noqa: E501
 
 
 class ServerMonitor(object):
@@ -176,7 +177,7 @@ class ServerMonitor(object):
                 logger.info("+ServerMonitor.__addProcess %s setting active workflow instances to %s", depID, replaceStatus)
                 sql = "update wf_instance set inst_status = '" + replaceStatus + "' where dep_set_id = '" +\
                     str(depID) + "' and inst_status not in ('exception','aborted','finished')"
-                _ok = self.__eUtil.runUpdateSQL(sql)
+                _ok = self.__eUtil.runUpdateSQL(sql)  # noqa: F841
 
                 logger.info("+ServerMonitor.__addProcess starting workflow manager for %s classId %s wfName %s taskID %s", depID, classID, wfName, taskID)
                 wf = WorkflowManager(wfName, depID, None, taskID)
@@ -189,7 +190,7 @@ class ServerMonitor(object):
                 m["status"] = "working"
                 self.monitorDict[depID] = m
                 #
-                logger.info("+ServerMonitor.__addProcess end iteration %d of %d for %s classID %s wfName %s taskId %s  status %s", 
+                logger.info("+ServerMonitor.__addProcess end iteration %d of %d for %s classID %s wfName %s taskId %s  status %s",
                             ii + 1, numT, depID, classID, wfName, taskID, m['status'])
 
         logger.info("+ServerMonitor.__addProcess leaving after %d iterations", numT)
@@ -274,7 +275,7 @@ class ServerMonitor(object):
             if not self.__createNewBucket(allRow[1], allRow[2], allRow[6], timeNow):
                 logger.info("+ServerMonitor.__manageGetInstanceRow  Failed communication depId %s %s", allRow[1], allRow[4])
                 sql = "update communication set status = 'failed', actual_timestamp = " + str(timeNow) + " where ordinal = " + str(allRow[0])
-                _ok = self.__eUtil.runUpdateSQL(sql)
+                _ok = self.__eUtil.runUpdateSQL(sql)  # noqa: F841
                 return -1, -1, -1
             else:
                 sql = "select ordinal, wf_inst_id from wf_instance where dep_set_id = '" +\
@@ -289,7 +290,7 @@ class ServerMonitor(object):
         if (lastOrdinal < 0):
             logger.info("+ServerMonitor.__manageGetInstanceRow  :  Failed communication %s: %s", allRow[1], allRow[4])
             sql = "update communication set status = 'failed', actual_timestamp = " + str(timeNow) + " where ordinal = " + str(allRow[0])
-            _ok = self.__eUtil.runUpdateSQL(sql)
+            _ok = self.__eUtil.runUpdateSQL(sql)  # noqa: F841
             return -1, -1, -1
 
         logger.info("+ServerMonitor.__manageGetInstanceRow - classId %s lastInst %s lastOrdinal %s", allRow[2], lastInst, str(lastOrdinal))
@@ -335,16 +336,16 @@ class ServerMonitor(object):
         # #
         sql = "update wf_instance set inst_status = 'aborted', status_timestamp = " +\
             str(timeNow - 1) + " where dep_set_id = '" + str(depID) + "' and inst_status not in ('exception','finished')"
-        _ok = self.__eUtil.runUpdateSQL(sql)
+        _ok = self.__eUtil.runUpdateSQL(sql)  # noqa: F841
 
         # set the last instance to init
         sql = "update wf_instance set inst_status = 'init', status_timestamp = " + str(timeNow) + ", owner = '" + str(allRow[6]) + "' where ordinal = " + str(lastOrdinal)
-        _ok = self.__eUtil.runUpdateSQL(sql)
+        _ok = self.__eUtil.runUpdateSQL(sql)  # noqa: F841
 
         # Only need the one sql as we only have one reference for this depID
         sql = "update wf_instance_last set wf_inst_id = '" + lastInst + "', inst_status = 'init', wf_class_id = '" +\
             str(lastClass) + "', owner = 'Annotation.bf.xml', status_timestamp = " + str(timeNow) + ", owner = '" + str(allRow[6]) + "' where dep_set_id = '" + str(depID) + "'"
-        _ok = self.__eUtil.runUpdateSQL(sql)
+        _ok = self.__eUtil.runUpdateSQL(sql)  # noqa: F841
 
         logger.info("+ServerMonitor.__manageResetUpdate :  Set deposition %s  back to init (%s)\n", str(allRow[1]), str(nrow))
 
@@ -417,7 +418,7 @@ class ServerMonitor(object):
                     m["timeStamp"] = self.__timeStamp.getSecondsFromReference()
                     m["status"] = "working"
                     self.monitorDict[row[1]] = m
-                    logger.info("+ServerMonitor.__manageProcess  adding entry to the MONITORED list %s list length %s",  str(row[1]), str(len(self.monitorDict)))
+                    logger.info("+ServerMonitor.__manageProcess  adding entry to the MONITORED list %s list length %s", str(row[1]), str(len(self.monitorDict)))
 
         timeNow = self.__timeStamp.getSecondsFromReference()
         if allList is not None:
@@ -569,7 +570,7 @@ class ServerMonitor(object):
                 mon = self.monitorDict[depid]
                 if self.__timeStamp.getSecondsFromReference() - mon['timeStamp'] > bored:
                     # the action in the internal monitor is old too (ie we have not just tried to do something)
-                    logger.info("+ServerMonitor.__checkProcess  deleting %s from monitor dictionary - current length %s",  str(depid), str(len(self.monitorDict)))
+                    logger.info("+ServerMonitor.__checkProcess  deleting %s from monitor dictionary - current length %s", str(depid), str(len(self.monitorDict)))
                     value = self.monitorDict[depid]
                     # jdw this does nothing
                     self.__deleteProcess(depid, value)
@@ -581,7 +582,7 @@ class ServerMonitor(object):
 
         return load
 
-    def __updateResourceStatus(self, gather): 
+    def __updateResourceStatus(self, gather):
         '''
           Process to monitor the server load - writes a status entry
 
@@ -616,8 +617,11 @@ class ServerMonitor(object):
                                             CpuInfo['Usage']) + ", ids_set = '" + gather + "' , status_timestamp = " + str(timeNow) + " where hostname = '" + str(
                                                 self.hostname) + "'"
         else:
-            sql = "insert engine_monitoring (hostname,total_physical_mem,total_virtual_mem,physical_mem_usage,virtual_mem_usage,swap_total,swap_used,swap_free,cached,buffers,cpu_number,cpu_usage,ids_set,status_timestamp) values ('" + str(self.hostname) + "', " + str(MemInfo['MemTotal']) + "," + str(MemInfo['TotalTotal']) + " , " + str(
-                MemInfo['MemUsed']) + ", " + str(MemInfo['SwapUsed']) + ", " + str(MemInfo['SwapTotal']) + "," + str(MemInfo['SwapUsed']) + ", " + str(MemInfo['SwapFree']) + "," + str(MemInfo['Cached']) + "," + str(MemInfo['Buffers']) + "," + str(CpuInfo['Ncpu']) + ", " + str(CpuInfo['Usage']) + " , '" + gather + "' , " + str(timeNow) + ")"
+            sql = "insert engine_monitoring (hostname,total_physical_mem,total_virtual_mem,physical_mem_usage,virtual_mem_usage,swap_total,swap_used,swap_free,cached,buffers,cpu_number,cpu_usage,ids_set,status_timestamp) values ('" +\
+                str(self.hostname) + "', " + str(MemInfo['MemTotal']) + "," + str(MemInfo['TotalTotal']) + " , " +\
+                str(MemInfo['MemUsed']) + ", " + str(MemInfo['SwapUsed']) + ", " + str(MemInfo['SwapTotal']) + "," + str(MemInfo['SwapUsed']) + ", " +\
+                str(MemInfo['SwapFree']) + "," + str(MemInfo['Cached']) + "," + str(MemInfo['Buffers']) + "," + str(CpuInfo['Ncpu']) + ", " + str(CpuInfo['Usage']) +\
+                " , '" + gather + "' , " + str(timeNow) + ")"  # noqa: E501
 
         ret = self.__eUtil.runUpdateSQL(sql)
         if ret is None or ret < 1:
@@ -668,7 +672,7 @@ class ServerMonitor(object):
         timeNow = self.__timeStamp.getSecondsFromReference()
 
         sql = "select communication.ordinal,wf_instance_last.dep_set_id,wf_class_file,communication.host from wf_instance_last,communication where wf_instance_last.dep_set_id = communication.dep_set_id and communication.host = '" +\
-            self.hostname + "' and communication.activity = 'SLEEPING' and wf_instance_last.inst_status not in ("
+            self.hostname + "' and communication.activity = 'SLEEPING' and wf_instance_last.inst_status not in ("  # noqa: E501
         for valid in self.validSleep:
             sql = sql + "'" + str(valid) + "',"
         # Problem - when is a wakeup call stale ?
@@ -693,7 +697,7 @@ class ServerMonitor(object):
                         if pid is None or len(pid) == 0:
                             m["status"] = "working"
                             command = "update communication set activity = 'WORKING', actual_timestamp = " + str(timeNow) + " where ordinal in (" + str(row[0]) + ")"
-                            _nrow = self.__eUtil.runUpdateSQL(command)
+                            _nrow = self.__eUtil.runUpdateSQL(command)  # noqa: F841
                             # need to recover the annotation flow - so run the annotation-WF at the correct module-WF at the correct task
                             # there is no process so run it
                             # look up a workflow nesting of task
@@ -880,7 +884,7 @@ class ServerMonitor(object):
         # Take the rowLimit=1 list of pending tasks in communication table with command = inStatus
         #
         command = "select communication.ordinal, communication.dep_set_id, communication.wf_class_ID, communication.wf_inst_id,communication.wf_class_file, communication.sender, communication.actual_timestamp, parent_wf_class_id from communication where communication.receiver = 'WFE' and communication.command = '" +\
-            inStatus + "' and communication.status = 'PENDING' limit " + str(self.rowLim)
+            inStatus + "' and communication.status = 'PENDING' limit " + str(self.rowLim)  # noqa: E501
 
         myList = self.__eUtil.runSelectSQL(command)
 
@@ -948,9 +952,7 @@ class ServerMonitor(object):
         else:
             return 1
 
-
 # --------------------------------------------------------------------------------------------------------------
-# Code NOT USED
     def XwatchList(self, serverList):
         '''
           Get the list of wf-instances that should be active
@@ -989,7 +991,7 @@ class ServerMonitor(object):
                                 logger.info("Found a closed UI %s, %s, %s", str(row[0]), str(row2[0]), str(row2[1]))
                                 mode = 1
                             elif row2[2].find('runn') >= 0:
-                                logger.info("Found a running dep %s, %s, %s", str(row[0]), str(row2[0]),  str(row2[1]))
+                                logger.info("Found a running dep %s, %s, %s", str(row[0]), str(row2[0]), str(row2[1]))
                                 mode = 2
                             # get the current task for this instance
                             if mode > 0:
@@ -1024,4 +1026,3 @@ class ServerMonitor(object):
                                     m["timeStamp"] = self.__timeStamp.getSecondsFromReference()
                                     m["status"] = "working"
                                     self.monitorDict[row[0]] = m
-

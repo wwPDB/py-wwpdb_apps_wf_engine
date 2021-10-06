@@ -43,11 +43,11 @@ class parseXML(object):
                         mData = metaDataObject()
                         for metaData in thing.childNodes:
                             if metaData.nodeName == "wf:version":
-                                self.__lfh.write("WFE.parseXML.getMetaData : XML style = PRODUCTION : major release = " +
-                                                 str(metaData.getAttribute("major")) +
-                                                 " : Date = " +
-                                                 str(metaData.getAttribute("date")) +
-                                                 "\n")
+                                self.__lfh.write("WFE.parseXML.getMetaData : XML style = PRODUCTION : major release = "
+                                                 + str(metaData.getAttribute("major"))
+                                                 + " : Date = "
+                                                 + str(metaData.getAttribute("date"))
+                                                 + "\n")
                                 mData.setVersionMajor(metaData.getAttribute("major"))
                                 mData.setVersionMinor(metaData.getAttribute("minor"))
                                 mData.setAuthor(metaData.getAttribute("author"))

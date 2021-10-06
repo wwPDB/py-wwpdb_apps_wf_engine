@@ -37,11 +37,10 @@ __version__ = "V0.24"
 
 import sys
 import time
-# import datetime
 import os
 import logging
 from xml.dom import minidom
-#from threading import *
+# from threading import *
 
 from wwpdb.apps.wf_engine.engine.SwitchTask import SwitchTask
 from wwpdb.apps.wf_engine.engine.ExternalTask import ExternalTask
@@ -254,11 +253,11 @@ class mainEngine(object):
         if elist is None or len(elist) == 0:
             ind = -1
         else:
-            for l in elist:
-                if l is None:
+            for el in elist:
+                if el is None:
                     ind = -1
                 else:
-                    ind = l[0]
+                    ind = el[0]
 
         if ind < 0:
             # Create new row
@@ -1230,6 +1229,6 @@ def main(argv):
 
     exit(stat)
 
-if __name__ == "__main__":
 
+if __name__ == "__main__":
     main(sys.argv[1:])

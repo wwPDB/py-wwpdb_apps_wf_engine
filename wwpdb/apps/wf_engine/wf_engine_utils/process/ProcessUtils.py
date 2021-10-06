@@ -21,14 +21,13 @@ import traceback
 
 
 class ProcessUtils(object):
-
     """
         A collection of utilities for managing processes and extracting
         process and system status details.
 
     """
 
-    def __init__(self, verbose, log): # pylint: disable=unused-argument
+    def __init__(self, verbose, log):  # pylint: disable=unused-argument
         # self.__verbose = verbose
         self.__lfh = log
         self.__debug = False
@@ -87,7 +86,7 @@ class ProcessUtils(object):
                 #        to this call so trap this exception so that the iterator can continue.
                 try:
                     pD = p.as_dict()
-                except:  # pylint: disable=bare-except
+                except:  # noqa: E722 pylint: disable=bare-except
                     pass
                 if (key in pD):
                     # if self.__debug:
@@ -99,7 +98,7 @@ class ProcessUtils(object):
                         pidList.append((pD['pid'], pD['ppid']))
                         if self.__debug:
                             self.__lfh.write("+ProcessUtils.findProcess() matched key %r value %r\n" % (key, pD[key]))
-            except:  # pylint: disable=bare-except
+            except:  # noqa: E722 pylint: disable=bare-except
                 if self.__debug:
                     self.__lfh.write("+ProcessUtils.findProcess() exception for key %r target %r\n" % (key, value))
                     traceback.print_exc(file=self.__lfh)

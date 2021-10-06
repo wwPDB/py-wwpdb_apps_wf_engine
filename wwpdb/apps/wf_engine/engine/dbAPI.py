@@ -100,7 +100,7 @@ class dbAPI(object):
         '''
 
         if not table:
-            print( "WFE.dbAPI.runUpdateOnOrdinal : Undefined table")
+            print("WFE.dbAPI.runUpdateOnOrdinal : Undefined table")
             return False
 
         if not ordinal:
@@ -259,7 +259,7 @@ class dbAPI(object):
             return False
 
 
-def main(): 
+def main():
 
     print("starting DBAPI test")
 
@@ -274,9 +274,9 @@ def main():
             'wf_instance.wf_inst_id'],
         where={
             "deposition.dep_set_id": "wf_instance.dep_set_id",
-            "wf_instance.dep_set_id": "'" +
-            depid +
-            "'",
+            "wf_instance.dep_set_id": "'"
+            + depid
+            + "'",
             "wf_instance.wf_inst_id": "'W_001'"},
         run=True)
     print(str(ret))

@@ -24,7 +24,7 @@ class ServerCheck():
                 print(" Checking " + siteID)
                 config = ConfigInfo(siteId=siteID)
 
-                con = self.getConnection(config)
+                con = self.getConnection(config)  # noqa: F841
 
                 self.getHosts(siteID)
 
@@ -76,27 +76,24 @@ class ServerCheck():
                 # row[5], (row[3] - row[4] - row[5]) / row[2])
                 if (row[3] - row[4] - row[5]) / row[2] > 0.9:
                     print(" ERROR : Physical memory usage very large on host %s , fraction = %8.2f" % (row[0], row[3] / (row[2] - row[4] - row[5])))
-                    self.sendHelpEmails('High memory usage on ' +
-                                        str(row[0]), 'High physical memory usage on ' +
-                                        str(row[0]) +
-                                        ' for SITE-ID = ' +
-                                        str(siteID) +
-                                        ' has a fraction of %8.2f memory usage' %
-                                        (row[3] /
-                                            (row[2] -
-                                             row[4] -
-                                             row[5])))
+                    self.sendHelpEmails('High memory usage on '
+                                        + str(row[0]), 'High physical memory usage on '
+                                        + str(row[0])
+                                        + ' for SITE-ID = '
+                                        + str(siteID)
+                                        + ' has a fraction of %8.2f memory usage' %
+                                        (row[3] / (row[2] - row[4] - row[5])))
                 else:
                     if (row[3] - row[4] - row[5]) / row[2] > 0.5:
                         print(" Warning : Physical memory usage large on host %s , fraction = %8.2f" % (row[0], row[3] / (row[2] - row[4] - row[5])))
             if row[7] / row[6] > 0.8:
                 print(" ERROR : CPU usage very large on host %s , nCPU = %d, Usage  = %8.2f" % (row[0], row[4], row[5]))
-                self.sendHelpEmails('CPU usage on ' +
-                                    str(row[0]), 'CPU usage on ' +
-                                    str(row[0]) +
-                                    ' for SITE-ID = ' +
-                                    str(siteID) +
-                                    ' has usage %8.2f out of %d' %
+                self.sendHelpEmails('CPU usage on '
+                                    + str(row[0]), 'CPU usage on '
+                                    + str(row[0])
+                                    + ' for SITE-ID = '
+                                    + str(siteID)
+                                    + ' has usage %8.2f out of %d' %
                                     (row[4], row[5]))
             else:
                 if row[7] / row[6] > 0.5:
@@ -116,8 +113,8 @@ class ServerCheck():
         msg['From'] = 'noreply@wwpdb.org'
         msg['To'] = email
 
-         # Send the message via our own SMTP server, but don't include the
-         # envelope header.
+        # Send the message via our own SMTP server, but don't include the
+        # envelope header.
         s = smtplib.SMTP('localhost')
         s.sendmail('noreply@wwpdb.org', [email], msg.as_string())
         s.quit()

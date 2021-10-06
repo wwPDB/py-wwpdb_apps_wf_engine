@@ -27,7 +27,7 @@ class MyLogger(object):
     def write(self, str):  # pylint: disable=redefined-builtin
         try:
             if self.__myLevel >= self.__currentLevel:
-                #f = sys._current_frames().values()[0]
+                # f = sys._current_frames().values()[0]
                 f = sys._getframe()  # pylint: disable=protected-access
                 # fN = f.f_back.f_globals['__file__']
                 tL = f.f_back.f_globals['__name__'].split('.')
@@ -36,7 +36,7 @@ class MyLogger(object):
                     logger.log(self.__myLevel, mN + " " + str[:-1])
                 else:
                     logger.log(self.__myLevel, mN + " " + str)
-        except:  # pylint: disable=bare-except
+        except:  # noqa: E722  pylint: disable=bare-except
             logger.exception(str)
 
     def flush(self):

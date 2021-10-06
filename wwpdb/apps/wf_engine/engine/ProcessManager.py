@@ -35,7 +35,7 @@ from wwpdb.apps.wf_engine.engine.ServerMonitor import ServerMonitor
 
 from wwpdb.utils.wf.process.ProcessRunner import ProcessRunner
 from wwpdb.apps.wf_engine.engine.EngineUtils import EngineUtils
-#from wwpdb.apps.wf_engine.wf_engine_utils.run.MyLogger import MyLogger
+# from wwpdb.apps.wf_engine.wf_engine_utils.run.MyLogger import MyLogger
 from wwpdb.apps.wf_engine.wf_engine_utils.time.TimeStamp import TimeStamp
 
 logger = logging.getLogger(name='root')
@@ -251,7 +251,7 @@ class ProcessManager(Thread):
                             cN = value.__class__.__name__
                             logfh.write("+ProcessManager.__runProcess :  setting input %s using object type %s\n" % (key, cN))
                             value.printMe()
-                        except Exception as _e:
+                        except Exception as _e:  # noqa: F841
                             logfh.write("+ProcessManager.__runProcess :  setting input %s with value %r\n" % (key, value))
                     process.setInput(key, value)
             if self.output is not None:
@@ -261,7 +261,7 @@ class ProcessManager(Thread):
                             cN = value.__class__.__name__
                             logfh.write("+ProcessManager.__runProcess :  setting output %s using object type %s\n" % (key, cN))
                             value.printMe()
-                        except Exception as _e:
+                        except Exception as _e:  # noqa: F841
                             logfh.write("+ProcessManager.__runProcess :  setting output %s with value %r\n" % (key, value))
 
                     process.setOutput(key, value)
@@ -283,7 +283,7 @@ class ProcessManager(Thread):
                     cN = value.__class__.__name__
                     logfh.write("+ProcessManager.__runProcess :  returned output %s has object type %s\n" % (key, cN))
                     value.printMe(logfh)
-                except Exception as _e:
+                except Exception as _e:  # noqa: F841
                     traceback.print_exc(file=logfh)
                     logfh.write("+ProcessManager.__runProcess :  returned output %s has value %r\n" % (key, value))
 

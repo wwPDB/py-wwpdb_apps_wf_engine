@@ -82,7 +82,7 @@ class ServerTransfer(object):
             if self.verbose:
                 print("Contention = " + str(ret))
             return ret
-        except:
+        except:  # noqa: E722
             return 0.0
 
     def StealControl(self, ordinal):

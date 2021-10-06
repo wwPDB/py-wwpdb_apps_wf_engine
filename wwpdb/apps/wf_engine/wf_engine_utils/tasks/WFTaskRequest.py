@@ -133,7 +133,7 @@ class WFTaskRequest(MyDbAdapter):
             wfOpts["author"] = wfMetaData.getAuthor()
             wfOpts["version"] = wfMetaData.getVersionMajor() + wfMetaData.getVersionMinor()
             #
-            _ok = self._deleteRequest(tableId='WF_CLASS_DICT', wfClassId=wfMetaData.getID())
+            _ok = self._deleteRequest(tableId='WF_CLASS_DICT', wfClassId=wfMetaData.getID())  # noqa: F841
             return self._insertRequest(tableId='WF_CLASS_DICT', contextId=None, ** wfOpts)
         else:
             return False
@@ -284,7 +284,7 @@ class WFTaskRequest(MyDbAdapter):
                     self._insertRequest(tableId=tableId, contextId=None, **options)
                     iCount += 1
             self.__lfh.write("WFTaskRequest.loadAccessions() loaded %d codes\n" % iCount)
-        except:  # pylint: disable=bare-except
+        except:   # noqa: E722 pylint: disable=bare-except
             self.__lfh.write("WFTaskRequest.loadAccessions() failed \n")
             traceback.print_exc(file=self.__lfh)
             return False

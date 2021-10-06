@@ -119,7 +119,7 @@ class WFTaskRequestWorker(object):
             for tableId in tableIdList:
                 self.__wftr.deleteDataSet(depSetId=depSetId, tableId=tableId)
             return True
-        except:  # pylint: disable=bare-except
+        except:  # noqa: E722 pylint: disable=bare-except
             return False
 
     def writeTruncateScript(self, dbName, tableNameList, suffix=None):
@@ -134,7 +134,7 @@ class WFTaskRequestWorker(object):
             for tableName in tableNameList:
                 fp.write("truncate table %s ;\n" % tableName)
             fp.close()
-        except:  # pylint: disable=bare-except
+        except:  # noqa: E722 pylint: disable=bare-except
             return False
 
     def clearAll(self, tableIdList):
@@ -145,7 +145,7 @@ class WFTaskRequestWorker(object):
             for tableId in tableIdList:
                 self.__wftr.clearTable(tableId=tableId)
             return True
-        except:  # pylint: disable=bare-except
+        except:  # noqa: E722 pylint: disable=bare-except
             return False
 
     def assignTask(self, depSetId, taskOp=None):
@@ -170,7 +170,7 @@ class WFTaskRequestWorker(object):
             options['command'] = 'waitWF'
             return self.__wftr.assignTask(depSetId=depSetId, **options)
         elif taskOp.lower() in ['delete', 'remove']:
-            return self.__wftr.deleteDataSet(depSetId=depSetId) # THIS IS MISSING AN ARGUMENT  pylint: disable=no-value-for-parameter
+            return self.__wftr.deleteDataSet(depSetId=depSetId)  # THIS IS MISSING AN ARGUMENT  pylint: disable=no-value-for-parameter
         else:
             return False
 
@@ -380,7 +380,7 @@ def main():
 
         #
         'da_internal': {'truncate': ['PDB_status_information', 'audit_author', 'chem_comp', 'citation', 'citation_author', 'database_2', 'diffrn_source',
-                                     'em_admin', 'entity', 'entity_poly', 'exptl', 'ndb_struct_conf_na', 
+                                     'em_admin', 'entity', 'entity_poly', 'exptl', 'ndb_struct_conf_na',
                                      'pdbx_audit_revision_category', 'pdbx_audit_revision_details', 'pdbx_audit_revision_group', 'pdbx_audit_revision_history',
                                      'pdbx_audit_revision_item', 'pdbx_contact_author', 'pdbx_database_PDB_obs_spr',
                                      'pdbx_database_related', 'pdbx_database_status_history', 'pdbx_deposit_group', 'pdbx_depui_entry_details',
@@ -490,6 +490,7 @@ def main():
         trw.loadWfDefFile(wfFileName=options.wfDefFileName)
     else:
         pass
+
 
 if __name__ == "__main__":
     main()
