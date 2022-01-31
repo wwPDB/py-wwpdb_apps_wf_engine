@@ -232,7 +232,7 @@ class dbAPI(object):
 
         else:
             if where:
-                sql = "select ordinal from " + str(table) + " where " + " and ".join(["%s = %s" % (k, v) for k, v in where.items()])
+                sql = "select * from " + str(table) + " where " + " and ".join(["%s = %s" % (k, v) for k, v in where.items()])
                 rows = self.con.runSelectSQL(sql)
                 if rows and len(rows) > 0:
                     rowExists = True
