@@ -134,6 +134,12 @@ class ProcessUtils(object):
         try:
             for pid in pidList:
                 os.kill(pid, mySignal)
+
+                try:
+                    os.waitpid(pid, 0)
+                    self.__lfh.write("+ProcessUtils.killProcessList() process %s cleaned from process table\n" % (str(pid)))
+                except OSError as e:
+                    self.__lfh.write("+ProcessUtils.killProcessList() error waiting for pid (%s), error %s\n" % (str(pid), e))
             return True
         except Exception as e:
             self.__lfh.write("+ProcessUtils.killProcessList() failing with (%s)\n" % (str(e)))
