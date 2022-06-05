@@ -21,7 +21,7 @@ def parseTimeDelta(s):
     """
     if s is None:
         return None
-    d = re.match(r"((?P<days>\d+) days, )?(?P<hours>\d+):" r"(?P<minutes>\d+):(?P<seconds>\d+)", str(s)).groupdict(0)
+    d = re.match(r"((?P<days>\d+) days, )?(?P<hours>\d+):(?P<minutes>\d+):(?P<seconds>\d+)", str(s)).groupdict(0)
     return timedelta(**dict(((key, int(value)) for key, value in d.items())))
 
 
