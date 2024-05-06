@@ -58,19 +58,6 @@ def getPicklePath(depSetId=None):
     return fPath
 
 
-def getNotesEmailAddr():
-    """Returns the email address for archiving messages"""
-    email = "wwpdb-da-system@rcsb.rutgers.edu"
-
-    siteid = getSiteId()
-    # Debugging at PDBe
-    if siteid == "PDBE_DEV":
-        cI = ConfigInfo()
-        email = cI.get("ANNOTATION_EMAIL")
-
-    return email
-
-
 def runOutOfBandWorkflow(DBstatusAPI, depSetId, classId, classFileName):
     """UPDATE status.communication SET  sender=%s, receiver=%s, wf_class_id=%s, wf_class_file=%s,
                                   command=%s, status=%s, actual_timestamp=%s, data_version=%s
