@@ -553,7 +553,7 @@ class mainEngine(object):
             workflowThread = WorkflowManager(task.file, self.__depositionId, "Annotate", str(task.name))
 
         self.__setDBTaskStatus("workflow", "start", task)
-        workflowThread.start()
+        workflowThread.start()  # pylint: disable=possibly-used-before-assignment
         self.__setDBTaskStatus("workflow", "running", task)
 
         status = -1

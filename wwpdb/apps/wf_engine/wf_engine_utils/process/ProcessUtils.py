@@ -43,6 +43,7 @@ class ProcessUtils(object):
 
         Return True if the comparison is satisfied
         """
+        ok = False
         opList = ["str_in", "str_eq", "numb_eq", "numb_gt", "numb_lt"]
         if op not in opList:
             return False

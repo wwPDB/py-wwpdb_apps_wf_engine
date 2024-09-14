@@ -249,6 +249,7 @@ class WFTaskRequest(MyDbAdapter):
             mapL = self._getDefaultAttributeParameterMap(tableId)
             self._setAttributeParameterMap(tableId=tableId, mapL=mapL)
             #
+            idName = ""
             if accessionType == "PDB":
                 cMapL = [("PDB_ID", "pdbId")]
                 idName = "pdbId"
@@ -258,7 +259,7 @@ class WFTaskRequest(MyDbAdapter):
             elif accessionType == "EMDB":
                 cMapL = [("EMDB_ID", "emdbId")]
                 idName = "emdbId"
-            self._setConstraintParameterMap(tableId=tableId, mapL=cMapL)
+            self._setConstraintParameterMap(tableId=tableId, mapL=cMapL)  # pylint: disable=possibly-used-before-assignment
             #
             iCount = 0
             ifh = open(filePath, "r")
