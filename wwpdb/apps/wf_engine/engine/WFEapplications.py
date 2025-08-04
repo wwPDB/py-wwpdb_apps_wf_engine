@@ -27,6 +27,7 @@ from wwpdb.utils.wf.dbapi.WfDbApi import WfDbApi
 from wwpdb.utils.wf.dbapi.dbAPI import dbAPI
 from wwpdb.utils.config.ConfigInfo import ConfigInfo, getSiteId
 from wwpdb.utils.wf.dbapi.WFEtime import getTimeNow
+from wwpdb.io.locator.PathInfo import PathInfo
 from email.mime.text import MIMEText
 
 logger = logging.getLogger()
@@ -36,25 +37,14 @@ def getPicklePath(depSetId=None):
     """Return path to deposition pkl files - to break circular dependency
     if depSetId set, return deposition specific path
     """
-
     # logger.debug("Getting PicklePath for %s" % depSetId)
-
-    cI = ConfigInfo()
-    WWPDB_APP_VERSION_STRING = "v-200"
-
-    depstrpath = cI.get("SITE_ARCHIVE_STORAGE_PATH")
-    if not depstrpath:
-        logger.error("SITE_ARCHIVE_STORAGE_PATH not set")
-        return None
-
-    file_upload_temp_dir = os.path.join(depstrpath, "deposit", "temp_files")
-    storage_pickled_depositions = os.path.join(file_upload_temp_dir, "deposition" + "-" + WWPDB_APP_VERSION_STRING)
-
+    pi = PathInfo()
     if depSetId:
-        fPath = os.path.join(storage_pickled_depositions, str(depSetId))
+        fPath = pi.getDirPath(dataSetId=depSetId, fileSource="pickles")
     else:
-        fPath = storage_pickled_depositions
+        fPath = os.path.dirname(pi.getDirPath(dataSetId="D_000000", fileSource="pickles"))
 
+    logger.info("Pickle path for %s: %s" % (depSetId, fPath))
     return fPath
 
 
