@@ -44,7 +44,7 @@ def getPicklePath(depSetId=None):
     else:
         fPath = os.path.dirname(pi.getDirPath(dataSetId="D_000000", fileSource="pickles"))
 
-    logger.info("Pickle path for %s: %s" % (depSetId, fPath))
+    logger.info("Pickle path for %s: %s", depSetId, fPath)
     return fPath
 
 
