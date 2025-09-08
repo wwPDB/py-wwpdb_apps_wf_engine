@@ -49,7 +49,7 @@ setup(
         "wwpdb.utils.config",
         "wwpdb.utils.wf >= 0.5",
         "wwpdb.utils.detach",
-        "wwpdb.io",
+        "wwpdb.io >= 0.36",
         "tabulate",
         "future",
     ],
