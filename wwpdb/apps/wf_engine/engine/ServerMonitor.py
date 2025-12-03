@@ -55,7 +55,7 @@ class ServerMonitor(object):
         self.inStatus = "runWF"
         self.outStatus = "runningWF"
         #  watch loop delay interval - seconds
-        self.waitTime = 5
+        self.waitTime = 50
         # not used
         # self.sleepTime = 3600
         self.classID = classID
