@@ -77,7 +77,21 @@ def reRunWorkflow(depID):
         sql = "select wf_class_file,command from communication where dep_set_id = '" + str(depID) + "'"
         rows = wfApi.runSelectSQL(sql)
         for row in rows:
-            if row[0] in ["ValidDeposit.xml", "depRunOnUpload.xml", "wf_op_validdeposit_fs_deposit.xml", "wf_op_uploaddep_fs_deposit.xml"] and row[1] in ["runWF", "restartGoWF"]:
+            # DAOTHER-9269: Extended list to include new DepUI workflows that were not previously allowed
+            allowed_workflows = [
+                "ValidDeposit.xml",
+                "depRunOnUpload.xml",
+                "wf_op_validdeposit_fs_deposit.xml",
+                "wf_op_uploaddep_fs_deposit.xml",
+                "wf_op_centreofmass_tempdep.xml",  # CNTR_O_MASS
+                "wf_op_mrgpdbdep_fs_tempdep.xml",  # MRGPDBDEP_TDEP (merge PDB coordinates)
+                "wf_op_mrgpdbdep_fs_deposit.xml",  # MRGPDBDEP_DEP (merge PDB coordinates - deposit version)
+                "wf_op_mrgpdbxdep_fs_tempdep.xml",  # MRGPDBXDEP_TDEP (merge PDBX coordinates)
+                "wf_op_mrgpdbxdep_fs_deposit.xml",  # MRGPDBXDEP_DEP (merge PDBX coordinates - deposit version)
+                "wf_op_emmapcheck_fs_deposit.xml",  # EMMAPCHECK_DEP
+                "wf_op_assembly_auth_depinfo.xml"  # Assembly authentication (used in FileConversion)
+            ]
+            if row[0] in allowed_workflows and row[1] in ["runWF", "restartGoWF"]:
                 sql = "update communication set status = 'PENDING',actual_timestamp = '" + str(timestamp) + "' where dep_set_id = '" + str(depID) + "'"
                 ok = wfApi.runUpdateSQL(sql)
                 if ok < 1:
