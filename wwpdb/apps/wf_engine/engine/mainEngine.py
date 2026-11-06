@@ -715,8 +715,8 @@ class mainEngine(object):
                 status == "complete"  # pylint: disable=pointless-statement
             elif task.type.lower() == "exception":
                 logger.info("+mainEngine.__handleTask :  Exception handler thown in workflow class %s - aborting", self.__wfClassId)
-                self.__setDBTaskStatus(task.type, "abort", task)
-                self.__setDBInstStatus(task.type, "abort", task)
+                self.__setDBTaskStatus(task.type, "aborted", task)
+                self.__setDBInstStatus(task.type, "aborted", task)
                 logger.info("+mainEngine.__handleTask : exiting for %s with status %r ret %r", self.__depositionId, status, ret)
                 sys.exit(1)
             else:
