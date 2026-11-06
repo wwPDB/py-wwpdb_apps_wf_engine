@@ -713,7 +713,7 @@ class mainEngine(object):
                 status == "complete"  # pylint: disable=pointless-statement
             elif task.type == "Exit-point":
                 status == "complete"  # pylint: disable=pointless-statement
-            elif task.type == "Exception":
+            elif task.type.lower() == "exception":
                 logger.info("+mainEngine.__handleTask :  Exception handler thown in workflow class %s - aborting", self.__wfClassId)
                 self.__setDBTaskStatus(task.type, "abort", task)
                 self.__setDBInstStatus(task.type, "abort", task)

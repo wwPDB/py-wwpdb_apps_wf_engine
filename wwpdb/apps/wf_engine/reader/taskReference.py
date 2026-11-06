@@ -89,7 +89,7 @@ class taskModule:
         self.uniqueActionName = taskNode.getAttribute("reference")
         if taskNode.nodeName == "wf:exception":
             self.outputName.append(taskNode.getAttribute("nextTask"))
-            self.type = "exception"
+            self.type = "Exception"
 
         for taskType in taskNode.childNodes:
             if taskType.nodeName == "wf:description":
