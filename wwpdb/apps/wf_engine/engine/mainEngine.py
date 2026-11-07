@@ -525,7 +525,7 @@ class mainEngine(object):
         logger.error("+mainEngine.__runProcess :  Trying to kill process")
 
         pid = os.getpid()
-        logger.info("+mainEngine.__runProcess Stopping children %s id %s", str(processThread.getName()), str(pid))
+        logger.info("+mainEngine.__runProcess Stopping children %s id %s", str(processThread.name), str(pid))
         pu = ProcessUtils(verbose=True, log=self.__lfh)
         cPidList = pu.getChildren(pid)
         myStatus = pu.killProcessList(cPidList)
