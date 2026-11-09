@@ -54,27 +54,27 @@ class MainEngineExceptionNodeTests(unittest.TestCase):
         with self.assertRaises(SystemExit):
             self.engine._mainEngine__handleTask(self.task, [], 0)
 
-    def testNodeAfterFailureKeepsException(self):
-        """A run that already failed (e.g. a timeout) must stay 'exception' so the Workflow Manager shows it."""
+    def testNodeAfterFailureEndsException(self):
+        """A run that already failed (e.g. a timeout) must end 'exception' so the Workflow Manager shows it."""
         self.engine._mainEngine__setDBInstStatus("process", "exception", self.task)
         self.reachExceptionNode()
-        self.assertEqual(self.instanceStatuses(), ["exception"])
+        self.assertEqual(self.instanceStatuses()[-1], "exception")
 
-    def testNodeWithoutEarlierFailureIsAborted(self):
-        """A run that reaches the node with no earlier failure is still recorded as 'aborted'."""
+    def testNodeWithoutEarlierFailureEndsException(self):
+        """Reaching the node is a failure in itself (e.g. no validation report): the run ends 'exception', not 'aborted'."""
         self.engine._mainEngine__setDBInstStatus("workflow", "running", self.task)
         self.reachExceptionNode()
-        self.assertEqual(self.instanceStatuses(), ["running", "aborted"])
+        self.assertEqual(self.instanceStatuses(), ["running", "exception"])
 
-    def testNodeAfterRecoveryIsAborted(self):
-        """An earlier failure that was later replaced by another status does not hold the node back."""
+    def testNodeAfterRecoveryEndsException(self):
+        """A run that recovered from an earlier failure and then reaches the node still ends 'exception'."""
         self.engine._mainEngine__setDBInstStatus("process", "exception", self.task)
         self.engine._mainEngine__setDBInstStatus("workflow", "running", self.task)
         self.reachExceptionNode()
-        self.assertEqual(self.instanceStatuses(), ["exception", "running", "aborted"])
+        self.assertEqual(self.instanceStatuses(), ["exception", "running", "exception"])
 
     def testNodeTaskStatusIsAborted(self):
-        """The node's own task row is 'aborted' whether or not the run had failed."""
+        """The node's own task row stays 'aborted' whether or not the run had failed."""
         self.engine._mainEngine__setDBInstStatus("process", "exception", self.task)
         self.reachExceptionNode()
         taskModes = [call.args[1] for call in self.eUtil.updateStatus.call_args_list if "TASK_NAME" in call.args[0]]
