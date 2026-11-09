@@ -99,8 +99,6 @@ class mainEngine(object):
         # Something went wrong - exception task
         self.exception = None
         self.instanceExitState = "finished"
-        # Last status written to the instance row: an exception node must not hide an earlier failure
-        self.__lastInstStatus = None
 
     def __createDBclass(self, wfMetaDataObj):
         """
@@ -146,7 +144,6 @@ class mainEngine(object):
         instDB["DEP_SET_ID"] = self.__depositionId
         #    instDB['STATUS_TIMESTAMP'] = datetime.datetime.utcnow()
         instDB["STATUS_TIMESTAMP"] = now
-        self.__lastInstStatus = mode
 
         self.__eUtil.updateConnection()
         db = self.__eUtil
@@ -719,9 +716,9 @@ class mainEngine(object):
             elif task.type.lower() == "exception":
                 logger.info("+mainEngine.__handleTask :  Exception handler thown in workflow class %s - aborting", self.__wfClassId)
                 self.__setDBTaskStatus(task.type, "aborted", task)
-                # A run that already failed (e.g. timed out) stays "exception" so the Workflow Manager still shows it
-                if self.__lastInstStatus != "exception":
-                    self.__setDBInstStatus(task.type, "aborted", task)
+                # Reaching an exception node means the run failed (e.g. timed out, or produced no report): keep it
+                # "exception" so the Workflow Manager shows it, which it does not for "aborted"
+                self.__setDBInstStatus(task.type, "exception", task)
                 logger.info("+mainEngine.__handleTask : exiting for %s with status %r ret %r", self.__depositionId, status, ret)
                 sys.exit(1)
             else:
