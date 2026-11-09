@@ -1,3 +1,4 @@
+# pylint: disable=protected-access
 ##
 # File:    MainEngineExceptionNodeTests.py
 #
