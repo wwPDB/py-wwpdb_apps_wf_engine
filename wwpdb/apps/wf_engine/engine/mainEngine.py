@@ -716,7 +716,9 @@ class mainEngine(object):
             elif task.type.lower() == "exception":
                 logger.info("+mainEngine.__handleTask :  Exception handler thown in workflow class %s - aborting", self.__wfClassId)
                 self.__setDBTaskStatus(task.type, "aborted", task)
-                self.__setDBInstStatus(task.type, "aborted", task)
+                # Reaching an exception node means the run failed (e.g. timed out, or produced no report): keep it
+                # "exception" so the Workflow Manager shows it, which it does not for "aborted"
+                self.__setDBInstStatus(task.type, "exception", task)
                 logger.info("+mainEngine.__handleTask : exiting for %s with status %r ret %r", self.__depositionId, status, ret)
                 sys.exit(1)
             else:
